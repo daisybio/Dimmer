@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.PermutationParametersController">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">
+         <children>
+            <Label styleClass="FontHeader1" text="4 . Set permutation parameters " GridPane.columnSpan="2147483647" />
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.columnSpan="2147483647" GridPane.rowIndex="20">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="continue" />
+               </children></HBox>
+            <VBox prefHeight="0.0" prefWidth="580.0" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="14" />
+            <Pane prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
+               <children>
+                  <TextField fx:id="pvalueCutoff" layoutX="10.0" layoutY="220.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="80.0" styleClass="textFieldPermutation" text="0.05" visible="false" />
+                  <Label layoutX="10.0" layoutY="93.0" styleClass="FontHeader" text="Number of permutations" />
+                  <TextField fx:id="numThreads" layoutX="10.0" layoutY="173.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="80.0" styleClass="textFieldPermutation" text="4" />
+                  <Label layoutX="10.0" layoutY="200.0" styleClass="FontHeader" text="P-value cutoff" visible="false" />
+                  <TextField fx:id="numPermutations" layoutX="10.0" layoutY="113.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="80.0" styleClass="textFieldPermutation" text="1000" />
+                  <Label layoutX="10.0" layoutY="153.0" styleClass="FontHeader" text="Number of CPU threads" />
+                  <HBox layoutY="10.0">
+                     <children>
+                        <Label maxWidth="-Infinity" styleClass="hboxParagraph" text="Select the number of permutations to calculate the statistical significance of the CpGs. Using large numbers will lead to a better correction of the p-values for multiple testing. In doubt, leave it at 1,000. The number of CPU threads refers to the number of CPU cores that will be used to parallelize the upcoming computations. In doubt, set it to the number of CPU cores of your computer minus one." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+               </children>
+            </Pane>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+         </rowConstraints>
+         <StackPane.margin>
+            <Insets left="30.0" />
+         </StackPane.margin>
+      </GridPane>
+   </children>
+</StackPane>

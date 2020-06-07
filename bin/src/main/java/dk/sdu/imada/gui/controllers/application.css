@@ -1,0 +1,113 @@
+.PaneLogo {
+	-fx-hpos: center;
+	-fx-vpos: center;
+}
+
+.Logo{
+ -fx-graphic: url("/Users/diogo/Desktop/dimmer_logo.png");
+}
+
+.PaneContent {
+	-fx-background-color: white;
+}
+
+.VboxMenu {
+	-fx-spacing: 20;
+	-fx-background-color: #EDEDED	;
+	-fx-padding: 20;
+}
+
+.FontMenu {
+    -fx-font: 18px Tahoma;
+}
+
+.ButtonPanel {
+    -fx-padding: 4 20 4 20;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+
+.ButtonStart {
+    -fx-padding: 8 28 8 28;
+    -fx-text-fill: black;
+    -fx-font-size: 18px;
+	-fx-font-weight: bold;
+}
+.ButtonMenu{
+	-fx-background-color: #AAE1F2;
+    -fx-font: 15px Tahoma;
+}
+
+.ButtonMenu:hover{
+	-fx-background-color: #EDEDED;
+    -fx-font: 15px Tahoma;	
+}
+
+.ButtonMenu:disabled {
+ 	-fx-background-color: #EDEDED;
+    -fx-font: 15px Tahoma;	
+}
+
+.hboxInput {
+	-fx-spacing: 5;
+	-fx-pref-width: 250;
+	
+}
+
+.hboxListView{
+	-fx-spacing: 20;
+}
+
+.buttonRight {
+  -fx-background-radius: 1000px;
+}
+
+.textFieldPermutation {
+	-fx-font-size: 13px;
+}
+
+.FontHeader {
+	-fx-font-weight: bold;
+}
+
+.FontHeader1 {
+	-fx-font-weight: bold;
+	-fx-font-size: 24px;
+}
+
+.Vboxmain {
+	-fx-spacing: 30;
+}
+
+ScrollPane {
+    -fx-background-color:transparent;
+}
+
+.hboxpic {
+	-fx-spacing: 5;
+	-fx-pref-width: 550;
+	-fx-pref-height: 250;
+}
+
+
+.hboxParagraph {
+	-fx-pref-width: 700;
+}
+
+
+.hboxCaption {
+	
+}
+
+.vboxImage {
+	-fx-pref-width: 250;
+	-fx-pref-height: 220;
+	-fx-alignment: center;
+	-fx-spacing: 10;
+}
+
+.vboxPlots {
+	-fx-spacing: 20;
+}

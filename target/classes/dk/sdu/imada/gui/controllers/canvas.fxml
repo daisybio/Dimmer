@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="620.0" prefWidth="819.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.MainController">
+   <left>
+      <VBox prefHeight="532.0" prefWidth="294.0" styleClass="VboxMenu" stylesheets="@application.css" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane prefHeight="150.0" prefWidth="133.0" styleClass="PaneLogo" stylesheets="@application.css">
+               <children>
+                  <ImageView fx:id="logo" fitHeight="150.0" fitWidth="144.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="-0.2886810302734375" AnchorPane.rightAnchor="129.28868103027344">
+                     <image>
+                        <Image url="@../../../../../../../../../../../Desktop/dimmer_logo.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <Button fx:id="stepDataType_1" mnemonicParsing="false" onAction="#screenDataType" styleClass="ButtonMenu" stylesheets="@application.css" text="1 . Select data type" />
+            <Button fx:id="stepModel_2" disable="true" mnemonicParsing="false" onAction="#screenModelTtest" styleClass="ButtonMenu" stylesheets="@application.css" text="2 . Choose model" />
+            <Button fx:id="input_4" disable="true" mnemonicParsing="false" onAction="#screenInput" styleClass="ButtonMenu" stylesheets="@application.css" text="3 . Input" />
+            <Button fx:id="stepPermutationParameters_3" disable="true" mnemonicParsing="false" onAction="#screenPermutationParameters" styleClass="ButtonMenu" stylesheets="@application.css" text="4 . Set permutation parameters" />
+            <Button fx:id="summary_5" disable="true" mnemonicParsing="false" onAction="#screenSummary" styleClass="ButtonMenu" stylesheets="@application.css" text="5 . Perform permutation test" />
+            <Button fx:id="permutationResult_6" disable="true" mnemonicParsing="false" onAction="#screenPermutationResults" styleClass="ButtonMenu" stylesheets="@application.css" text="6 . Check permutation results" />
+            <Button fx:id="dmrParameters_7" disable="true" mnemonicParsing="false" onAction="#screenDMRParameters" styleClass="ButtonMenu" stylesheets="@application.css" text="7 . Set DMRs parameters" />
+            <Button fx:id="dmrExecute_8" disable="true" mnemonicParsing="false" onAction="#screenExecuteDMR" styleClass="ButtonMenu" stylesheets="@application.css" text="8 . Perform DMR search" />
+            <Button fx:id="dmrResult_9" disable="true" mnemonicParsing="false" onAction="#screenResultDMR" styleClass="ButtonMenu" stylesheets="@application.css" text="9 . Check DMR results" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <AnchorPane nodeOrientation="LEFT_TO_RIGHT" styleClass="PaneContent" stylesheets="@application.css" BorderPane.alignment="CENTER_LEFT" />
+   </center>
+</BorderPane>

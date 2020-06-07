@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.ModelController">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">
+         <children>
+            <Label styleClass="FontHeader1" text="2 . Choose model" GridPane.columnSpan="2147483647" />
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.rowIndex="20">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="continue" />
+               </children>
+            </HBox>
+            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
+               <children>
+                  <Separator layoutX="10.0" layoutY="200.0" prefWidth="700.0" />
+                  <VBox fx:id="ttestBox" layoutX="10.0" layoutY="320.0" prefHeight="200.0" prefWidth="100.0" visible="false">
+                     <children>
+                        <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="680.0">
+                           <children>
+                              <Label text="Alternative hypothesis:" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="hboxInput" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                                 <children>
+                                    <RadioButton fx:id="left" mnemonicParsing="false" text="left">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="group1" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="right" mnemonicParsing="false" selected="true" text="right" toggleGroup="$group1" />
+                                    <RadioButton fx:id="twoSided" mnemonicParsing="false" selected="true" text="both" toggleGroup="$group1" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                              </HBox>
+                              <CheckBox fx:id="assumeEqualVariance" mnemonicParsing="false" selected="true" text="Assume equal variance" GridPane.columnSpan="3" GridPane.rowIndex="5" />
+                              <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="680.0" GridPane.columnSpan="2147483647" GridPane.rowSpan="3">
+                                 <children>
+                                    <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="680.0" text="Here you have to decide what kind of differential methylation you are interested in: If you only want to consider hypermethylation of the first group (e.g. patients) compared to the second group (e.g. control) choose “right”. Choose “left” for hypomethylated. Or select “both” for differentially methylated in either direction (up or down). You can further specify if the test statistics should assume that both groups have the same variance in methylation or if the variance should be calculated for each group separately." textAlignment="JUSTIFY" wrapText="true" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  <Label layoutX="10.0" layoutY="120.0" maxWidth="690.0" styleClass="FontHeader" text="Choose regression if you have more than two labels (e.g. healthy vs. disease type 1 vs. disease type 2) and/or if the labels are non-binary (e.g. age, smoker, weight)." wrapText="true" />
+                  <RadioButton fx:id="ttest" layoutX="10.0" layoutY="260.0" mnemonicParsing="false" onAction="#selectEvent" text="T-test">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="group" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="regression" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#selectEvent" text="Regression" toggleGroup="$group" />
+                  <Label layoutX="10.0" layoutY="220.0" maxWidth="690.0" styleClass="FontHeader" text="Choose t-test if you have only two labels and a typical case/control study design (e.g. healthy vs. disease)." wrapText="true" />
+                  <HBox layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="200.0" styleClass="hboxParagraph">
+                     <children>
+                        <Label styleClass="hboxParagraph" text="DiMmer supports two different statistics for calculating the significance of the CpGs: t-tests for case/control study designs, and regressions models for multi-label designs (e.g. several outcome variables and/or potential confounders). If you only have a case/control study you can choose both models, nevertheless the t-test is much, much faster. In contrast, if you have given multiple labels (e.g., patient weight, age, etc.) you have to choose regression." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+               </children>
+            </Pane>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+         </rowConstraints>
+         <StackPane.margin>
+            <Insets left="30.0" />
+         </StackPane.margin>
+      </GridPane>
+   </children>
+</StackPane>

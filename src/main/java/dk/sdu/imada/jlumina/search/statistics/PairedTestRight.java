@@ -1,0 +1,71 @@
+package dk.sdu.imada.jlumina.search.statistics;
+
+import java.util.Arrays;
+
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.util.FastMath;
+
+public class PairedTestRight extends AbstractTTestEstimator {
+
+	/**
+	 * Paired t-test constructor
+	 * @param twoSided
+	 * @param splitPoint
+	 */
+	public PairedTestRight(boolean twoSided, int splitPoint) {
+		super(twoSided, splitPoint);
+	}
+
+	/* (non-Javadoc)
+	 * @see dk.sdu.imada.statistics.AbstractTTestEstimator#compute(float[], float[][])
+	 * 
+	 * Computes the t-test assuming paired data.
+	 */
+	@Override
+	public float compute(double[] sample1, double[] sample2) {
+		//separating the pairs
+		double aux = 0.f;
+		for (int i = 2; i < sample1.length; i+=2) {
+			aux = sample2[i-1];
+			sample2[i-1] = sample1[i-1];
+			sample1[i-1] = aux;
+		}
+
+		float m = (float)StatUtils.meanDifference((sample1), (sample2));
+
+		float mu = 0.f;
+
+		float v = (float)StatUtils.varianceDifference((sample1), (sample2), m);
+
+		int n = sample1.length;
+
+		this.tvalue = (float)((m - mu) / FastMath.sqrt(v / n));
+
+		float degreesOfFreedom = n - 1;
+
+		TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+
+		float tvalue = (float)FastMath.abs(this.tvalue);
+
+		Float pvalue = ((float)((2.0 * tDistribution.cumulativeProbability(-tvalue)/2.0)));
+
+		if (this.tvalue < 0.0) {
+			pvalue = (float)(1.0 - pvalue);
+		}
+
+		if (pvalue.isNaN()) {
+			pvalue = 1.f;
+		}
+		this.meanDifference=(m);
+
+		return pvalue;
+	}
+
+	@Override
+	public void setSignificance(double[] y) {
+		double [] sample1 = Arrays.copyOfRange(y, 0, splitPoint);
+		double [] sample2 = Arrays.copyOfRange(y, splitPoint, y.length);
+		setPvalue(compute(sample1, sample2));	
+	}
+}

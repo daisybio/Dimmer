@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.DataTypeController">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+          <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+          	<RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="NEVER" />
+          	<RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="FontHeader1" text="1 . Select data type" GridPane.columnSpan="2147483647" />
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.columnSpan="2147483647" GridPane.rowIndex="20">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="start" />
+               </children>
+            </HBox>
+            
+            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
+               <children>
+                  <Separator layoutX="1.0" layoutY="160.0" maxWidth="-Infinity" prefHeight="0.0" prefWidth="703.0" />
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="478.0" styleClass="hboxInput">
+                     <children>
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#openPermutationFile" stylesheets="@application.css" text="open" />
+                        <TextField fx:id="permutationFile" maxWidth="200.0" stylesheets="@application.css" />
+                     </children>
+                  </HBox>
+                  <Label layoutX="10.0" layoutY="200.0" styleClass="FontHeader" text="Alternatively, you can load a previously saved DiMmer project file." />
+                  <Label layoutX="10.0" layoutY="80.0" styleClass="FontHeader" text="Select the data type and click “start” at the bottom to start a new project." />
+                  <RadioButton fx:id="unpaired" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" selected="true" text="unpaired">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="group" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="paired" layoutX="100.0" layoutY="100.0" mnemonicParsing="false" text="paired" toggleGroup="$group" />
+                  <HBox layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="60.0" prefWidth="200.0" styleClass="hboxParagraph">
+                     <children>
+                        <Label text="At this point you can either start a new project or load a saved session. When you decide to start a new session, you have to choose whether your dataset is going to have paired data (e.g. when having twin data) or unpaired data (typical case/control study with independently sampled populations)." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+               </children>
+            </Pane>
+            
+         </children>
+         <StackPane.margin>
+            <Insets left="30.0" />
+         </StackPane.margin>
+      </GridPane>
+   </children>
+</StackPane>
