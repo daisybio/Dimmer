@@ -48,6 +48,7 @@ public class CheckGender {
 
 		for (int i = 0; i < yMediansByColumn.length; i++) {
 			medianDifference[i] = yMediansByColumn[i] - xMediansByColumn[i];
+			//System.out.println(medianDifference[i]);
 		}
 		
 		

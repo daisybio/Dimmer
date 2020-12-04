@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.gui.monitors.PermutationTestMonitor;
+import dk.sdu.imada.jlumina.core.primitives.Grouping;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 import dk.sdu.imada.jlumina.search.statistics.RegressionEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
@@ -28,7 +30,7 @@ public class ExecutePermutationController {
 
 	// permutation results 
 	float cpgDistance[];
-	float cellComposition[][];
+	float cellCompoFsition[][];
 	ArrayList<String> colNames;
 
 	TreeMap<String, int[]> patientsGroups;
@@ -43,33 +45,63 @@ public class ExecutePermutationController {
 
 		int numberOfPermutations = mainController.getNumPermutations();
 		int numThreads = mainController.getNumThreads();
+		
+		if(numberOfPermutations < numThreads){
+			numThreads = numberOfPermutations;
+		}
+		
 		float beta[][] = mainController.getBeta();
 		float[] pvalue = null;
-		float[] methylationDiff = new float[beta.length];		
-		float[][] phenotype = loadPhenotype();
+		float[] methylationDiff = new float[beta.length];
+		
+		
+		// 0 = isPaired, 1 = isRegression, 2 = twoSided, 3 = left, 4 = right, 5 = assumeEqualVariance
 		boolean options [] = getOptions();
-
-		mainController.setPhenotype(phenotype);
-		resultIndex = getCoefficientIndexResult();
-
-		ProgressForm progressForm = new ProgressForm();
-		Platform.runLater(progressForm);
-
-		if  (!mainController.dataTypeController.isPaired()) {
-
-			if (mainController.inputController.hasGroupID()) {
-				patientsGroups = getGroupMapping();
-			}else {
-				patientsGroups = getGroupMapping(mainController.inputController.getCoefficient());
-			}
-			
-		}else {
-			if (mainController.inputController.hasPairID) {
-				patientsGroups = getPairIDMapping("Pair_ID");
+		
+		//for regression
+		float[][] phenotype = null;
+		
+		//for t-test
+		int splitPoint = mainController.getBeta()[0].length/2;
+		
+		//for grouping
+		HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
+		Grouping gr = new Grouping(columnMap.get(mainController.inputController.getCoefficient()));
+		
+		//pre loading of variables
+		if(options[1]){
+			phenotype = loadPhenotype();
+			mainController.setPhenotype(phenotype);
+			resultIndex = getCoefficientIndexResult();
+			originalIndex = gr.unGroupedIndices();
+		}
+		if(!options[1]){
+			if(!options[0]){
+				originalIndex = gr.getIndices();
+				splitPoint = gr.getSplitPoint();
+				System.out.println(gr.log());
+			}else{
+				System.out.println("Currently not supported! (paired data)");
 			}
 		}
 
-		originalIndex = getGroupIndex(patientsGroups);
+
+		ProgressForm progressForm = new ProgressForm();
+		Platform.runLater(progressForm);
+		
+		
+		
+//		//will be changed with the paired data type rework
+//		if  (!options[0]) {
+//			System.out.println("Old grouping:");
+//				patientsGroups = getGroupMapping(mainController.inputController.getCoefficient());
+//			//data is paired
+//		}else {
+//			if (options[0] && mainController.getInputController().hasPairID()) {
+//				patientsGroups = getPairIDMapping("Pair_ID");
+//			}
+//		}
+
 
 		CpGStatistics cpGSignificance = new CpGStatistics(beta, 0, beta.length);
 
@@ -78,22 +110,20 @@ public class ExecutePermutationController {
 
 		if (!options[1]) {
 			
-			int splitPoint = mainController.getBeta()[0].length/2;
-			
-			if (!mainController.isPaired()) { 
-				splitPoint = getSplitPoint(patientsGroups);
-			}
-			se = new StudentTTest(options[2], splitPoint, false, false , options[0], options[3]).getTTestEstimator();
+			StudentTTest test = new StudentTTest(options[2], splitPoint, options[3], options[4], options[0], options[5]);
+			System.out.println(test.status());
+			se = test.getTTestEstimator();
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			for (int i = 0; i < numThreads; i++) {
-				estimators[i] = new StudentTTest(options[2], splitPoint, false, false , options[0], options[3]).getTTestEstimator();
+				estimators[i] = new StudentTTest(options[2], splitPoint, options[3], options[4], options[0], options[5]).getTTestEstimator();
 			}
 
 		}else {
 			//long startTime = System.currentTimeMillis();
 
 			//long regS = System.currentTimeMillis();
+			System.out.println("Performing linear regression for original p-value estimation...");
 			se = new RegressionEstimator(phenotype, resultIndex);
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 			//long regE = System.currentTimeMillis();
@@ -113,23 +143,27 @@ public class ExecutePermutationController {
 
 		// ... Permutation of the CpGs
 		RandomizeLabels rand;
+		long seed = System.currentTimeMillis();
 		ArrayList<Thread> threads = new ArrayList<>();
 
-		if (mainController.dataTypeController.isPaired()) {
-			rand = new PairedShuffle(originalIndex);
-		}else {
-			rand = new NonPairedShuffle(originalIndex);
-			//rand = new Bootstraping(originalIndex);
-		}
+
 
 		CpGStatistics[] permutations = new CpGStatistics[numThreads];
 		Thread pThreads[] = new Thread[numThreads];
+		int[] permuDist = Util.distributePermutations(numThreads, numberOfPermutations);
 
 		for (int i = 0; i < numThreads; i++) {
-			permutations[i] = new CpGStatistics(beta, pvalue, estimators[i], rand, numberOfPermutations/numThreads);
+			if (mainController.dataTypeController.isPaired()) {
+				rand = new PairedShuffle(originalIndex,seed+i);
+			}else {
+				rand = new NonPairedShuffle(originalIndex,seed+i);
+			}
+			permutations[i] = new CpGStatistics(beta, pvalue, estimators[i], rand, permuDist[i]);
 			pThreads[i] = new Thread(permutations[i]);
 			threads.add(pThreads[i]);
 		}
+		
+		System.out.println("Performing " + numberOfPermutations + " permutations on " + numThreads + " threads to determine empirical p-values...");
 
 		PermutationTestMonitor pMonitor = new PermutationTestMonitor(permutations, mainController, progressForm);
 		Thread monitorThread = new Thread(pMonitor, "monitor");
@@ -188,8 +222,8 @@ public class ExecutePermutationController {
 		boolean isPaired = mainController.dataTypeController.isPaired();
 		boolean isRegression = mainController.modelController.isRegression();
 		boolean twoSided = mainController.modelController.selectTwoSided();
-		boolean left = mainController.modelController.selectTwoSided();
-		boolean right = mainController.modelController.selectTwoSided();
+		boolean left = mainController.modelController.selectLeft();
+		boolean right = mainController.modelController.selectRight();
 		boolean assumeEqualVariance = mainController.modelController.selectAssumeEqualVariance();
 
 		boolean [] ttestOptions = {isPaired, isRegression, twoSided, left, right, assumeEqualVariance};
@@ -224,9 +258,11 @@ public class ExecutePermutationController {
 			groupsAux.get(s).add(rows++);
 		}
 
-
+		int gn = 1;
 		for (String key : groupsAux.keySet()) {
-
+			if(!mainController.modelController.isRegression()){
+				System.out.println("Group "+(gn++)+": "+key);
+			}
 			ArrayList<Integer> v = groupsAux.get(key);
 			int newArray [] = new int[v.size()];
 			int index = 0;
@@ -258,9 +294,11 @@ public class ExecutePermutationController {
 			groupsAux.get(s).add(rows++);
 		}
 
-
+		int gn = 1;
 		for (String key : groupsAux.keySet()) {
-
+			if(!mainController.modelController.isRegression()){
+				System.out.println("Group "+(gn++)+": "+key);
+			}
 			ArrayList<Integer> v = groupsAux.get(key);
 			int newArray [] = new int[v.size()];
 			int index = 0;
@@ -313,6 +351,7 @@ public class ExecutePermutationController {
 
 		String coefficient = mainController.inputController.getCoefficient();
 		colNames = mainController.inputController.getSelectedLabels();
+
 
 		if(!mainController.modelController.isRegression()) {
 

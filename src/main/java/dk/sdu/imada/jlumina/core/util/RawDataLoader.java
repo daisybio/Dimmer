@@ -1,5 +1,6 @@
 package dk.sdu.imada.jlumina.core.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
@@ -7,6 +8,7 @@ import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.MSet;
 import dk.sdu.imada.jlumina.core.primitives.RGSet;
 import dk.sdu.imada.jlumina.core.primitives.USet;
+import dk.sdu.imada.jlumina.core.statistics.BackgroundCorrection;
 import dk.sdu.imada.jlumina.core.statistics.CellCompositionCorrection;
 import dk.sdu.imada.jlumina.core.statistics.CheckGender;
 import dk.sdu.imada.jlumina.core.statistics.Normalization;
@@ -29,6 +31,9 @@ public class RawDataLoader extends DataProgress {
 	int numThreads;
 
 	char[] gender;
+	
+	boolean performBackgroundCorrection = false;
+	boolean performProbeFiltering = false;
 
 	public RawDataLoader(RGSet rgSet, ReadManifest manifest, ReadControlProbe readControlProbe, USet uSet, MSet mSet,
 			CellCompositionCorrection cellCompositionCorrection, USet refUSet, MSet refMSet,
@@ -124,8 +129,16 @@ public class RawDataLoader extends DataProgress {
 	public void setmSet(MSet mSet) {
 		this.mSet = mSet;
 	}
+	
+	public void setPerformBackgroundCorrection(boolean perform){
+		performBackgroundCorrection = perform;
+	}
+	
+	public void setPerformProbeFiltering(boolean perform){
+		performProbeFiltering = perform;
+	}
 
-	public void loadData() {
+	public void loadData() throws OutOfMemoryError{
 
 		this.done = false;
 		setMsg("Processing raw data...");
@@ -142,10 +155,13 @@ public class RawDataLoader extends DataProgress {
 		ReadControlProbe controlProbe = this.readControlProbe;
 		controlProbe.loadManifest();
 		
-		/*System.out.println("Running detection-p and removing low quality CpG loci");
-		AbstractQualityControl qualityControl = this.getQualityControl();
-		ArrayList<String> removedCpGs = qualityControl.removeBadCpGs(0.01f);
-		System.out.println(removedCpGs.size() + " CpGs were removed:");*/
+		if(performProbeFiltering){
+			System.out.println("Running detection-p and removing low quality CpG loci");
+			AbstractQualityControl qualityControl = this.getQualityControl();
+			ArrayList<String> removedCpGs = qualityControl.removeBadCpGs(0.01f);
+			System.out.println(removedCpGs.size() + " low quality CpGs were removed");
+		}
+
 						
 		//testing function normalization
 		/*FunctionNormalization fn = new FunctionNormalization();
@@ -153,10 +169,12 @@ public class RawDataLoader extends DataProgress {
 		fn.setManifest(manifest);
 		fn.performNormalization(rgSet, manifest, null, 1);*/
 		
-		
-		/*System.out.println("Performing backgorund correction");
-		BackgroundCorrection bc = new BackgroundCorrection(controlProbe,0.05);
-		bc.performNormalization(rgSet, controlProbe, null, numSamples);*/
+		if(performBackgroundCorrection){
+			System.out.println("Performing background correction");
+			BackgroundCorrection bc = new BackgroundCorrection(controlProbe,0.05);
+			bc.performNormalization(rgSet, controlProbe, null, numSamples);
+		}
+
 		
 		
 		setMsg("Setting U and M probes");
@@ -177,79 +195,80 @@ public class RawDataLoader extends DataProgress {
 		}
 		rgSet = null; System.gc();
 
-		if (cellCompositionCorrection!=null) {
-
-			setMsg("Estimating cell composition");
-			setProgress(p++);
-			
-			//refMSet.loadData("/Users/diogo/Desktop/flow.sorted.blood.data/M.csv");
-			//refUSet.loadData("/Users/diogo/Desktop/flow.sorted.blood.data/U.csv");
-			
-			String mf = "resources/M.csv";
-
-			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = "M.csv";
-			}
-			String uf = "resources/U.csv";
-			if (getClass().getClassLoader().getResourceAsStream(uf)==null) {
-				uf = "U.csv";
-			}
-
-			setMsg("Loading cell composition reference data");
-			setProgress(p++);
-			try {
-				refMSet.loadData(mf);
-				refUSet.loadData(uf);
-				//refUSet.loadData((getClass().getResource("U.csv").toString()));
-
-				setMsg("Merging user and ref datasets");
-				setProgress(p++);
-				MSet combinedMset = new MSet();
-				combinedMset.setData(MatrixUtil.combineDataSets(refMSet, mSet, manifest));
-				USet combinedUset = new USet();
-				combinedUset.setData(MatrixUtil.combineDataSets(refUSet, uSet, manifest));
-				refUSet=null; refMSet=null; System.gc();
-
-				CheckGender checkGender = new CheckGender(combinedUset, combinedMset, manifest, -2);
-
-				char[] newGender = null;
-
-				if (this.gender == null) {
-					setMsg("Running gender detection");
-					newGender = checkGender.getGender();
-					for (int i = 0 ; i < 60; i++) {
-						newGender[i] = 'M';
-					}
-
-				}else {
-
-					newGender = new char[60 + this.gender.length];
-					int index = 0;
-					for (int i = 0 ; i < 60; i++) {
-						newGender[index++] = 'M';
-					}
-					for (char c : this.gender) {
-						newGender[index++] = c;
-					}
-				}
-
-				setMsg("Running normalization, this gonna take a while ....");
-				setProgress(p++);
-				normalization.performNormalization(combinedMset, manifest, newGender, numThreads);
-				normalization.performNormalization(combinedUset, manifest, newGender, numThreads);
-
-				setMsg("Calculating cell composition ....");
-				setProgress(p++);
-				HashMap<String, float[]> beta = MatrixUtil.getBeta(combinedUset.getData(),  combinedMset.getData(), manifest, 0.0f);
-				combinedMset=null; combinedUset=null; System.gc();
-				cellCompositionCorrection.setManifest(manifest);
-				cellCompositionCorrection.estimateCellComposition(beta, numSamples);
-				beta=null; System.gc();
-			}catch(OutOfMemoryError e) {
-				this.setOveflow(true);
-				System.out.println("Memory ram problem. Increase your java heap space with the parameters -Xmx and Xms");
-			}
-		}
+// needs rework!! cell compostion estimation
+//		if (cellCompositionCorrection!=null){
+//
+//			setMsg("Estimating cell composition");
+//			setProgress(p++);
+//			
+//			//refMSet.loadData("/Users/diogo/Desktop/flow.sorted.blood.data/M.csv");
+//			//refUSet.loadData("/Users/diogo/Desktop/flow.sorted.blood.data/U.csv");
+//			
+//			String mf = "resources/M.csv";
+//
+//			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
+//				mf = "M.csv";
+//			}
+//			String uf = "resources/U.csv";
+//			if (getClass().getClassLoader().getResourceAsStream(uf)==null) {
+//				uf = "U.csv";
+//			}
+//
+//			setMsg("Loading cell composition reference data");
+//			setProgress(p++);
+//			try {
+//				refMSet.loadData(mf);
+//				refUSet.loadData(uf);
+//				//refUSet.loadData((getClass().getResource("U.csv").toString()));
+//
+//				setMsg("Merging user and ref datasets");
+//				setProgress(p++);
+//				MSet combinedMset = new MSet();
+//				combinedMset.setData(MatrixUtil.combineDataSets(refMSet, mSet, manifest));
+//				USet combinedUset = new USet();
+//				combinedUset.setData(MatrixUtil.combineDataSets(refUSet, uSet, manifest));
+//				refUSet=null; refMSet=null; System.gc();
+//
+//				CheckGender checkGender = new CheckGender(combinedUset, combinedMset, manifest, -2);
+//
+//				char[] newGender = null;
+//
+//				if (this.gender == null) {
+//					setMsg("Running gender detection");
+//					newGender = checkGender.getGender();
+//					for (int i = 0 ; i < 60; i++) {
+//						newGender[i] = 'M';
+//					}
+//
+//				}else {
+//
+//					newGender = new char[60 + this.gender.length];
+//					int index = 0;
+//					for (int i = 0 ; i < 60; i++) {
+//						newGender[index++] = 'M';
+//					}
+//					for (char c : this.gender) {
+//						newGender[index++] = c;
+//					}
+//				}
+//
+//				setMsg("Running normalization, this gonna take a while ....");
+//				setProgress(p++);
+//				normalization.performNormalization(combinedMset, manifest, newGender, numThreads);
+//				normalization.performNormalization(combinedUset, manifest, newGender, numThreads);
+//
+//				setMsg("Calculating cell composition ....");
+//				setProgress(p++);
+//				HashMap<String, float[]> beta = MatrixUtil.getBeta(combinedUset.getData(),  combinedMset.getData(), manifest, 0.0f);
+//				combinedMset=null; combinedUset=null; System.gc();
+//				cellCompositionCorrection.setManifest(manifest);
+//				cellCompositionCorrection.estimateCellComposition(beta, numSamples);
+//				beta=null; System.gc();
+//			}catch(OutOfMemoryError e) {
+//				this.setOveflow(true);
+//				System.out.println("Memory ram problem. Increase your java heap space with the parameters -Xmx and Xms");
+//			}
+//		}
 
 
 		// replace this normalization below to a Illummina normalization
@@ -262,7 +281,7 @@ public class RawDataLoader extends DataProgress {
 			
 			try {
 				
-				setMsg("Running normalization in your data, this gonna take a while ....");
+				setMsg("Running normalization in your data, this is gonna take a while ....");
 				setProgress(p++);
 				
 				System.out.println("Normalizing user data, this can take a  while...");
@@ -271,7 +290,6 @@ public class RawDataLoader extends DataProgress {
 					CheckGender checkGender = new CheckGender(uSet, mSet, manifest, -2);
 					this.gender = checkGender.getGender();
 				}
-
 				normalization.performNormalization(uSet, manifest, this.gender, numThreads);
 				normalization.performNormalization(mSet, manifest, this.gender, numThreads);
 

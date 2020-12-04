@@ -19,7 +19,6 @@ public class BackgroundCorrection implements Normalization {
 		this.percentage = p;
 	}
 	
-	
 	@Override
 	public void performNormalization(RGSet methylationData, AbstractManifest manifest, char[] gender, int nt)
 			throws OutOfMemoryError {

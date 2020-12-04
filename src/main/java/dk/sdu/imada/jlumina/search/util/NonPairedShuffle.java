@@ -5,6 +5,10 @@ public class NonPairedShuffle extends RandomizeLabels {
 	public NonPairedShuffle(int[] values) {
 		super(values);
 	}
+	
+	public NonPairedShuffle(int[] values, long seed) {
+		super(values,seed);
+	}
 
 	@Override
 	public void shuffle() {

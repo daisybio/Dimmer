@@ -8,8 +8,14 @@ public class DMRPermutationSummary {
 	// average of islands in the permutation
 	double averageOfIslands;
 	
+	// all the islands in the permutation
+	int totalOfIslands;
+	
 	// chance of observing in the permutation Islands of at least the same number of CpGs
 	double pValue;
+	
+	// number of times a permutation had more DMRs than numberOfIslands
+	int numMoreDMRs;
 	
 	// 
 	double logRatio;
@@ -37,9 +43,26 @@ public class DMRPermutationSummary {
 	public double getAverageOfIslands() {
 		return averageOfIslands;
 	}
+	
 
 	public void setAverageOfIslands(double averageOfIslands) {
 		this.averageOfIslands = averageOfIslands;
+	}
+	
+	public int getTotalOfIslands(){
+		return this.totalOfIslands;
+	}
+	
+	public void setTotalOfIslands(int totalOfIslands){
+		this.totalOfIslands = totalOfIslands;
+	}
+	
+	public int getNumMoreDMRs(){
+		return this.numMoreDMRs;
+	}
+	
+	public void setNumMoreDMRs(int numMoreDMRs){
+		this.numMoreDMRs = numMoreDMRs;
 	}
 
 	public double getpValue() {
@@ -79,5 +102,18 @@ public class DMRPermutationSummary {
 	}
 	
 	public DMRPermutationSummary() {
+	}
+	/**
+	 * 
+	 * @return #CpG, Num DMRs, Avg DMRs, p-value, Log-ratio
+	 */
+	public String logLine(){
+		StringBuilder builder = new StringBuilder();
+		builder.append(getCpgID()+"\t");
+		builder.append(getNumberOfIslands()+"\t");
+		builder.append(((double)Math.round(getAverageOfIslands()* 1000d) / 1000d)+"\t");
+		builder.append(((double)Math.round(getpValue()* 1000d) / 1000d)+"\t");
+		builder.append(((double)Math.round(getLogRatio()* 1000d) / 1000d));
+		return builder.toString();
 	}
 }

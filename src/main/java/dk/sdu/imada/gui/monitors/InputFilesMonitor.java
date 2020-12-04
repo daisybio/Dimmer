@@ -40,7 +40,7 @@ public class InputFilesMonitor implements Runnable {
 					if(rawDataLoader.isOveflow()) {
 						Platform.runLater(() -> progressForm.getDialogStage().close());
 						Platform.runLater(() -> FXPopOutMsg.showWarning("A memory exception was detected. Use the java command line with -Xms2024M -Xmx3024M. "	+ 
-								"If the problem persists try to increase the cited values... good lucky"));
+								"If the problem persists try to increase the cited values... good luck"));
 						this.progressForm.cancelThreads();
 					}
 
@@ -50,6 +50,7 @@ public class InputFilesMonitor implements Runnable {
 		}
 
 		this.progressForm.getText().setText("Almost done....");
+		System.out.println("Almost done...");
 		float[][] beta = null;
 
 		try {
@@ -77,7 +78,7 @@ public class InputFilesMonitor implements Runnable {
 		}catch(OutOfMemoryError e) {
 			Platform.runLater(() -> progressForm.getDialogStage().close());
 			Platform.runLater(() -> FXPopOutMsg.showWarning("A memory exception was detected. Use the java command line with -Xms2024M -Xmx3024M. "	+ 
-					"If the problem persists try to increase the previous values... good lucky"));
+					"If the problem persists try to increase the previous values... good luck"));
 			this.progressForm.cancelThreads();
 		}
 	}

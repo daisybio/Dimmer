@@ -71,7 +71,7 @@ public class MainController implements Initializable {
 
 	ReadManifest manifest;
 
-	float [][] phenotype;
+	float[][] phenotype;
 	float[][]beta;
 	float[][] cellComposition;
 	float[]coefficients;
@@ -311,6 +311,13 @@ public class MainController implements Initializable {
 
 		this.manifest = new ReadManifest(mf);
 		this.manifest.loadManifest();
+	}
+	
+	public boolean loadManifest(String[][] data) {
+
+		this.manifest = new ReadManifest();
+		return(this.manifest.loadManifest(data));
+		
 	}
 
 	public void setDmrDescriptions(ArrayList<DMRDescription> dmrDescriptions) {
@@ -632,7 +639,7 @@ public class MainController implements Initializable {
 				inputController.setLabelHeader("Select your input data (the comma-separated CSV file with the annotation) and an output directory, which will be used to write all results and plots. The CSV annotation file comes with your Illumina results, and you will have to add columns with your labels/variables describing the phenotypes/confounders. The number of CPU threads refers to the number of CPU cores that will be used to parallelize the upcoming computations. In doubt, set it to the number of CPU cores of your computer minus one. Further, we can estimate the cell type composition (for whole-blood samples) and select which cell type abundances to include as potential (confounding) factors in the regression model.");
 			}else {
 				inputController.getCellComposition().setVisible(false);
-				inputController.setLabelHeader("Select your input data (the comma-separated CSV file with the annotation) and an output directory, which will be used to write all results and plots. The CSV annotation file comes with your Illumina results, and you will have to add columns with your labels/variables describing the phenotypes/confounders. The number of CPU threads refers to the number of CPU cores that will be used to parallelize the upcoming computations. In doubt, set it to the number of CPU cores of your computer minus one. Further, select your variable of interest (e.g. the phenotype or the disease “state”");
+				inputController.setLabelHeader("Select your input data (the comma-separated CSV file with the annotation) and an output directory, which will be used to write all results and plots. The CSV annotation file comes with your Illumina results, and you will have to add columns with your labels/variables describing the phenotypes/confounders. The number of CPU threads refers to the number of CPU cores that will be used to parallelize the upcoming computations. In doubt, set it to the number of CPU cores of your computer minus one. Further, select your variable of interest (e.g. the phenotype or the disease \"state\")");
 			}
 			enable(4);
 			checkStep(stepModel_2);

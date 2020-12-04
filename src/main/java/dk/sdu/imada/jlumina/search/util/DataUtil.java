@@ -88,12 +88,10 @@ public class DataUtil {
 	public static  ArrayList<Integer> getColumnStartPoints(int nt, float matrix[][]) {
 
 		int division = matrix[0].length/nt;
-
 		ArrayList<Integer> startPoints = new ArrayList<Integer>();
 
 		int aux = 0;
 		for (int i = 0; i < nt; i++) {
-
 			startPoints.add(aux);
 
 			aux += division; 

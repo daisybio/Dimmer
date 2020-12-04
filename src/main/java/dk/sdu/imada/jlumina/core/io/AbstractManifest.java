@@ -16,6 +16,10 @@ public abstract class AbstractManifest {
 		this.inputFile = inputFile;
 	}
 	
+	public AbstractManifest(){
+		
+	}
+	
 	public int getProgress() {
 		return progress;
 	}

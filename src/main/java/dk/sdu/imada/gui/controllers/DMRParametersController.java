@@ -100,7 +100,7 @@ public class DMRParametersController {
 			condition&=true;
 		}else {
 			condition&=false;
-			FXPopOutMsg.showWarning("You need a integer numerical value > 0for permutations");
+			FXPopOutMsg.showWarning("You need a integer numerical value > 0 for permutations");
 		}
 
 		if (checkIntegerFormat(windowSize.getText())) {

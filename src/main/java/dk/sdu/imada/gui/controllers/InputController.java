@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.google.common.io.ByteStreams;
 
 import au.com.bytecode.opencsv.CSVReader;
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.gui.monitors.InputFilesMonitor;
 import dk.sdu.imada.jlumina.core.io.Read450KSheet;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
@@ -61,6 +62,9 @@ public class InputController {
 	@FXML Label label3;
 
 	@FXML Label labelHeader;
+	
+	@FXML CheckBox probeFiltering;
+	@FXML CheckBox backgroundCorrection;
 
 	public Label getLabelHeader() {
 		return labelHeader;
@@ -168,6 +172,14 @@ public class InputController {
 			return 1;
 		}
 	}
+	
+	public CheckBox getBackgroundCorrection(){
+		return backgroundCorrection;
+	}
+	
+	public CheckBox getProbeFiltering(){
+		return probeFiltering;
+	}
 
 	@FXML public void estimateCellCompositionSelect(ActionEvent actionEvent) {
 
@@ -211,20 +223,14 @@ public class InputController {
 
 			if (cols.equals("Group_ID")){
 				hasGroupID = true;
-			}else {
-				hasGroupID = false;
 			}
 
 			if (cols.equals("Pair_ID")) {
 				hasPairID = true;
-			}else {
-				hasPairID = false;
 			}
 
 			if (cols.equals("Gender_ID")) {
 				hasGenderID = true;
-			}else {
-				hasGenderID = false;
 			}
 		}
 
@@ -247,7 +253,7 @@ public class InputController {
 	public String getOutputPath() {
 
 		String text = output.getText();
-		if(text.isEmpty()) {
+		if(text == null || text.isEmpty()) {
 			return ("./");
 		}else { 
 			return text + "/";
@@ -281,10 +287,10 @@ public class InputController {
 
 			}
 
-			if (!f.canExecute()) {
-				fileProblem = true;
-				FXPopOutMsg.showWarning("The file is not readable, check if this is a valid CSV file or if you have reading permissions");
-			}
+//			if (!f.canExecute()) {
+//				fileProblem = true;
+//				FXPopOutMsg.showWarning("The file is not readable, check if this is a valid CSV file or if you have reading permissions");
+//			}
 
 		}
 
@@ -299,7 +305,7 @@ public class InputController {
 				toksSize.add(toks.length);
 				if (toks.length <= 1) {
 					fileProblem = true;
-					FXPopOutMsg.showWarning("This is not a valid comma-separated-file");
+					FXPopOutMsg.showWarning("This is not a valid comma-separated file");
 					break;
 				}
 			}
@@ -313,7 +319,7 @@ public class InputController {
 			for (int i = 1 ; i < toksSize.size(); i++) {
 				if (toksSize.get(i-1) != toksSize.get(i)) {
 					fileProblem = true;
-					FXPopOutMsg.showWarning("This is not a valid comma-separated-file file");
+					FXPopOutMsg.showWarning("This is not a valid comma-separated file");
 					break;
 				}
 			}
@@ -336,7 +342,7 @@ public class InputController {
 						setLabelsList(f.getAbsolutePath());	
 						warning(f.getParentFile().getAbsolutePath()+"/");
 					}else {
-						FXPopOutMsg.showWarning("A problem were found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
+						FXPopOutMsg.showWarning("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
 					}
 				}
 			} catch (IOException e) {
@@ -490,6 +496,8 @@ public class InputController {
 		ncell.setSelected(false);
 		mono.setSelected(false);
 		gran.setSelected(false);
+		backgroundCorrection.setSelected(false);
+		probeFiltering.setSelected(false);
 	}
 
 	@FXML public void selectOutputFolder(ActionEvent actionEvent) {
@@ -531,7 +539,7 @@ public class InputController {
 		// ParID mapp the pairs ...
 		for (String s : str) {
 			if (!s.equals("Sentrix_ID") && !s.equals("Sentrix_Position") 
-					&& !s.equals("Group_ID")  && !s.equals("Pair_ID") ) {
+					  && !s.equals("Pair_ID") ) {
 				labelsList.add(s);
 			}
 		}
@@ -626,7 +634,9 @@ public class InputController {
 		boolean cond = true;
 
 		for (String s : target.getItems()) {
-			cond = checkNumeric(columnMap.get(s));
+			if(!checkNumeric(columnMap.get(s))){
+				cond = false;
+			}
 		}
 
 		return cond;
@@ -666,7 +676,7 @@ public class InputController {
 							FXPopOutMsg.showWarning("Select one coefficient of interest");
 						}
 					}else {
-						FXPopOutMsg.showWarning("Please which labels you want to estimate in the linear regression");
+						FXPopOutMsg.showWarning("Please select which labels you want to estimate in the linear regression");
 					}
 				}else {
 
@@ -674,10 +684,10 @@ public class InputController {
 
 					if (getCoefficient()!= null) {
 
-						if (checkNumeric(columnMap.get(getCoefficient()))) {
+						if (Util.checkBinary(columnMap.get(getCoefficient()))) {
 							startPreprocessing();
 						}else {
-							FXPopOutMsg.showWarning("Your selected variable of interest must have numerical values only");
+							FXPopOutMsg.showWarning("Your selected variable of interest must have exactly two distinct values for a T-test");
 						}
 						//mainController.loadScreen("summary");
 					}else {
@@ -719,6 +729,8 @@ public class InputController {
 	int maxCoreSteps;
 	int stepsDone;
 	AbstractQualityControl qualityControl;
+	boolean performBackgroundCorrection;
+	boolean performProbeFiltering;
 
 	private void startPreprocessing() {
 
@@ -734,6 +746,8 @@ public class InputController {
 
 		rawDataLoader.setMaxSteps(maxCoreSteps);
 		rawDataLoader.setQualityControl(qualityControl);
+		rawDataLoader.setPerformBackgroundCorrection(performBackgroundCorrection);
+		rawDataLoader.setPerformProbeFiltering(performProbeFiltering);
 
 		DataExecutor dataExecutor = new DataExecutor(rawDataLoader);
 		inputFilesMonitor = new InputFilesMonitor(rawDataLoader, mainController, pf);
@@ -814,9 +828,13 @@ public class InputController {
 			}else {
 				cellCompositionCorrection = null;
 			}
+			performBackgroundCorrection = backgroundCorrection.isSelected();
+			performProbeFiltering = probeFiltering.isSelected();
 		}else {
-			System.out.println("Cell composition estimation is not avaliable for epic data");
+			System.out.println("Cell composition estimation, background correction and probe filtering are not avaliable for epic data");
 			cellCompositionCorrection = null;	
+			performBackgroundCorrection = false;
+			performProbeFiltering = false;
 		}
 	}
 }

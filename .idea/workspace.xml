@@ -1,7 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="27b94a10-2dd0-4162-9710-5d27f107c055" name="Default" comment="" />
+    <list default="true" id="27b94a10-2dd0-4162-9710-5d27f107c055" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRParametersController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRParametersController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecutePermutationController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecutePermutationController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRFullSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRFullSummary.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/InputController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/InputController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/MainController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/MainController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/PermutationParametersController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/PermutationParametersController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/input.fxml" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/input.fxml" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/SaveAll.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/SaveAll.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DimmerProjectMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DimmerProjectMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/InputFilesMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/InputFilesMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/PermutationTestMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/PermutationTestMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/AbstractManifest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/AbstractManifest.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/ReadManifest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/ReadManifest.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CheckGender.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CheckGender.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/DataExecutor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/DataExecutor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/QualityControlImpl.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/QualityControlImpl.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/RawDataLoader.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/RawDataLoader.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/StudentTTest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/StudentTTest.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/DataUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/DataUtil.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/PairedShuffle.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/PairedShuffle.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/RandomizeLabels.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/RandomizeLabels.java" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRParametersController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRParametersController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecutePermutationController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecutePermutationController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRFullSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRFullSummary.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/InputController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/InputController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/MainController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/MainController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/PermutationParametersController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/PermutationParametersController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/input.fxml" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/input.fxml" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/SaveAll.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/SaveAll.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DimmerProjectMonitor$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DimmerProjectMonitor$1.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/InputFilesMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/InputFilesMonitor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/PermutationTestMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/PermutationTestMonitor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/AbstractManifest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/AbstractManifest.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/ReadManifest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/ReadManifest.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CheckGender.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CheckGender.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil$1.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/DataExecutor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/DataExecutor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/QualityControlImpl.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/QualityControlImpl.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/RawDataLoader.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/RawDataLoader.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/StudentTTest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/StudentTTest.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/DataUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/DataUtil.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/PairedShuffle.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/PairedShuffle.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/RandomizeLabels.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/RandomizeLabels.class" />
+    </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,7 +82,7 @@
       <file leaf-file-name="StartGUI.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1504">
+            <state relative-caret-position="25">
               <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
               <folding />
             </state>
@@ -43,6 +110,9 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -77,6 +147,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -88,10 +160,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -250,18 +320,17 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.49783784" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.50216216" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2583784" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20864865" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -272,6 +341,7 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.49783784" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -284,6 +354,174 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60200">
+          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -336,7 +574,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-6867">
           <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -344,13 +581,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="50">
           <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1504">
+        <state relative-caret-position="25">
           <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
           <folding />
         </state>

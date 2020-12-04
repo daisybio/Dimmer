@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.gui.monitors.DMRPermutationMonitor;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.search.algorithms.DMRAlgorithm;
@@ -55,6 +56,10 @@ public class ExecuteDMRFinderController {
 		int w = mainController.dmrParametersController.getWindowSize() - 1;
 		int l = mainController.dmrParametersController.getCpgDistance();
 		int np = mainController.dmrParametersController.getNumPermutations();
+		
+		if(np < numThreads){
+			numThreads = np;
+		}
 		
 		
 		int[] binaryArray = getBinaryArray(mainController.getSearchPvalues(), mainController.getP0Cutoff());
@@ -109,15 +114,16 @@ public class ExecuteDMRFinderController {
 		DMRPermutationExecutor [] executors = new DMRPermutationExecutor[numThreads];
 		DMRPermutation dmrPermutation[] = new DMRPermutation[numThreads];
 		Thread eThread [] = new Thread[numThreads];
+		int[] dmrPermuDist = Util.distributePermutations(numThreads, np);
 
 		for (int i = 0; i < numThreads; i++) {
-			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs), dmrs, binaryArray, np/numThreads);
+			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs), dmrs, binaryArray, dmrPermuDist[i]);
 			executors[i] = new DMRPermutationExecutor(dmrPermutation[i]);
 			eThread[i] = new Thread(executors[i], "permutation_" + i);
 			threads.add(eThread[i]);
 		}
 
-		DMRPermutationMonitor dmrPermutationMonitor = new DMRPermutationMonitor(dmrPermutation, dmrs, progressForm, mainController);
+		DMRPermutationMonitor dmrPermutationMonitor = new DMRPermutationMonitor(dmrPermutation, dmrs, progressForm, mainController, np);
 		Thread monitorThread = new Thread(dmrPermutationMonitor, "dmr_monitor");
 
 		threads.add(monitorThread);

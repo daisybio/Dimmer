@@ -54,9 +54,8 @@ public class ReadDimmerProjectUtil implements Runnable {
 		try {
 			int numCols = CSVUtil.countColumn(input, 0);
 			int numRows = CSVUtil.countRows(input, 0) - 1;
-			this.mainController.loadManifest(numRows);
 
-			data = new String[numRows][numCols - 1];
+			data = new String[numRows][3];
 			CSVReader reader = new CSVReader(new FileReader(input));
 
 			String [] nextLine = reader.readNext();
@@ -104,6 +103,10 @@ public class ReadDimmerProjectUtil implements Runnable {
 			Platform.runLater(()->FXPopOutMsg.showWarning("The file can't be loaded"));
 			e.printStackTrace();
 			check = false;
+		}
+		if(!this.mainController.loadManifest(data)){
+			check = false;
+			Platform.runLater(()->FXPopOutMsg.showWarning("The position column isn't numeric"));
 		}
 		done = true;
 	}

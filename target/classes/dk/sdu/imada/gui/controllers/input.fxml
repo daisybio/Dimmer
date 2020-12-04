@@ -25,7 +25,7 @@
                      <children>
                         <TextField fx:id="numThreads" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="304.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="91.0" text="4" />
                         <Label layoutX="10.0" layoutY="284.0" styleClass="FontHeader" text="Number of CPU threads" />
-                        <Pane fx:id="paneCC" layoutX="2.0" layoutY="380.0" prefHeight="105.0" prefWidth="218.0" visible="false">
+                        <Pane fx:id="paneCC" layoutX="2.0" layoutY="442.0" prefHeight="105.0" prefWidth="218.0" visible="false">
                            <children>
                               <CheckBox fx:id="cd8t" layoutX="30.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="cd8t" />
                               <CheckBox fx:id="cd4t" layoutX="30.0" layoutY="46.0" mnemonicParsing="false" selected="true" text="cd4t" />
@@ -35,7 +35,7 @@
                               <CheckBox fx:id="gran" layoutX="120.0" layoutY="77.0" mnemonicParsing="false" selected="true" text="gran" />
                            </children>
                         </Pane>
-                        <CheckBox fx:id="cellComposition" layoutX="10.0" layoutY="344.0" mnemonicParsing="false" onAction="#estimateCellCompositionSelect" text="Estimate cell composition" visible="false" />
+                        <CheckBox fx:id="cellComposition" layoutX="10.0" layoutY="416.0" mnemonicParsing="false" onAction="#estimateCellCompositionSelect" text="Estimate cell composition" visible="false" />
                         <Label fx:id="label2" layoutX="520.0" layoutY="154.0" styleClass="FontHeader" text="Selected labels/variables" visible="false" />
                         <Label fx:id="label1" layoutX="270.0" layoutY="154.0" styleClass="FontHeader" text="Available labels/variables" visible="false" />
                         <Button fx:id="toLeft" layoutX="460.0" layoutY="231.0" mnemonicParsing="false" onAction="#removeLabel" text="&lt;&lt;&lt;" visible="false" />
@@ -54,8 +54,11 @@
                               <TextField fx:id="labels" prefHeight="27.0" prefWidth="175.0" />
                            </children>
                         </HBox>
+						<CheckBox fx:id="backgroundCorrection" layoutX="10.0" layoutY="364.0" mnemonicParsing="false" selected="false" text="Background correction"/>
+						<CheckBox fx:id="probeFiltering" layoutX="10.0" layoutY="390.0" mnemonicParsing="false" selected="false" text="Probe filtering"/>						
                         <Label layoutX="10.0" layoutY="216.0" styleClass="FontHeader" text="Output directory" />
                         <Label layoutX="10.0" layoutY="154.0" styleClass="FontHeader" text="Sample annotation file" />
+						<Label layoutX="10.0" layoutY="344.0" styleClass="FontHeader" text="Optional preprocessing steps" />
                         <Label fx:id="label3" layoutX="268.0" layoutY="300.0" prefHeight="132.0" prefWidth="419.0" text="Select which labels you like to be considered for the regression model by using the arrows to insert the corresponding variables into the right box. When you are done, select one variable on the right side (by clicking on it) as major outcome label, i.e. that label you wish to be explained by the differential methylation. All other variables inside the right box right box will be treated as co-factors when learning the regression models afterwards." textAlignment="JUSTIFY" visible="false" wrapText="true" />
                         <HBox layoutY="10.0" maxWidth="-Infinity" prefHeight="120.0" prefWidth="200.0" styleClass="hboxParagraph">
                            <children>

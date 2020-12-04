@@ -18,6 +18,10 @@ public class ReadManifest extends AbstractManifest {
 	public ReadManifest(String inputFile) {
 		super(inputFile);
 	}
+	
+	public ReadManifest(){
+		
+	}
 
 	public synchronized void loadManifest() {
 		
@@ -84,5 +88,28 @@ public class ReadManifest extends AbstractManifest {
 		done = true;
 		progress++;
 		notify();
+	}
+ /**
+  * 
+  * @param data a String Matrix containing the columns id, chrom and position in that order
+  * @return true if loading was successfully
+  */
+	
+	public boolean loadManifest(String[][] data){
+		done = false;
+		int nrows = data.length;
+		cpgList = new CpG[nrows];
+		try{
+			for(int i = 0; i < nrows; i++){
+				CpG cpg = new CpG(data[i][0], -1, -1, "", data[i][1], Integer.parseInt(data[i][2]), "", -1, "", "");
+				cpgList[i] = cpg;
+			}
+		}
+		catch(NumberFormatException e){
+			System.out.println("Position column isn't numeric!");
+			return false;
+		}
+		done = true;
+		return true;
 	}
 }

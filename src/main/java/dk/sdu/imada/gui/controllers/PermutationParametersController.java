@@ -35,7 +35,7 @@ public class PermutationParametersController {
 			condition &= true;
 		}else {
 			condition &= false;
-			FXPopOutMsg.showWarning("Num permutations must be a number and between [0, 1]");
+			FXPopOutMsg.showWarning("P-value cutoff must be a number and between [0, 1]");
 		}
 
 		if (condition) {

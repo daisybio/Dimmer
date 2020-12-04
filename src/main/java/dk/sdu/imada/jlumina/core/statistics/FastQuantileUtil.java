@@ -44,6 +44,7 @@ public class FastQuantileUtil {
 	public synchronized void setRowMeans() throws OutOfMemoryError {
 		doneRowMean = false;
 		this.rowMean = new float[data.length];
+		//System.out.println(data.length);
 		for (int col = begin; col < end; col++) {
 			float[] temp = new float[data.length];
 			for (int row = 0; row < data.length; row++) {

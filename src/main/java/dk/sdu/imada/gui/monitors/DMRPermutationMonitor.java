@@ -20,14 +20,16 @@ public class DMRPermutationMonitor implements Runnable {
 	ProgressForm  progressForm;
 	MainController mainController;
 	double progress;
+	int numPermutations;
 
-	public DMRPermutationMonitor(DMRPermutation[] dmrPermutation, ArrayList<DMR> dmrs, ProgressForm progressForm, MainController mainController) {
+	public DMRPermutationMonitor(DMRPermutation[] dmrPermutation, ArrayList<DMR> dmrs, ProgressForm progressForm, MainController mainController, int np) {
 		super();
 		this.dmrPermutation = dmrPermutation;
 		this.dmrs = dmrs;
 		this.progressForm = progressForm;
 		this.mainController = mainController;
 		this.progress = 0;
+		this.numPermutations = np;
 	}
 
 	private void updateProgess() {
@@ -117,46 +119,36 @@ public class DMRPermutationMonitor implements Runnable {
 		TreeMap<Integer, DMRPermutationSummary> map = new TreeMap<>();
 
 		for (Integer key : keys) {
-			DMRPermutationSummary s0 = dmrPermutation[0].getResultMap().get(key);
-
-			for (int i = 1; i < dmrPermutation.length; i++) {
+			
+			int numMoreDMRs = 0;
+			int numTotalDMRs = 0;
+			int[] numIslandsPerPermutation = new int[numPermutations];
+			int index = 0;
+			int numIslands = dmrPermutation[0].getResultMap().get(key).getNumberOfIslands();
+			
+			for (int i = 0; i < dmrPermutation.length; i++) {
 				DMRPermutationSummary sAux = dmrPermutation[i].getResultMap().get(key);
-				s0 = mergePermutationSummaryBasicData(s0, sAux);
-				//mergePermutationSummaryBasicData(s0, s2)
+				numMoreDMRs+= sAux.getNumMoreDMRs();
+				numTotalDMRs += sAux.getTotalOfIslands();
+				for(int num : sAux.getNumberOfIslandsPerPermutation()){
+					numIslandsPerPermutation[index++] = num;
+				}
 			}
-			s0.setpValue(s0.getpValue()/(double)dmrPermutation.length);
-			s0.setLogRatio(s0.getLogRatio()/(double)dmrPermutation.length);
-			s0.setAverageOfIslands(s0.getAverageOfIslands()/(double)dmrPermutation.length);
-			map.put(key, s0);
+			
+			DMRPermutationSummary summary = new DMRPermutationSummary();
+			summary.setCpgID(key);
+			summary.setNumberOfIslands(numIslands);
+			summary.setpValue(numMoreDMRs/(double)numPermutations);
+			double averageIslands = numTotalDMRs/(double)numPermutations;
+			summary.setAverageOfIslands(averageIslands);
+			summary.setNumberOfIslandsPerPermutation(numIslandsPerPermutation);
+			summary.setLogRatio(Math.log10(((double) numIslands + (1.0/(double)this.numPermutations))/(averageIslands + (1.0/(double)this.numPermutations))));
+
+			map.put(key, summary);
 		}
 
 		return map;
 	}
 
-	private DMRPermutationSummary mergePermutationSummaryBasicData(DMRPermutationSummary s1, DMRPermutationSummary s2 ) {
-
-		DMRPermutationSummary s = new DMRPermutationSummary();
-		s.setCpgID(s1.getCpgID());
-		s.setNumberOfIslands(s1.getNumberOfIslands());
-
-		s.setAverageOfIslands(s1.getAverageOfIslands() + s2.getAverageOfIslands());
-		s.setpValue((s1.getpValue() + s2.getpValue()));
-		s.setLogRatio((s1.getLogRatio() + s2.getLogRatio()));
-
-		int v [] = new int[s1.getNumberOfIslandsPerPermutation().length + s2.getNumberOfIslandsPerPermutation().length];
-
-		int index = 0;
-
-		for (int i : s1.getNumberOfIslandsPerPermutation()) {
-			v[index++] = i;
-		}
-
-		for (int i : s2.getNumberOfIslandsPerPermutation()) {
-			v[index++] = i;
-		}
-
-		s.setNumberOfIslandsPerPermutation(v);
-
-		return s;
-	}
+	
 }

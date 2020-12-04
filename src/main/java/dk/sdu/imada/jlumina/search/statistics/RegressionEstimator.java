@@ -56,7 +56,6 @@ public class RegressionEstimator extends StatisticalEstimator {
 		this.pvalues = pvalues;
 
 		this.coefficients = parameters;
-		
 		this.pvalue = pvalues[target];
 	}
 }

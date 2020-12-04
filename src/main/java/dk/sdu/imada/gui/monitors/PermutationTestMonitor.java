@@ -231,8 +231,8 @@ public class PermutationTestMonitor implements Runnable{
 		mainController.setEmpiricalPvaluesScatterPlotLogChart(scatterPlot(empiricalPvalues, mainController.getOriginalPvalues(), true, "Emp. p-values Vs. p-values", "p-values (-log10)", "Emp. p-values (-log10)" ));
 
 		mainController.setStepDownDistributionChart(histogram(stepDownMinPvalues, numBins , "Step-down minP values distribution", "Step-down minP values", "Count"));
-		mainController.setStepDownScatterPlotChart(scatterPlot(stepDownMinPvalues, mainController.getOriginalPvalues(), false, "Step-Donw minP. p-values Vs. p-values", "p-values", "Step-down minP values"));
-		mainController.setStepDownLogScatterPlotChart(scatterPlot(stepDownMinPvalues, mainController.getOriginalPvalues(), true, "Step-Donw minP. p-values Vs. p-values", "p-values (-log10)", "Step-down minP values (-log10)" ));
+		mainController.setStepDownScatterPlotChart(scatterPlot(stepDownMinPvalues, mainController.getOriginalPvalues(), false, "Step-down minP. p-values Vs. p-values", "p-values", "Step-down minP values"));
+		mainController.setStepDownLogScatterPlotChart(scatterPlot(stepDownMinPvalues, mainController.getOriginalPvalues(), true, "Step-down minP. p-values Vs. p-values", "p-values (-log10)", "Step-down minP values (-log10)" ));
 
 		mainController.setFwerDistributionChart(histogram(fwerPvalues, numBins, "FWER p-values distribution", "Fwer. p-value", "Count"));
 		mainController.setFwerScattePlotChart(scatterPlot(fwerPvalues, mainController.getOriginalPvalues(), false, "FWER p-values Vs. p-values", "p-values", "FWER p-values"));

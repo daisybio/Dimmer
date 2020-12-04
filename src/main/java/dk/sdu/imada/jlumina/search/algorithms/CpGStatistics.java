@@ -1,6 +1,7 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
@@ -83,7 +84,14 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		pvalues = null; System.gc();
 		setDone(true);
 	}
-
+	
+	/**
+	 * 
+	 * @param statisticalEstimator
+	 * @param indexes
+	 * @param diff place holder for methylation diff
+	 * @return pvalues
+	 */
 	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int indexes[], float diff[])  {
 
 		float originalPvalues[] = new float[beta.length];

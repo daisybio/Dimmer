@@ -71,6 +71,8 @@ public class SaveAll implements  Runnable{
 		if (permutationStep) {
 			progress = 0.0;
 			//pController.saveAll();
+			
+			pController.exportChart(mainController.getOrigDistributionChart().createBufferedImage(1800, 1200), dir+"orig_hist.png");
 
 			pController.exportChart(mainController.getEmpiricalPvaluesDistributionChart().createBufferedImage(1800, 1200), dir+"emp_histogram.png");
 			pController.exportChart(mainController.getEmpiricalPvaluesScatterPlotLogChart().createBufferedImage(1800, 1200), dir+"emp_scatter_plot_log.png");
@@ -78,9 +80,10 @@ public class SaveAll implements  Runnable{
 
 			if (!mainController.isRegression()) {
 				pController.exportChart(mainController.getEmpiricalPvaluesVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"emp_vulcano_plot.png");
-				pController.exportChart(mainController.getFdrVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"fdr_vulcano_plot.png");
+				pController.exportChart(mainController.getFdrVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"max_fdr_vulcano_plot.png");
 				pController.exportChart(mainController.getFwerVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"fwer_vulcano_plot.png");
 				pController.exportChart(mainController.getStepDownVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"sdc_vulcano_plot.png");
+				pController.exportChart(mainController.getOrigVulcanoPlotChart().createBufferedImage(1800, 1200), dir+"orig_vulcano_plot.png");
 			}
 			
 			progress = 0.2;
@@ -91,12 +94,12 @@ public class SaveAll implements  Runnable{
 
 			progress = 0.6;
 			pController.exportChart(mainController.getFwerDistributionChart().createBufferedImage(1800, 1200), dir+"fwer_hist.png");
-			pController.exportChart(mainController.getFwerScatterPlotChart().createBufferedImage(1800, 1200), dir+"fwer_scaltter_plot.png");
-			pController.exportChart(mainController.getFwerScatterPlotLogChart().createBufferedImage(1800, 1200), dir+"fwer_scaltter_plot_log.png");
+			pController.exportChart(mainController.getFwerScatterPlotChart().createBufferedImage(1800, 1200), dir+"fwer_scatter_plot.png");
+			pController.exportChart(mainController.getFwerScatterPlotLogChart().createBufferedImage(1800, 1200), dir+"fwer_scatter_plot_log.png");
 			progress = 0.8;
 			pController.exportChart(mainController.getSteDownDistributionChart().createBufferedImage(1800, 1200), dir+"sdc_hist.png");
-			pController.exportChart(mainController.getStepDownScatterPlotChart().createBufferedImage(1800, 1200), dir+"sdc_scaltter_plot.png");
-			pController.exportChart(mainController.getStepDownLogScatterPlotChart().createBufferedImage(1800, 1200), dir+"sdc_scaltter_plot_log.png");
+			pController.exportChart(mainController.getStepDownScatterPlotChart().createBufferedImage(1800, 1200), dir+"sdc_scatter_plot.png");
+			pController.exportChart(mainController.getStepDownLogScatterPlotChart().createBufferedImage(1800, 1200), dir+"sdc_scatter_plot_log.png");
 			progress = 1.0;
 			
 			done = true;
@@ -147,7 +150,7 @@ public class SaveAll implements  Runnable{
 			progress = 0.5;
 			try {
 
-				File file = new File(mainController.getInputController().getOutputPath() + "permutation.csv");
+				File file = new File(dir+ "permutation.csv");
 
 				if (file != null) {
 					if (!file.exists()) {
@@ -160,11 +163,11 @@ public class SaveAll implements  Runnable{
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("#CpG, Num.Islands, Average.Islands, p-value, log.ratio\n");
+					bw.write("#CpG, Num.DMRs, Average.DMRs, p-value, log.ratio\n");
 					for (int key : mainController.getDMRPermutationMap().keySet()) {
 						DMRPermutationSummary summary = mainController.getDMRPermutationMap().get(key);
 						bw.write(key + "," + summary.getNumberOfIslands() + "," + summary.getAverageOfIslands() + "," + summary.getpValue() + "," + summary.getLogRatio() + "\n");
-					}
+					} 
 					bw.close();
 				}
 			} catch (IOException e1) {
@@ -189,13 +192,13 @@ public class SaveAll implements  Runnable{
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
 
-					bw.write("Link, Chr, Begin, End, begin.CpG, end.CpG, score, #CpG, Num.Islands, Average.Islands, p-value, log.ratio\n");
+					bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, #CpG, Num.DMRs, Average.DMRs, p-value, log.ratio, Link\n");
 
 					ObservableList<FXDMRFullSummary> list = dmrController.getTableViewFullSummary().getItems();
 
 					for (FXDMRFullSummary l : list) {
-						bw.write( l.getHyperlink() + ","
-								+ l.getChromosome() + ","
+						bw.write( 
+								 l.getChromosome() + ","
 								+ l.getBeginPosition() + ","
 								+ l.getEndPosition() + ","
 								+ l.getBeginCPG() + ","
@@ -205,7 +208,8 @@ public class SaveAll implements  Runnable{
 								+ l.getNumberOfIslands() + ","
 								+ l.getAverageOfIslands() + ","
 								+ l.getPvalue() + ","
-								+l.getLogRatio() + "\n");
+								+l.getLogRatio() + ","
+								+l.getURL() + "\n");
 					}
 
 					bw.close();

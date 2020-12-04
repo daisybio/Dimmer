@@ -5,6 +5,10 @@ public class PairedShuffle extends RandomizeLabels {
 	public PairedShuffle(int[] values) {
 		super(values);
 	}
+	
+	public PairedShuffle(int[] values, long seed) {
+		super(values,seed);
+	}
 
 	@Override
 	public void shuffle() {

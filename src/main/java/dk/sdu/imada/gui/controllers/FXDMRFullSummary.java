@@ -133,4 +133,8 @@ public class FXDMRFullSummary {
 	public float getScore() {
 		return score.get();
 	}
+	
+	public String getURL(){
+		return this.url;
+	}
 }

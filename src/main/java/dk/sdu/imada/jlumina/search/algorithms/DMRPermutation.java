@@ -25,7 +25,6 @@ public class DMRPermutation extends PermutationProgress {
 		this.maxIterations = numPermutations;
 		this.dmrAlgorithm = dmrAlgorithm;
 		this.binaryArray = binaryArray;
-		this.maxIterations = numPermutations;
 		this.progress = 0;
 		this.progressAux  = 0;
 		this.dmrs = dmrs;
@@ -101,7 +100,9 @@ public class DMRPermutation extends PermutationProgress {
 				}
 				countIsladsArray[i] = count;
 			}
-
+			
+			summary.setTotalOfIslands(islandList.size());
+			summary.setNumMoreDMRs((int) pValue);
 			double averageIslands = (double)islandList.size()/(double)this.maxIterations;
 
 			summary.setAverageOfIslands(averageIslands);

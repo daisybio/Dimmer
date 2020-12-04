@@ -10,7 +10,15 @@ public class DataExecutor implements Runnable{
 
 	@Override
 	public void run() {
-		rawDataLoader.loadData();
+		try{
+			rawDataLoader.loadData();
+		}
+		catch(OutOfMemoryError e){
+			rawDataLoader.setOveflow(true);
+			System.out.println("Memory ram problem. "
+					+ "Increase your java heap space with the parameters -Xmx and Xms");
+		}
+
 	}
 
 }

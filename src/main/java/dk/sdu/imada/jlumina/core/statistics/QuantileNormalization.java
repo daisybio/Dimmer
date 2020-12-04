@@ -89,6 +89,14 @@ public class QuantileNormalization implements Normalization, Runnable {
 	private float[][] getNonStratifiedNormalization(float [][] toNormalize, int nt)  throws OutOfMemoryError {
 
 		int x = 0;
+		if(nt>toNormalize[0].length){
+			System.out.println(toNormalize[0].length +" cores are used for speed-up...");
+			System.out.println(nt-toNormalize[0].length + " additonally provided cores aren't used...");
+			nt = toNormalize[0].length;
+		}
+		else{
+			System.out.println(nt +" cores are used for speed-up...");
+		}
 
 		for (CpG cpg : manifest.getCpgList()) {
 			if (cpg.getChromosome().equals("X")) {
@@ -122,6 +130,7 @@ public class QuantileNormalization implements Normalization, Runnable {
 		float[][] sexual = new float[length][sex[0].length];
 
 		//. same gender
+
 		if (gender==null) {
 			for (int i = 0; i < sex.length;i++) {
 				for (int j = 0; j < sex[0].length; j++) {
@@ -149,7 +158,7 @@ public class QuantileNormalization implements Normalization, Runnable {
 			float [][] xyNormalized = getFastQuantileNormalizedData(xyData, nt);
 			progress++;
 			notify();
-			
+
 			//float [][] xxNormalized = getQuantileNormalizedData(xxData);
 			float [][] xxNormalized = getFastQuantileNormalizedData(xxData, nt);
 			progress++;
@@ -210,6 +219,13 @@ public class QuantileNormalization implements Normalization, Runnable {
 		int index = 0;
 		for (String cpg : manifest.getCpGsIDs()) {
 			toNormalize[index++] = methylationData.getData().get(cpg);
+//			if(index<=100){
+//				System.out.println(index+"\t"+cpg);
+//				for(float value: toNormalize[index-1]){
+//				System.out.print(value+"\t");
+//				}
+//				System.out.println("");
+//			}
 		}
 
 		toNormalize = getNonStratifiedNormalization(toNormalize, nt);
@@ -217,6 +233,7 @@ public class QuantileNormalization implements Normalization, Runnable {
 		index = 0;
 		for (String cpg : manifest.getCpGsIDs()) {
 			map.put(cpg, toNormalize[index++]);
+		
 		}
 		methylationData.setData(null); System.gc();
 		methylationData.setData(map);
