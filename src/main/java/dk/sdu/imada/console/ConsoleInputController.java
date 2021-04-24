@@ -16,6 +16,7 @@ import com.google.common.io.ByteStreams;
 
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.jlumina.core.io.Read450KSheet;
+import dk.sdu.imada.jlumina.core.io.ReadBetaMatrix;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
 import dk.sdu.imada.jlumina.core.io.ReadIDAT;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
@@ -26,7 +27,9 @@ import dk.sdu.imada.jlumina.core.statistics.CellCompositionCorrection;
 import dk.sdu.imada.jlumina.core.statistics.Normalization;
 import dk.sdu.imada.jlumina.core.statistics.QuantileNormalization;
 import dk.sdu.imada.jlumina.core.util.AbstractQualityControl;
+import dk.sdu.imada.jlumina.core.util.CCFileCheck;
 import dk.sdu.imada.jlumina.core.util.DataExecutor;
+import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.core.util.QualityControlImpl;
 import dk.sdu.imada.jlumina.core.util.RawDataLoader;
 
@@ -47,6 +50,8 @@ public class ConsoleInputController {
 	boolean hasGroupID = false;
 	boolean hasPairID = false;
 	boolean hasGenderID = false;
+	
+	boolean usePairID = false;
 	
 	ArrayList<String> labelsList;
 
@@ -91,7 +96,10 @@ public class ConsoleInputController {
 				if (checkMandatoryColumns(f.getAbsolutePath())) {
 					setMaps(f.getAbsolutePath());
 					setLabelsList(f.getAbsolutePath());	
-					warning(f.getParentFile().getAbsolutePath()+"/");
+					//only relevant for idat input
+					if(!config.useBetaInput()){
+						warning(f.getParentFile().getAbsolutePath()+"/");
+					}
 					checkVariables();
 				}else {
 					System.out.println("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
@@ -244,10 +252,12 @@ public class ConsoleInputController {
 	boolean missingFiles;
 	boolean emptyData;
 	boolean duplication;
+
 	private void warning(String basedir) {
 
 		missingFiles = false;
 		duplication = false;
+
 		String sID[] = columnMap.get("Sentrix_ID");
 		String sPos[] = columnMap.get("Sentrix_Position");
 
@@ -362,9 +372,28 @@ public class ConsoleInputController {
 			System.out.println("Your selected variable of interest must be binary for a T-test");
 			System.exit(0);
 		}
+		
+		
+		//checks for paired data type
+		if(config.isPaired()){
+			PairIDCheck pairIDCheck = new PairIDCheck(columnMap.get("Pair_ID"),columnMap.get(config.getVariable()));
+			if(!pairIDCheck.check()){
+				if(pairIDCheck.hasPairID()){
+					System.out.println(pairIDCheck.errorLog());
+					System.out.println("Please fix the Pair_ID");
+					System.exit(0);
+				}
+				else{
+					System.out.println(pairIDCheck.errorLog());
+					System.out.println("The annotation file requires a column \"Pair_ID\" for the paired data type, please add it or choose the unpaired data type.");
+					System.exit(0);
+				}
+			}
+		}
+
 		if (this.config.getModel().equals("Regression")) {
 			if (!checkNumeric()) {
-				System.out.println("Your selected coefficients must have numerical values only");
+				System.out.println("Your selected coefficients must have numerical values only.");
 				System.exit(0);
 			}
 			if(!checkNumeric(columnMap.get(config.getVariable()))){
@@ -431,6 +460,7 @@ public class ConsoleInputController {
 	USet uSet, uRefSet;
 	Normalization normalizations;
 	CellCompositionCorrection cellCompositionCorrection;
+	CCFileCheck ccFileCheck;
 	RawDataLoader rawDataLoader;
 	ConsoleInputMonitor inputFilesMonitor;
 	int maxCoreSteps;
@@ -440,13 +470,47 @@ public class ConsoleInputController {
 	boolean performProbeFiltering;
 
 	private void startPreprocessing() {
+		if(config.useBetaInput()){
+			startBetaPreprocessing();
+		}
+		else{
+			startIdatPreprocessing();
+		}
+	}
+	
+	private void startBetaPreprocessing(){
+		ReadBetaMatrix betaReader = new ReadBetaMatrix(config.getBetaPath());
+		betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());
+		if(!betaReader.check()){
+			System.out.println(betaReader.errorLog());
+			System.exit(0);
+		}
+		else{
+			mainController.setBeta(betaReader.getBeta());
+			mainController.setManifest(betaReader.getManifest());
+			if(config.getArrayType().equals(Variables.INFINIUM)){
+				mainController.setInfinium(true);
+				mainController.setEpic(false);
+			}
+			else if(config.getArrayType().equals(Variables.EPIC)){
+				mainController.setInfinium(false);
+				mainController.setEpic(true);
+			}
+			else{
+				System.out.println("Error in startBetaPreprocessing()");
+			}
+		}
+	}
+	
+	private void startIdatPreprocessing(){
 
 		stepsDone = 0;
 
 		testDataType();
 		initializeJLuminaCore();
+		
 		rawDataLoader = new RawDataLoader(rgSet, manifest, readControlProbe, uSet, mSet,
-				cellCompositionCorrection, uRefSet, mRefSet, normalizations, this.config.getThreads(), getGenderList());
+				cellCompositionCorrection, uRefSet, mRefSet, normalizations, this.config.getThreads(), getGenderList(),ccFileCheck);
 
 		rawDataLoader.setMaxSteps(maxCoreSteps);
 		rawDataLoader.setQualityControl(qualityControl);
@@ -488,22 +552,22 @@ public class ConsoleInputController {
 		if (mainController.isInfinium()) { 
 
 			System.out.println("Using infinium data type");
-			mf = "resources/manifest_summary.csv";
-			mfProbes = "resources/illumminaControl.csv";
+			mf = Variables.RES_INFINIUM_MANIFEST;
+			mfProbes = Variables.RES_CONTROLE;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = "manifest_summary.csv";
-				mfProbes = "illumminaControl.csv";	
+				mf = Variables.INFINIUM_MANIFEST;
+				mfProbes = Variables.CONTROLE;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
-			mf = "resources/epic_manifest.csv";
-			mfProbes = "resources/illumminaControl.csv";
+			mf = Variables.RES_EPIC_MANIFEST;
+			mfProbes = Variables.RES_CONTROLE;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = "epic_manifest.csv";
-				mfProbes = "illumminaControl.csv";
+				mf = Variables.EPIC_MANIFEST;
+				mfProbes = Variables.CONTROLE;
 			}
 		}
 
@@ -516,19 +580,32 @@ public class ConsoleInputController {
 		this.qualityControl = new QualityControlImpl(rgSet, manifest, readControlProbe);
 
 		normalizations = new QuantileNormalization(); 
+		
 
 		if (mainController.isInfinium()) {
 			if (this.config.getCellComposition()) {
+
 				cellCompositionCorrection = new CellCompositionCorrection();
+				//check if ccFiles are ok
+				ccFileCheck = new CCFileCheck(config.getCellCompositionPath());
+				
+				if(!ccFileCheck.check()){
+					System.out.println(ccFileCheck.errorLog());
+					System.out.println("Cell-composition estimation won't be performed!");
+					cellCompositionCorrection = null;
+					ccFileCheck = null;
+				}
 				maxCoreSteps = 9;
 			}else {
 				cellCompositionCorrection = null;
+				ccFileCheck = null;
 			}
 			performBackgroundCorrection = config.getBackgroundCorrection();
 			performProbeFiltering = config.getProbeFiltering();
 		}else {
 			System.out.println("Cell composition estimation, background correction and probe filtering are not avaliable for epic data");
 			cellCompositionCorrection = null;	
+			ccFileCheck = null;
 			performBackgroundCorrection = false;
 			performProbeFiltering = false;
 		}

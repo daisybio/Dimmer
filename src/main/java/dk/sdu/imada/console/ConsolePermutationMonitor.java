@@ -131,7 +131,7 @@ public class ConsolePermutationMonitor implements Runnable{
 			}
 		}
 		for (int i = 0; i < empiricalPvalue.length; i++) {
-			empiricalPvalue[i] = empiricalPvalue[i]/(mainController.getConfig().getNPermutationsCpG());
+			empiricalPvalue[i] = (empiricalPvalue[i] + 1 )/(mainController.getConfig().getNPermutationsCpG() + 1);
 		}
 		return empiricalPvalue;
 	}

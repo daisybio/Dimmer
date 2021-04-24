@@ -68,7 +68,7 @@ public class ConsoleMainController {
 			this.permutationController = new ConsolePermutationController(this.config,this);
 			permutationController.start();
 		}
-	
+		//Util.writeBetaMatrix("C:/Users/kerst/Desktop/Dimmer/dimmer_test_data/beta.csv", beta, inputController.columnMap.get(Variables.SENTRIX_ID), inputController.columnMap.get(Variables.SENTRIX_POS), manifest.getCpGsIDs());
 		if(config.doDMRSearch()){
 			
 			if(config.getPause()){

@@ -106,6 +106,7 @@ public class MainController implements Initializable {
 	ArrayList<Float> permutedScores;
 
 	JFreeChart dmrScoresDistributionChart;
+	JFreeChart dmrPValueDistributionChart;
 	JFreeChart cpgDistanceChart;
 	TreeMap<Integer, JFreeChart> pvaluesChart;
 
@@ -270,6 +271,14 @@ public class MainController implements Initializable {
 
 	public JFreeChart getDmrScoresDistributionChart() {
 		return dmrScoresDistributionChart;
+	}
+	
+	public JFreeChart  getDmrPValueDistributionChart(){
+		return this.dmrPValueDistributionChart;
+	}
+	
+	public void setDmrPValueDistributionChart(JFreeChart dmrPValueDistributionChart){
+		this.dmrPValueDistributionChart = dmrPValueDistributionChart;
 	}
 
 	public void setPvaluesChart(TreeMap<Integer, JFreeChart> pvaluesChart) {

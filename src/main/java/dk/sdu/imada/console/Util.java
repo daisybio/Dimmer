@@ -1,5 +1,10 @@
 package dk.sdu.imada.console;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
@@ -52,6 +57,46 @@ public class Util {
 			return false;
 		}
 	}
+	
+	public static void writeBetaMatrix(String path, float[][] beta, String[] sentrixID, String[] sentrixPosition, String[] cpgIDs){
+		System.out.println("Writing beta matrix to "+path);
+		try{
+			BufferedWriter br = new BufferedWriter(new FileWriter(new File(path)));	
+			//write header
+			br.write("CpGid");
+			for(int i = 0; i < sentrixID.length; i++){
+				br.write(","+sentrixID[i]+"_"+sentrixPosition[i]);
+			}
+			br.write("\n");
+			
+			for(int i = 0; i < beta.length; i++){
+				br.write(cpgIDs[i]);
+				for(int j = 0; j < beta[0].length; j++){
+					br.write(","+beta[i][j]);
+				}
+				br.write("\n");
+			}
+			br.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+
+	}
+	
+	/**
+	 * 
+	 * @return the  errors as a single String
+	 */
+	public static String errorLog(ArrayList<String> errors){
+		StringBuilder builder = new StringBuilder();
+		for(String error: errors){
+			builder.append(error);
+			builder.append("\n");
+		}
+		return builder.toString();
+	}
+	
 	
 	//main for testing
 	public static void main(String[] args){

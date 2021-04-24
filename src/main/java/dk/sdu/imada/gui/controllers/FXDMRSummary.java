@@ -21,6 +21,7 @@ public class FXDMRSummary {
 	private final IntegerProperty size;
 	//private final StringProperty score;
 	private final FloatProperty score;
+	private final FloatProperty pvalue;
 	
 	public FXDMRSummary(DMRDescription description) {
 		this.chromosome = new SimpleStringProperty(""+description.getChromosome());
@@ -30,6 +31,7 @@ public class FXDMRSummary {
 		this.endCPG = new SimpleStringProperty(description.getEndCPG());
 		this.score = new SimpleFloatProperty(description.getIsland().score);
 		this.size  = new SimpleIntegerProperty(description.getSize());
+		this.pvalue = new SimpleFloatProperty(description.getIsland().getPValue());
 	}
 
 	public String getChromosome() {
@@ -58,5 +60,9 @@ public class FXDMRSummary {
 
 	public Float getScore() {
 		return score.get();
+	}
+	
+	public float getPvalue() {
+		return pvalue.get();
 	}
 }

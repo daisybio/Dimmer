@@ -66,10 +66,11 @@ public class ExecutePermutationController {
 		
 		//for grouping
 		HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
-		Grouping gr = new Grouping(columnMap.get(mainController.inputController.getCoefficient()));
+		Grouping gr;
 		
 		//pre loading of variables
 		if(options[1]){
+			gr = new Grouping(columnMap.get(mainController.inputController.getCoefficient()));
 			phenotype = loadPhenotype();
 			mainController.setPhenotype(phenotype);
 			resultIndex = getCoefficientIndexResult();
@@ -77,11 +78,15 @@ public class ExecutePermutationController {
 		}
 		if(!options[1]){
 			if(!options[0]){
+				gr = new Grouping(columnMap.get(mainController.inputController.getCoefficient()));
 				originalIndex = gr.getIndices();
 				splitPoint = gr.getSplitPoint();
 				System.out.println(gr.log());
 			}else{
-				System.out.println("Currently not supported! (paired data)");
+				gr = new Grouping(columnMap.get("Pair_ID"));
+				originalIndex = gr.pairedIndices(columnMap.get(mainController.inputController.getCoefficient()));
+				splitPoint = mainController.getBeta()[0].length/2;
+				System.out.println(gr.log());
 			}
 		}
 
@@ -90,17 +95,7 @@ public class ExecutePermutationController {
 		Platform.runLater(progressForm);
 		
 		
-		
-//		//will be changed with the paired data type rework
-//		if  (!options[0]) {
-//			System.out.println("Old grouping:");
-//				patientsGroups = getGroupMapping(mainController.inputController.getCoefficient());
-//			//data is paired
-//		}else {
-//			if (options[0] && mainController.getInputController().hasPairID()) {
-//				patientsGroups = getPairIDMapping("Pair_ID");
-//			}
-//		}
+
 
 
 		CpGStatistics cpGSignificance = new CpGStatistics(beta, 0, beta.length);

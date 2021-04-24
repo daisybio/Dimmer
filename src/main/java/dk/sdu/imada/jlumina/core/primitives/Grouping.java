@@ -15,6 +15,8 @@ public class Grouping {
 
 	private String[] groupColumn;
 	
+	private boolean paired = false;
+	
 	/**
 	 * 
 	 * @param groupColumn indices will be grouped by the values in this array
@@ -76,6 +78,47 @@ public class Grouping {
 			numSamples.add(indices.size());
 		}
 	}
+	/**
+	 * does grouping for paired data
+	 * @param length is used to create pairs (successive samples) if no grouping column exists
+	 */
+	
+	public void groupPaired(int length){
+		paired = true;
+		int sample_num;
+		
+		//check length
+		if(this.groupColumn == null){
+			sample_num = length;
+		}
+		else{
+			sample_num = groupColumn.length;
+		}
+		if(sample_num % 2 != 0){
+			System.err.println("The sample number must be a even for paired data!");
+			return;
+		}
+		
+		//generate group column for missing pair id
+		if(this.groupColumn == null){
+			groupColumn = new String[sample_num];
+			for(int i = 0; i < sample_num; i+=2){
+				groupColumn[i] = i/2+"";
+				groupColumn[i+1] = i/2+"";
+			}
+		}
+		
+		//do basically normal grouping
+		group();	
+		
+		for(int size : numSamples){
+			if(size!=2){
+				System.err.println("PairIDs must exist exactly two times!");
+				break;
+			}
+		}
+	}
+	
 	
 	/**
 	 * 
@@ -95,7 +138,7 @@ public class Grouping {
 	
 	/**
 	 * 
-	 * @return the separation points or getIndices() (only if there are 2 group or more
+	 * @return the separation points or getIndices() (only if there are 2 groups or more
 	 */
 	public int[] getSplitPoints(){
 		//groups if not already done
@@ -123,7 +166,12 @@ public class Grouping {
 		int groupNumber = 1;
 		for(String key: groupIDs){
 			
-			builder.append("Group "+groupNumber+": "+key);
+			if(!paired){
+				builder.append("Group "+groupNumber+": "+key);
+			}
+			else{
+				builder.append("Pair "+groupNumber+": "+key);
+			}
 			builder.append("\n");
 			builder.append("Samples: ");
 			
@@ -144,12 +192,70 @@ public class Grouping {
 	
 	/**
 	 * 
-	 * @return the ungrouped indices (so basically an array with the values 0,...,groupColumn.length-1, used for regression
+	 * @return the ungrouped indices (so basically an array with the values 0,...,groupColumn.length-1), used for regression
 	 */
 	public int[] unGroupedIndices(){
 		int[] indices = new int[groupColumn.length];
 		for(int i = 0; i < groupColumn.length; i++){
 			indices[i] = i;
+		}
+		return indices;
+	}
+	
+	/**
+	 * 
+	 * @return the grouped indices, first half: first sample of a pair, second half: second sample of a pair
+	 */
+	public int[] pairedIndices(int length){
+		if(groupIDs == null){
+			groupPaired(length);
+		}
+		int[] indices = new int[groupColumn.length];
+		int pos = 0;
+		//add first sample of each pair
+		for(String id: groupIDs){
+			indices[pos++] = groupSamples.get(id).get(0);
+		}
+		//add second sample of each pair
+		for(String id: groupIDs){
+			indices[pos++] = groupSamples.get(id).get(1);
+		}
+		return indices;
+	}
+	
+	/**Uses a grouping variable with two categories to decide which mate belongs to which group
+	 * 
+	 * @return the grouped indices, first half: first sample of a pair, second half: second sample of a pair
+	 */
+	public int[] pairedIndices(String[] variable){
+		
+		String first = variable[0];
+		
+		if(groupIDs == null){
+			groupPaired(variable.length);
+		}
+		
+		//determine group of each mate
+		for(String id: groupIDs){
+			//swap position if necessary
+			if(!variable[groupSamples.get(id).get(0)].equals(first)){
+				
+				int temp = groupSamples.get(id).get(0);
+				groupSamples.get(id).set(0, groupSamples.get(id).get(1));
+				groupSamples.get(id).set(1, temp);
+				
+			}
+		}
+		
+		int[] indices = new int[groupColumn.length];
+		int pos = 0;
+		//add first sample of each pair
+		for(String id: groupIDs){
+			indices[pos++] = groupSamples.get(id).get(0);
+		}
+		//add second sample of each pair
+		for(String id: groupIDs){
+			indices[pos++] = groupSamples.get(id).get(1);
 		}
 		return indices;
 	}

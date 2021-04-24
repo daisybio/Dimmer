@@ -25,13 +25,6 @@ public class PairedTestLeft extends AbstractTTestEstimator {
 	@Override
 	public float compute(double[] sample1, double[] sample2) {
 
-		//separating the pairs
-		double aux = 0.f;
-		for (int i = 2; i < sample1.length; i+=2) {
-			aux = sample2[i-1];
-			sample2[i-1] = sample1[i-1];
-			sample1[i-1] = aux;
-		}
 
 		float m = (float)StatUtils.meanDifference((sample1), (sample2));
 

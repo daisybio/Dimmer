@@ -56,13 +56,13 @@
                      </children>
                   </HBox>
                   <Label layoutX="10.0" layoutY="200.0" styleClass="FontHeader" text="Alternatively, you can load a previously saved DiMmer project file." />
-                  <Label layoutX="10.0" layoutY="80.0" styleClass="FontHeader" text="Select the data type and click “start” at the bottom to start a new project." />
-                  <RadioButton fx:id="unpaired" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" selected="true" text="unpaired">
+                  <Label layoutX="10.0" layoutY="80.0" styleClass="FontHeader" text="Select the data type and click start at the bottom to start a new project." />
+                  <RadioButton fx:id="unpaired" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" onAction="#selectEvent" selected="true" text="unpaired">
                      <toggleGroup>
                         <ToggleGroup fx:id="group" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="paired" layoutX="100.0" layoutY="100.0" mnemonicParsing="false" text="paired" toggleGroup="$group" />
+                  <RadioButton fx:id="paired" layoutX="100.0" layoutY="100.0" mnemonicParsing="false" onAction="#selectEvent" text="paired" toggleGroup="$group" />
                   <HBox layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="60.0" prefWidth="200.0" styleClass="hboxParagraph">
                      <children>
                         <Label text="At this point you can either start a new project or load a saved session. When you decide to start a new session, you have to choose whether your dataset is going to have paired data (e.g. when having twin data) or unpaired data (typical case/control study with independently sampled populations)." textAlignment="JUSTIFY" wrapText="true" />

@@ -1,14 +1,19 @@
 package dk.sdu.imada.jlumina.core.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class CCFileCheck {
+import au.com.bytecode.opencsv.CSVReader;
+
+public class CCFileCheck extends Check {
 	
 	private String dir_path;
 	private String m_path;
 	private String u_path;
-	ArrayList<String> errors;
+	
 	/**
 	 * 
 	 * @param path to a folder containing the files M.csv and U.csv
@@ -28,21 +33,18 @@ public class CCFileCheck {
 		errors = new ArrayList<String>();
 	}
 	
+	
 	/**
 	 * 
 	 * @return true, if the required files exist and are intact 
 	 */
-	public boolean checkFiles(){
+	public boolean check(){
 		//files exist
 		if(exists(m_path) & exists(u_path)){
 			
 			//files are readable
 			if(readable(m_path) & readable(u_path)){
-				
-				//files are in correct format
-				if(formatCorrect(m_path) & formatCorrect(u_path)){
 					return true;
-				}
 			}
 		}
 		return false;
@@ -72,21 +74,15 @@ public class CCFileCheck {
 		}
 	}
 	
-	public boolean formatCorrect(String path){
-		return true;
+	
+	
+	//getter setter
+	
+	public String getMPath(){
+		return this.m_path;
 	}
 	
-	/**
-	 * 
-	 * @return the file errors as a single String
-	 */
-	public String errorLog(){
-		StringBuilder builder = new StringBuilder();
-		for(String error: errors){
-			builder.append(error);
-			builder.append("\n");
-		}
-		return builder.toString();
+	public String getUPath(){
+		return this.u_path;
 	}
-
 }

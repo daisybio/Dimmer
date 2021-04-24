@@ -57,12 +57,12 @@ public class tests {
 		int k = 2;
 		int w = 4;
 		int l = 1000;
-		DMRAlgorithm dmrAlgorithm = new DMRAlgorithm(k, w, l, 1, positions, chrs);
-		ArrayList<DMR> dmrs = dmrAlgorithm.islandSearch(binary);
+		//DMRAlgorithm dmrAlgorithm = new DMRAlgorithm(k, w, l, 1, positions, chrs, main);
+		//ArrayList<DMR> dmrs = dmrAlgorithm.islandSearch(binary);
 		
-		DMRTester tester = new DMRTester(k,w,l,binary,positions,chrs);
-		tester.runTests(dmrs);
-		System.out.println(dmrs.size());
+		//DMRTester tester = new DMRTester(k,w,l,binary,positions,chrs);
+		//tester.runTests(dmrs);
+		//System.out.println(dmrs.size());
 	
 		
 		

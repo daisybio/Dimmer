@@ -14,7 +14,6 @@ public class DMRFullSummary {
 	// average of islands in the permutation
 	private  final float averageOfIslands;
 
-	// chance of observing in the permutation Islands of at least the same number of CpGs
 	private final float pvalue;
 
 	// 
@@ -35,7 +34,6 @@ public class DMRFullSummary {
 		cpgID = dmrPermutationSummary.getCpgID();
 		numberOfIslands = dmrPermutationSummary.getNumberOfIslands();
 		averageOfIslands = (float)dmrPermutationSummary.getAverageOfIslands();
-		pvalue = (float)dmrPermutationSummary.getpValue();
 		logRatio = (float)dmrPermutationSummary.getLogRatio();
 
 		this.chromosome = description.getChromosome();
@@ -45,6 +43,7 @@ public class DMRFullSummary {
 		this.endCPG = description.getEndCPG();
 		this.score = (float)description.getIsland().score;
 		this.size  = description.getSize();
+		this.pvalue = (float)description.getIsland().getPValue();
 	}
 
 
@@ -100,5 +99,6 @@ public class DMRFullSummary {
 	public String getURL(){
 		return this.url;
 	}
+	
 
 }

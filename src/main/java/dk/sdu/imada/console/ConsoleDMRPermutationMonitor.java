@@ -37,7 +37,7 @@ public class ConsoleDMRPermutationMonitor {
 		
 		
 		System.out.println("\nResult summary:");
-		System.out.println("#CpG, Num. DMRs, Avg. DMRs, p-value, log-ratio");
+		System.out.println("#CpG, Num. DMRs, Avg. DMRs, FDR, log-ratio");
 		for (Integer key : dmrPermutationMap.keySet()) {
 			System.out.println(dmrPermutationMap.get(key).logLine());
 		}
@@ -131,6 +131,7 @@ public class ConsoleDMRPermutationMonitor {
 			summary.setNumberOfIslands(numIslands);
 			summary.setpValue(numMoreDMRs/(double)numPermutations);
 			double averageIslands = numTotalDMRs/(double)numPermutations;
+			summary.setFDR(averageIslands / (double) numIslands);
 			summary.setAverageOfIslands(averageIslands);
 			summary.setNumberOfIslandsPerPermutation(numIslandsPerPermutation);
 			summary.setLogRatio(Math.log10(((double) numIslands + (1.0/(double)this.numPermutations))/(averageIslands + (1.0/(double)this.numPermutations))));

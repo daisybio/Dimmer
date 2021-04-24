@@ -14,8 +14,9 @@ public class DataProgress {
 		maxSteps = 0;
 	}
 	
-	public void setDone(boolean done) {
+	public synchronized void setDone(boolean done) {
 		this.done = done;
+		notify();
 	}
 	
 	public synchronized void setOveflow(boolean oveflow) {

@@ -1,6 +1,7 @@
 package dk.sdu.imada.jlumina.core.primitives;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -33,13 +34,12 @@ public abstract class MethylationData extends RGSet{
 		progress = 0;
 
 		data = new HashMap<>();
+		int nrows = CSVUtil.countRows(input, 1);
 
-		int nrows = CSVUtil.countRows(getClass().getClassLoader().getResourceAsStream(input), 1);
 
 		try {
-			CSVReader reader = new CSVReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(input)));
+			CSVReader reader = new CSVReader(new FileReader(input));
 			reader.readNext();
-
 			for (int i = 0; i < nrows; i++) {
 				try {
 					String next[] = reader.readNext();

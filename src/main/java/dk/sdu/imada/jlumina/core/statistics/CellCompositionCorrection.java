@@ -1,5 +1,9 @@
 package dk.sdu.imada.jlumina.core.statistics;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -124,6 +128,7 @@ public class CellCompositionCorrection {
 		done = true;
 		progress++;
 		notify();
+		
 	}
 
 	/*public synchronized void estimateCellComposition(Normalization normalization) {
@@ -277,6 +282,7 @@ public class CellCompositionCorrection {
 		}
 
 		return MatrixUtil.toFloat(coefficients);
+		
 	}
 
 	/**
@@ -573,6 +579,24 @@ public class CellCompositionCorrection {
 	
 	public int getProgress() {
 		return progress;
+	}
+	
+	public void write(String path){
+		System.out.println("Writing cell composition estimations to "+ path);
+		try{
+			BufferedWriter br = new BufferedWriter(new FileWriter(new File(path)));
+			for( float[] row : cellComposition){
+				for( float value: row){
+					br.write(value+"\t");
+				}
+				br.write("\n");
+			}
+			br.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+
 	}
 }
 

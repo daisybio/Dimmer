@@ -9,6 +9,7 @@ public class DMRDescription {
 	String beginCPG;
 	String endCPG;
 	int size;
+	
 
 	public DMRDescription() {
 	}

@@ -16,7 +16,6 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class CSVUtil {
 
-	// .
 	public static int countRows(String filename, int skip) {
 
 		try {
@@ -36,21 +35,22 @@ public class CSVUtil {
 						}
 					}
 				}
+
 				return (count == 0 && !empty) ? 1 : (count - skip);
 			} finally {
 				is.close();
 			}
 		}catch (IOException e) {
-			System.out.println("Error in " + filename + ": I couldn't get the number of rows");
+			System.out.println("Error in " + filename + ": Couldn't get the number of rows");
 			return 0;
 		}catch (Exception e) {
+			System.out.println("Error in " + filename + ": Couldn't get the number of rows");
 			return 0;
 		}
 	}
 	
 	
 	public static int countRows(InputStream is, int skip) {
-
 		try {
 
 			try {
@@ -74,6 +74,8 @@ public class CSVUtil {
 			System.out.println("Error in  get the number of rows");
 			return 0;
 		}catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error in  get the number of rows");
 			return 0;
 		}
 	}

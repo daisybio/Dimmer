@@ -245,8 +245,8 @@ public class MatrixUtil {
 
 			float v1 [] = set1.getData().get(cpg);
 			float v2 [] = set2.getData().get(cpg);
-
 			map.put(cpg, ArrayUtils.addAll(v1, v2));
+			
 		}
 		return map;
 	}

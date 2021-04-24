@@ -27,13 +27,13 @@ public class PairedTest extends AbstractTTestEstimator {
 		
 		double aux = 0.f;
 		
-		//separating the pairs
-		for (int i = 2; i < sample1.length; i+=2) {
-			aux = sample2[i-1];
-			sample2[i-1] = sample1[i-1];
-			sample1[i-1] = aux;
-		}
-		
+//		//separating the pairs
+//		for (int i = 2; i < sample1.length; i+=2) {
+//			aux = sample2[i-1];
+//			sample2[i-1] = sample1[i-1];
+//			sample1[i-1] = aux;
+//		}
+//		
 		float m = (float) StatUtils.meanDifference((sample1), (sample2));
 		
 		float mu = 0.f;

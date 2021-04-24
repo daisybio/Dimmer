@@ -18,6 +18,9 @@ public class FXDMRPermutationSummary {
 
 	// chance of observing in the permutation Islands of at least the same number of CpGs
 	private final FloatProperty pvalue;
+	
+	//fraction of DMRs of a specific size that is expected to be noise 
+	private final FloatProperty FDR;
 
 	// 
 	private final FloatProperty logRatio;
@@ -29,6 +32,7 @@ public class FXDMRPermutationSummary {
 		averageOfIslands = new SimpleFloatProperty((float)dmrPermutationSummary.getAverageOfIslands());
 		pvalue = new SimpleFloatProperty((float)dmrPermutationSummary.getpValue());
 		logRatio = new SimpleFloatProperty((float)dmrPermutationSummary.getLogRatio());
+		FDR = new SimpleFloatProperty((float)dmrPermutationSummary.getFDR());
 	}
 
 	public int getNumberOfIslands() {
@@ -49,5 +53,9 @@ public class FXDMRPermutationSummary {
 
 	public int getCpgID() {
 		return cpgID.get();
+	}
+	
+	public float getFDR(){
+		return this.FDR.get();
 	}
 }

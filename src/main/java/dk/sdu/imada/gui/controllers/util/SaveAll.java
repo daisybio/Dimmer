@@ -111,7 +111,7 @@ public class SaveAll implements  Runnable{
 					int selectedKey = Integer.parseInt(s);
 					JFreeChart chart = mainController.getPvaluesChart().get(selectedKey);
 					BufferedImage img = chart.createBufferedImage(1200, 800);
-					dmrController.exportChart2(img, dir+"pvalue_cpg_"+s);
+					dmrController.exportChart2(img, dir+"permutations_cpg_"+s);
 				}
 			}catch(NumberFormatException e1) {
 			}
@@ -120,6 +120,10 @@ public class SaveAll implements  Runnable{
 			JFreeChart chartScore = mainController.getDmrScoresDistributionChart();
 			BufferedImage imgScore = chartScore.createBufferedImage(1200, 600);
 			dmrController.exportChart2(imgScore, dir+"score_distribution");
+			
+			JFreeChart chartPValue = mainController.getDmrPValueDistributionChart();
+			BufferedImage imgPValue = chartPValue.createBufferedImage(1200, 600);
+			dmrController.exportChart2(imgPValue, dir+"p-value_distribution");
 
 			try {
 				File file = new File(dir+ "DMRs.csv");
@@ -131,14 +135,15 @@ public class SaveAll implements  Runnable{
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("Chr, Begin, End, begin.CpG, end.CpG, score\n");
+					bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, p-value\n");
 					for (DMRDescription d : mainController.getDmrDescriptions()) {
 						bw.write(d.getChromosome() + ", ");
 						bw.write(d.getBeginPosition() + ", ");
 						bw.write(d.getEndPosition() + ", ");
 						bw.write(d.getBeginCPG()+ ", ");
 						bw.write(d.getEndCPG() + ", ");
-						bw.write(d.getIsland().score + "\n");
+						bw.write(d.getIsland().score + ", ");
+						bw.write(d.getIsland().getPValue() + "\n");
 					}
 
 					bw.close();
@@ -163,10 +168,10 @@ public class SaveAll implements  Runnable{
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write("#CpG, Num.DMRs, Average.DMRs, p-value, log.ratio\n");
+					bw.write("#CpG, Num.DMRs, Average.DMRs, FDR, log.ratio\n");
 					for (int key : mainController.getDMRPermutationMap().keySet()) {
 						DMRPermutationSummary summary = mainController.getDMRPermutationMap().get(key);
-						bw.write(key + "," + summary.getNumberOfIslands() + "," + summary.getAverageOfIslands() + "," + summary.getpValue() + "," + summary.getLogRatio() + "\n");
+						bw.write(key + "," + summary.getNumberOfIslands() + "," + summary.getAverageOfIslands() + "," + summary.getFDR() + "," + summary.getLogRatio() + "\n");
 					} 
 					bw.close();
 				}

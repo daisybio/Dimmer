@@ -70,7 +70,6 @@ public class FXDMRFullSummary {
 		cpgID = new SimpleIntegerProperty(dmrPermutationSummary.getCpgID());
 		numberOfIslands = new SimpleIntegerProperty(dmrPermutationSummary.getNumberOfIslands());
 		averageOfIslands = new SimpleFloatProperty((float)dmrPermutationSummary.getAverageOfIslands());
-		pvalue = new SimpleFloatProperty((float)dmrPermutationSummary.getpValue());
 		logRatio = new SimpleFloatProperty((float)dmrPermutationSummary.getLogRatio());
 
 		this.chromosome = new SimpleStringProperty(""+description.getChromosome());
@@ -80,6 +79,7 @@ public class FXDMRFullSummary {
 		this.endCPG = new SimpleStringProperty(""+description.getEndCPG());
 		this.score = new SimpleFloatProperty((float)description.getIsland().score);
 		this.size  = new SimpleIntegerProperty(description.getSize());
+		this.pvalue = new SimpleFloatProperty((float)description.getIsland().getPValue());
 	}
 
 	public Button getHyperlink() {

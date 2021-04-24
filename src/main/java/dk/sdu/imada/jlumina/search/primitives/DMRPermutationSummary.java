@@ -14,6 +14,9 @@ public class DMRPermutationSummary {
 	// chance of observing in the permutation Islands of at least the same number of CpGs
 	double pValue;
 	
+	//fraction of DMRs of a specific size that is expected to be noise 
+	double FDR;
+	
 	// number of times a permutation had more DMRs than numberOfIslands
 	int numMoreDMRs;
 	
@@ -72,6 +75,14 @@ public class DMRPermutationSummary {
 	public void setpValue(double pValue) {
 		this.pValue = pValue;
 	}
+	
+	public double getFDR(){
+		return this.FDR;
+	}
+	
+	public void setFDR(double FDR){
+		this.FDR = FDR;
+	}
 
 	public double getLogRatio() {
 		return logRatio;
@@ -95,7 +106,7 @@ public class DMRPermutationSummary {
 	
 	public void log() {
 		System.out.println("Num DMRS: " + getNumberOfIslands());
-		System.out.println("p-value: " + getpValue());
+		System.out.println("FDR: " + getFDR());
 		System.out.println("Log-ratio: " + getLogRatio());
 		System.out.println("Avg dmr: " + getAverageOfIslands());
 		System.out.println("ID: " + getCpgID());
@@ -105,14 +116,14 @@ public class DMRPermutationSummary {
 	}
 	/**
 	 * 
-	 * @return #CpG, Num DMRs, Avg DMRs, p-value, Log-ratio
+	 * @return #CpG, Num DMRs, Avg DMRs, FDR, Log-ratio
 	 */
 	public String logLine(){
 		StringBuilder builder = new StringBuilder();
 		builder.append(getCpgID()+"\t");
 		builder.append(getNumberOfIslands()+"\t");
 		builder.append(((double)Math.round(getAverageOfIslands()* 1000d) / 1000d)+"\t");
-		builder.append(((double)Math.round(getpValue()* 1000d) / 1000d)+"\t");
+		builder.append(((double)Math.round(getFDR()* 1000d) / 1000d)+"\t");
 		builder.append(((double)Math.round(getLogRatio()* 1000d) / 1000d));
 		return builder.toString();
 	}

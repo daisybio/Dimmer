@@ -3,71 +3,97 @@
   <component name="ChangeListManager">
     <list default="true" id="27b94a10-2dd0-4162-9710-5d27f107c055" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRParametersController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRParametersController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/Config.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/Config.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleDMRFinderController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleDMRFinderController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleDMRPermutationMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleDMRPermutationMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleInputController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleInputController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleMainController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsoleMainController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsolePermutationController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsolePermutationController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsolePermutationMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/ConsolePermutationMonitor.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/DMRFullSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/DMRFullSummary.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/DMRSearchSaver.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/DMRSearchSaver.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/Util.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/console/Util.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResult.fxml" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResult.fxml" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DataTypeController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DataTypeController.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecutePermutationController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ExecutePermutationController.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRFullSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRFullSummary.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRPermutationSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRPermutationSummary.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/FXDMRSummary.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/InputController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/InputController.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/MainController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/MainController.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/PermutationParametersController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/PermutationParametersController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ModelController.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/ModelController.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/dataType.fxml" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/dataType.fxml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/input.fxml" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/input.fxml" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/DMRResultsUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/DMRResultsUtil.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/SaveAll.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/util/SaveAll.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DimmerProjectMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/DimmerProjectMonitor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/InputFilesMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/InputFilesMonitor.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/PermutationTestMonitor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/monitors/PermutationTestMonitor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/AbstractManifest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/AbstractManifest.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/ReadManifest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/ReadManifest.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CheckGender.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CheckGender.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/DataExecutor.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/DataExecutor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/QualityControlImpl.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/QualityControlImpl.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/primitives/Grouping.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/primitives/Grouping.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/primitives/MethylationData.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/primitives/MethylationData.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/CCFileCheck.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/CCFileCheck.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/CSVUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/CSVUtil.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/MatrixUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/MatrixUtil.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/RawDataLoader.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/util/RawDataLoader.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRAlgorithm.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRAlgorithm.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRTester.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/DMRTester.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/tests.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/algorithms/tests.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMR.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMR.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRDescription.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRDescription.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/StudentTTest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/StudentTTest.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/DataUtil.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/DataUtil.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTest.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTest.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTestLeft.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTestLeft.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTestRight.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/statistics/PairedTestRight.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/PairedShuffle.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/PairedShuffle.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/RandomizeLabels.java" afterPath="$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/search/util/RandomizeLabels.java" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRParametersController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRParametersController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/Config.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/Config.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleDMRFinderController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleDMRFinderController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleDMRPermutationMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleDMRPermutationMonitor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleInputController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleInputController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleMainController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsoleMainController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsolePermutationController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsolePermutationController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsolePermutationMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/ConsolePermutationMonitor.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/DMRFullSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/DMRFullSummary.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/DMRSearchSaver.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/DMRSearchSaver.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/Util.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/console/Util.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResult.fxml" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResult.fxml" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController$1.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController$2.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController$2.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DMRResultController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DataTypeController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/DataTypeController.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecuteDMRFinderController.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecutePermutationController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ExecutePermutationController.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRFullSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRFullSummary.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRPermutationSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRPermutationSummary.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/FXDMRSummary.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/InputController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/InputController.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/MainController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/MainController.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/PermutationParametersController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/PermutationParametersController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ModelController.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/ModelController.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/dataType.fxml" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/dataType.fxml" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/input.fxml" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/input.fxml" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/ReadDimmerProjectUtil.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/DMRResultsUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/DMRResultsUtil.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/SaveAll.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/controllers/util/SaveAll.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DMRPermutationMonitor.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DimmerProjectMonitor$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/DimmerProjectMonitor$1.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/InputFilesMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/InputFilesMonitor.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/PermutationTestMonitor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/gui/monitors/PermutationTestMonitor.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/AbstractManifest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/AbstractManifest.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/ReadManifest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/io/ReadManifest.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/BackgroundCorrection.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CheckGender.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CheckGender.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil$1.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/FastQuantileUtil.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/QuantileNormalization.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/DataExecutor.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/DataExecutor.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/QualityControlImpl.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/QualityControlImpl.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/primitives/Grouping.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/primitives/Grouping.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/primitives/MethylationData.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/primitives/MethylationData.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection$1.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection$1.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/statistics/CellCompositionCorrection.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/CCFileCheck.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/CCFileCheck.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/CSVUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/CSVUtil.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/MatrixUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/MatrixUtil.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/RawDataLoader.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/core/util/RawDataLoader.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/CpGStatistics.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRPermutation.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRAlgorithm.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRAlgorithm.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRTester.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/DMRTester.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/tests.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/algorithms/tests.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMR.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMR.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRDescription.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRDescription.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/primitives/DMRPermutationSummary.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/RegressionEstimator.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/StudentTTest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/StudentTTest.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/DataUtil.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/DataUtil.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/NonPairedShuffle.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTest.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTest.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTestLeft.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTestLeft.class" />
+      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTestRight.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/statistics/PairedTestRight.class" />
       <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/PairedShuffle.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/PairedShuffle.class" />
-      <change beforePath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/RandomizeLabels.class" afterPath="$PROJECT_DIR$/target/classes/dk/sdu/imada/jlumina/search/util/RandomizeLabels.class" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -82,8 +108,8 @@
       <file leaf-file-name="StartGUI.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+            <state relative-caret-position="925">
+              <caret line="54" column="76" lean-forward="false" selection-start-line="54" selection-start-column="76" selection-end-line="54" selection-end-column="76" />
               <folding />
             </state>
           </provider>
@@ -127,10 +153,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="260" />
-    <option name="y" value="20" />
+    <option name="x" value="-1880" />
+    <option name="y" value="178" />
     <option name="width" value="1400" />
-    <option name="height" value="980" />
+    <option name="height" value="966" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -147,7 +173,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="AndroidView" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -160,8 +188,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -316,7 +342,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-11" y="-11" width="1942" height="1056" extended-state="6" />
+    <frame x="-2891" y="-11" width="2902" height="1597" extended-state="6" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -330,7 +356,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20864865" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3241993" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -380,152 +406,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60200">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="925">
+          <caret line="54" column="76" lean-forward="false" selection-start-line="54" selection-start-column="76" selection-end-line="54" selection-end-column="76" />
           <folding />
         </state>
       </provider>
@@ -542,52 +424,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="625">
           <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/DMRResultController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_241/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56350">
-          <caret line="2408" column="0" lean-forward="false" selection-start-line="2408" selection-start-column="0" selection-end-line="2408" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/io/ReadIDAT.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6867">
-          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/jlumina/core/statistics/OneWayAnovaTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dk/sdu/imada/gui/controllers/StartGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
           <folding />
         </state>
       </provider>

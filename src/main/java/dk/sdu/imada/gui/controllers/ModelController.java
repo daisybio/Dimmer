@@ -34,6 +34,14 @@ public class ModelController {
 	}
 
 	@FXML public void selectEvent(ActionEvent actionEvent) {
+		
+		if(regression.isSelected()){
+			if(canvasController.isPaired()){
+				regression.setSelected(false);
+				ttestBox.setVisible(false);
+				FXPopOutMsg.showWarning("Regression doesn't work with paired data");
+			}
+		}
 
 		boolean isaChange = !(check ^ regression.isSelected());
 
@@ -81,7 +89,7 @@ public class ModelController {
 			setSize(canvasController.permutationResultController.scrollVboxFwer, 500);
 			setSize(canvasController.permutationResultController.scrollVboxMax, 500);
 
-		}else {
+		}else if (ttest.isSelected()){
 			check = true;
 			ttestBox.setVisible(true);
 			canvasController.inputController.paneCC.setVisible(false);
@@ -123,7 +131,18 @@ public class ModelController {
 
 	@FXML public void pushContinue(ActionEvent actionEvent) {
 		if (regression.isSelected() || ttest.isSelected()) {
-			this.canvasController.loadScreen("inputFiles");
+			if(regression.isSelected()){
+				if(canvasController.isPaired()){
+					regression.setSelected(false);
+					ttestBox.setVisible(false);
+					FXPopOutMsg.showWarning("Regression doesn't work with paired data");
+				}else{
+					this.canvasController.loadScreen("inputFiles");
+				}
+			}
+			else{
+				this.canvasController.loadScreen("inputFiles");
+			}
 			//this.canvasController.loadScreen("permutationParameters");
 		}else {
 			FXPopOutMsg.showWarning("Select a model");

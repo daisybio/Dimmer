@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
+import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 import dk.sdu.imada.jlumina.search.statistics.RegressionEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
@@ -66,10 +67,11 @@ public class ConsolePermutationController {
 		
 		//for grouping
 		HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
-		Grouping gr = new Grouping(columnMap.get(config.getVariable()));
+		Grouping gr;
 		
 		//pre loading of variables
 		if(config.isRegression()){
+			gr = new Grouping(columnMap.get(config.getVariable()));
 			phenotype = loadPhenotype();
 			mainController.setPhenotype(phenotype);
 			resultIndex = getCoefficientIndexResult();
@@ -77,26 +79,19 @@ public class ConsolePermutationController {
 		}
 		if(config.isTTest()){
 			if(!config.isPaired()){
+				gr = new Grouping(columnMap.get(config.getVariable()));
 				originalIndex = gr.getIndices();
 				splitPoint = gr.getSplitPoint();
 				System.out.println(gr.log());
 			}else{
-				System.out.println("Currently not supported! (paired data)");
+				gr = new Grouping(columnMap.get("Pair_ID"));
+				originalIndex = gr.pairedIndices(columnMap.get(config.getVariable()));
+				splitPoint = mainController.getBeta()[0].length/2;
+				System.out.println(gr.log());
 			}
 		}
 
-			
-//		//will be changed with the paired data type rework
-//		if  (!config.isPaired()) {
-//			System.out.println("Old grouping:");
-//				patientsGroups = getGroupMapping(config.getVariable());
-//			//data is paired
-//		}else {
-//			if (config.isPaired() && mainController.getInputController().hasPairID()) {
-//				patientsGroups = getPairIDMapping("Pair_ID");
-//			}
-//		}
-//		
+				
 		CpGStatistics cpGSignificance = new CpGStatistics(beta, 0, beta.length);
 		StatisticalEstimator se;
 		StatisticalEstimator estimators[] = new StatisticalEstimator[numThreads];
@@ -368,8 +363,8 @@ public class ConsolePermutationController {
 		return groups;
 	}
 	
-	/**
-	 * 
+	/*
+	 * dont think that this method is good
 	 * @param patientsGroups
 	 * @return a group number for each sample (all different, if no Groups exist)
 	 */
@@ -396,7 +391,6 @@ public class ConsolePermutationController {
 
 			for (int e : patientsGroups.get(key)) {
 				v[index++] = e;
-				System.out.println(e);
 			}
 		}
 		return v;

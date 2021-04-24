@@ -9,9 +9,11 @@ import org.jfree.chart.JFreeChart;
 
 import dk.sdu.imada.gui.controllers.MainController;
 import dk.sdu.imada.gui.plots.BarPlotDMRPvalues;
+import dk.sdu.imada.gui.plots.HistogramPvalueDistribution;
 import dk.sdu.imada.gui.plots.HistogramScoreDistribution;
 import dk.sdu.imada.jlumina.search.primitives.DMRDescription;
 import dk.sdu.imada.jlumina.search.primitives.DMRPermutationSummary;
+import dk.sdu.imada.jlumina.core.util.MatrixUtil;
 import dk.sdu.imada.jlumina.search.primitives.DMR;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -40,6 +42,7 @@ public class DMRResultsUtil {
 	public void setPlots() {
 		setPvaluesChart();
 		setDMRScoreDistribution();
+		setDMRPValueDistribution();
 		setLinks();
 
 		// tables are not as numerical for sorting!
@@ -64,7 +67,7 @@ public class DMRResultsUtil {
 			}	
 
 			double reference = (double) permutationResultMapping.get(key).getNumberOfIslands();
-			BarPlotDMRPvalues histogramComparison = new BarPlotDMRPvalues("p-value: " + permutationResultMapping.get(key).getpValue(), 
+			BarPlotDMRPvalues histogramComparison = new BarPlotDMRPvalues("#CpGs: " + key, 
 					values, reference, "Permutation", "#DMRs", values.length, Color.BLUE);
 			JFreeChart chart = histogramComparison.getChart();
 
@@ -101,6 +104,24 @@ public class DMRResultsUtil {
 
 		mainController.getDmrResultController().getView2().setImage(mini);
 	}
+	
+	private void setDMRPValueDistribution() {
+		
+		int index = 0;
+		double[] pValues = new double[mainController.getDMRs().size()];
+		for (DMR dmr : mainController.getDMRs()) {
+			pValues[index++] = dmr.getPValue();
+		}
+
+		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", 11, java.awt.Color.BLUE, 0, 1);
+		JFreeChart chart = histogram.getChart();
+		Image mini = SwingFXUtils.toFXImage(chart.createBufferedImage(600, 400), null);
+		
+		mainController.setDmrPValueDistributionChart(chart);
+		mainController.getDmrResultController().getView3().setImage(mini);
+	}
+	
+	
 
 	private void setLinks() {
 

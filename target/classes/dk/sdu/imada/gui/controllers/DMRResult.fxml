@@ -10,6 +10,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.layout.StackPane?>
 
+
 <StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.DMRResultController">
    <children>
       <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">	
@@ -35,7 +36,7 @@
                                           <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
                                              <children>
                                                 <ImageView fx:id="view1" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
-                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="DMR p-values by #CpGs" textAlignment="JUSTIFY" wrapText="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="DMR count by #CpGs per mutation" textAlignment="JUSTIFY" wrapText="true" />
                                                 <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
                                                    <children>
                                                       <ComboBox fx:id="cpgList" onAction="#setThumbail" prefHeight="27.0" prefWidth="86.0" promptText="#CpG" />
@@ -76,6 +77,29 @@
                                                 </HBox>
                                              </children>
                                           </Pane>
+										  <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="view3" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="P-value distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#plotPValueDistribution" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#pushSavePValueDistribution" text="save" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="" textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+										  
                                        </children>
                                     </VBox>
                                  </content>

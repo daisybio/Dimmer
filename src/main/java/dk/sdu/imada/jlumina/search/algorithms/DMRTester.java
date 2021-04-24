@@ -81,7 +81,7 @@ public class DMRTester {
 			sum += binaryArray[i];
 		}
 		
-		if(sum < w+1-l){
+		if(sum < w+1-k){
 			exceptionError = true;
 		}
 		
@@ -90,7 +90,7 @@ public class DMRTester {
 			if(i-w-1>=0){
 				sum-=binaryArray[i-w-1];
 			}
-			if(sum< w+1-l){
+			if(sum< w+1-k){
 				exceptionError = true;
 			}
 			i++;
@@ -140,7 +140,7 @@ public class DMRTester {
 		
 		boolean distanceError = false;
 		for(int i = beginPosition+1; i < beginPosition + totalCpgs; i++){
-			if(positions[i]-positions[i-1]>1000){
+			if(positions[i]-positions[i-1]>l){
 				distanceError = true;
 			}
 		}

@@ -19,11 +19,29 @@ public class DataTypeController {
 	@FXML ToggleGroup group;
 	@FXML RadioButton paired; 
 	@FXML RadioButton unpaired; 
+	
+	boolean check = true; //unpaired -> true
 
 	@FXML public void help(ActionEvent actionEvent) {
 		String msg = "testing ";
 		FXPopOutMsg.showHelp(msg);
 	}
+	
+	@FXML public void selectEvent(ActionEvent actionEvent) {
+		if(check!=unpaired.isSelected()){
+			System.out.println("change");
+			mainController.uncheckStep(mainController.stepModel_2);
+			mainController.uncheckStep(mainController.stepPermutationParameters_3);
+			mainController.uncheckStep(mainController.input_4);
+			mainController.uncheckStep(mainController.summary_5);
+			mainController.uncheckStep(mainController.permutationResult_6);
+			mainController.uncheckStep(mainController.dmrParameters_7);
+			mainController.uncheckStep(mainController.dmrExecute_8);
+			mainController.uncheckStep(mainController.dmrResult_9); 
+		}
+		check = unpaired.isSelected();
+	}
+	
 
 	@FXML public void pushContinue(ActionEvent actionEvent) {
 		mainController.uncheckStep(mainController.stepModel_2);
@@ -47,6 +65,7 @@ public class DataTypeController {
 	public boolean isPaired() {
 		return paired.isSelected();
 	}
+	
 
 	int progress = 0;
 	

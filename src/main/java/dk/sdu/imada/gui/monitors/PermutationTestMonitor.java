@@ -86,7 +86,7 @@ public class PermutationTestMonitor implements Runnable{
 			}
 		}
 		for (int i = 0; i < empiricalPvalue.length; i++) {
-			empiricalPvalue[i] = empiricalPvalue[i]/(mainController.getNumPermutations());
+			empiricalPvalue[i] = (empiricalPvalue[i] + 1 )/(mainController.getNumPermutations() + 1);
 		}
 		return empiricalPvalue;
 	}

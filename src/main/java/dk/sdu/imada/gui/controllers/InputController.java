@@ -17,8 +17,11 @@ import com.google.common.io.ByteStreams;
 
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.console.Util;
+import dk.sdu.imada.console.Variables;
+import dk.sdu.imada.gui.monitors.BetaMonitor;
 import dk.sdu.imada.gui.monitors.InputFilesMonitor;
 import dk.sdu.imada.jlumina.core.io.Read450KSheet;
+import dk.sdu.imada.jlumina.core.io.ReadBetaMatrix;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
 import dk.sdu.imada.jlumina.core.io.ReadIDAT;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
@@ -29,7 +32,10 @@ import dk.sdu.imada.jlumina.core.statistics.CellCompositionCorrection;
 import dk.sdu.imada.jlumina.core.statistics.Normalization;
 import dk.sdu.imada.jlumina.core.statistics.QuantileNormalization;
 import dk.sdu.imada.jlumina.core.util.AbstractQualityControl;
+import dk.sdu.imada.jlumina.core.util.BetaExecutor;
+import dk.sdu.imada.jlumina.core.util.CCFileCheck;
 import dk.sdu.imada.jlumina.core.util.DataExecutor;
+import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.core.util.QualityControlImpl;
 import dk.sdu.imada.jlumina.core.util.RawDataLoader;
 import javafx.application.Platform;
@@ -39,6 +45,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -49,18 +56,30 @@ import javafx.stage.FileChooser;
 public class InputController {
 
 	@FXML TextField labels;
+	private String labelsPath;
 	@FXML TextField output;
 	@FXML TextField numThreads;
+	@FXML TextField ccPath;
+	@FXML TextField betaPath;
 
 	@FXML Button b3;
 	@FXML Button b4;
+	@FXML Button b5;
 	@FXML Button toRight;
 	@FXML Button toLeft;
+	@FXML Button betaButton;
 
 	@FXML Label label1;
 	@FXML Label label2;
 	@FXML Label label3;
-
+	
+	@FXML ChoiceBox<String> inputType;
+	@FXML Pane paneIDAT;
+	@FXML Pane paneBeta;
+	
+	@FXML ChoiceBox<String> arrayType;
+	private String selectedType;
+	
 	@FXML Label labelHeader;
 	
 	@FXML CheckBox probeFiltering;
@@ -76,6 +95,8 @@ public class InputController {
 
 	FileChooser fileChooser = new FileChooser();
 	DirectoryChooser directoryChooser = new DirectoryChooser();
+	DirectoryChooser ccDirectoryChooser = new DirectoryChooser();
+	FileChooser betaFileChooser = new FileChooser();
 	String [] extention = {"csv"};
 
 	@FXML ListView<String> source;
@@ -86,6 +107,7 @@ public class InputController {
 
 	@FXML CheckBox cellComposition;
 	@FXML Pane paneCC;
+	CCFileCheck ccFileCheck = null;
 
 	private CSVReader reader;
 	MainController mainController;
@@ -189,6 +211,23 @@ public class InputController {
 			paneCC.setVisible(false);
 		}
 	}
+	
+	@FXML public void selectInputType(ActionEvent actionEvent) {
+		if(inputType.getValue().equals("IDAT format")){
+			paneIDAT.setVisible(true);
+			paneBeta.setVisible(false);
+		}else if(inputType.getValue().equals("Beta-matrix")){
+			paneIDAT.setVisible(false);
+			paneBeta.setVisible(true);
+		}
+		else{
+			System.out.println("Unsupported input type: " + inputType.getValue());
+		}
+	}
+	
+	@FXML public void selectArrayType(ActionEvent actionEvent) {
+			this.selectedType = arrayType.getValue();
+	}
 
 	@FXML public void addLabel(ActionEvent actionEvent) {
 
@@ -258,6 +297,10 @@ public class InputController {
 		}else { 
 			return text + "/";
 		}
+	}
+	
+	public String getCCPath(){
+		return ccPath.getText();
 	}
 
 	public ArrayList<String> getSelectedLabels() {
@@ -340,7 +383,6 @@ public class InputController {
 					if (checkMandatoryColumns(f.getAbsolutePath())) {
 						setMaps(f.getAbsolutePath());
 						setLabelsList(f.getAbsolutePath());	
-						warning(f.getParentFile().getAbsolutePath()+"/");
 					}else {
 						FXPopOutMsg.showWarning("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
 					}
@@ -489,6 +531,10 @@ public class InputController {
 	public void resetTextFields() {
 		labels.setText(null);
 		output.setText(null);
+		ccPath.setText(null);
+		betaPath.setText(null);
+		inputType.setValue("IDAT format");
+		arrayType.setValue(null);
 		cellComposition.setSelected(false);
 		cd8t.setSelected(false);
 		cd4t.setSelected(false);
@@ -521,6 +567,37 @@ public class InputController {
 		}
 		conditionOutput = true;
 	}
+	
+	@FXML public void selectCCFolder(ActionEvent actionEvent) {
+
+		ccDirectoryChooser.setTitle("Select cell composition data folder");
+
+		File f = ccDirectoryChooser.showDialog(null);
+
+		if (f!=null) {
+			ccFileCheck = new CCFileCheck(f.getAbsolutePath());
+			
+			if(!ccFileCheck.check()){
+				FXPopOutMsg.showWarning(ccFileCheck.errorLog());
+			}
+			else {
+				ccPath.setText(f.getAbsolutePath());
+			}
+		}else {
+			ccPath.setText("");
+		}
+		//conditionOutput = true;
+	}
+	
+	@FXML public void selectBetaFile(ActionEvent actionEvent) {
+		betaFileChooser.setTitle("Open your sample beta-matrix file");
+		File f = fileChooser.showOpenDialog(null);
+
+		if (f!=null) {
+			betaPath.setText(f.getAbsolutePath());
+		}
+	}
+	
 
 	public void setCanvasController(MainController canvasController) {
 		this.mainController = canvasController;
@@ -643,30 +720,35 @@ public class InputController {
 	}
 
 	@FXML public void pushContinue(ActionEvent actionEvent) {
-
-		if (labels.getText().isEmpty()) {
-
+		if (labels.getText() == null || labels.getText().isEmpty()) {
 			FXPopOutMsg.showWarning("No file to load... ");
 
 		}else {
-
+			//only relevant if idat
+			if(this.inputType.getValue().equals("IDAT format")){
+				warning(new File(labels.getText()).getParentFile().getAbsolutePath()+"/");
+			}
 			if (fileProblem || duplication || missingFiles || missingMandatoryColumns) {
-				FXPopOutMsg.showWarning("Please, fix your sample annotation file before start the pre-processing");
-			}else {
-
+				FXPopOutMsg.showWarning("Please, fix your sample annotation file before starting the pre-processing");
+			}else {		
 				setSelectedLabels();
 
 				if (mainController.modelController.isRegression()) {
-
-					if (getSelectedLabels().size() > 0) {
+					//check if cc Path is set (if cc selected)
+					if(this.cellComposition.isSelected() && ( this.ccPath.getText() == null || this.ccPath.getText().equals("")) ){
+						FXPopOutMsg.showWarning("Please select a folder for the cell composition files");
+					}
+					else if (getSelectedLabels().size() > 0) {
 
 						setSelectedCoefficients();
 
 						if (getCoefficient()!= null) {
 
 							if (checkNumeric()) {
+								
 
-								startPreprocessing();
+									startPreprocessing();
+
 
 							}else {
 								FXPopOutMsg.showWarning("Your selected coefficients must have numerical values only");
@@ -685,7 +767,29 @@ public class InputController {
 					if (getCoefficient()!= null) {
 
 						if (Util.checkBinary(columnMap.get(getCoefficient()))) {
-							startPreprocessing();
+							
+							if(mainController.isPaired()){
+								boolean pairIdOk = true;
+								PairIDCheck pairIDCheck = new PairIDCheck(columnMap.get("Pair_ID"),columnMap.get(getCoefficient()));
+								if(!pairIDCheck.check()){
+									if(pairIDCheck.hasPairID()){
+										FXPopOutMsg.showWarning(pairIDCheck.errorLog());
+										FXPopOutMsg.showWarning("Please fix the Pair_ID");
+									}
+									else{
+										FXPopOutMsg.showWarning("The annotation file requires a column \"Pair_ID\" for the paired data type, please add it or choose the unpaired data type.");
+									}
+								}
+								else{
+									startPreprocessing();
+								}
+							}
+							
+							
+							else{
+								startPreprocessing();
+							}
+							
 						}else {
 							FXPopOutMsg.showWarning("Your selected variable of interest must have exactly two distinct values for a T-test");
 						}
@@ -731,8 +835,62 @@ public class InputController {
 	AbstractQualityControl qualityControl;
 	boolean performBackgroundCorrection;
 	boolean performProbeFiltering;
-
+	
 	private void startPreprocessing() {
+		if(this.inputType.getValue().equals("Beta-matrix")){
+			startBetaPreprocessing();
+		}
+		else{
+			startIdatPreprocessing();
+		}
+	}
+	
+	private void startBetaPreprocessing(){
+		if(this.selectedType == null){
+			FXPopOutMsg.showWarning("Please select an array type");
+		}
+		else{
+			if(betaPath.getText()!=null){
+				
+				ProgressForm pf = new ProgressForm();
+				
+				if(this.selectedType.equals(Variables.INFINIUM)){
+					mainController.setInfinium(true);
+					mainController.setEpic(false);
+				}
+				else if(this.selectedType.equals(Variables.EPIC)){
+					mainController.setInfinium(false);
+					mainController.setEpic(true);
+				}
+				else{
+					System.out.println("Error in startBetaPreprocessing()");
+				}
+				
+				ReadBetaMatrix betaReader = new ReadBetaMatrix(betaPath.getText());
+				
+				BetaExecutor betaExecutor = new BetaExecutor(betaReader, this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), this.selectedType);
+				BetaMonitor betaMonitor = new BetaMonitor(betaReader, mainController, pf);
+
+				Thread loaderThread = new Thread(betaExecutor);
+				Thread progressThread = new Thread(betaMonitor);
+				ArrayList<Thread> arrayList = new ArrayList<>();
+
+				arrayList.add(loaderThread);
+				arrayList.add(progressThread);
+				pf.setThreads(arrayList);
+
+				Platform.runLater(pf);
+				progressThread.start();
+				loaderThread.start();
+		
+			}
+			else{
+				FXPopOutMsg.showWarning("Please select a beta-matrix file");
+			}
+		}
+	}
+
+	private void startIdatPreprocessing() {
 
 		stepsDone = 0;
 
@@ -742,7 +900,7 @@ public class InputController {
 		ProgressForm pf = new ProgressForm();
 
 		rawDataLoader = new RawDataLoader(rgSet, manifest, readControlProbe, uSet, mSet,
-				cellCompositionCorrection, uRefSet, mRefSet, normalizations, getNumThreads(), getGenderList());
+				cellCompositionCorrection, uRefSet, mRefSet, normalizations, getNumThreads(), getGenderList(),ccFileCheck);
 
 		rawDataLoader.setMaxSteps(maxCoreSteps);
 		rawDataLoader.setQualityControl(qualityControl);
@@ -792,22 +950,22 @@ public class InputController {
 		if (mainController.isInfinium()) { 
 
 			System.out.println("Using infinium data type");
-			mf = "resources/manifest_summary.csv";
-			mfProbes = "resources/illumminaControl.csv";
+			mf = Variables.RES_INFINIUM_MANIFEST;
+			mfProbes = Variables.RES_CONTROLE;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = "manifest_summary.csv";
-				mfProbes = "illumminaControl.csv";	
+				mf = Variables.INFINIUM_MANIFEST;
+				mfProbes = Variables.CONTROLE;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
-			mf = "resources/epic_manifest.csv";
-			mfProbes = "resources/illumminaControl.csv";
+			mf = Variables.RES_EPIC_MANIFEST;
+			mfProbes = Variables.RES_CONTROLE;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = "epic_manifest.csv";
-				mfProbes = "illumminaControl.csv";
+				mf = Variables.EPIC_MANIFEST;
+				mfProbes = Variables.CONTROLE;
 			}
 		}
 

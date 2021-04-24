@@ -1,4 +1,4 @@
-package dk.sdu.imada.console;
+ package dk.sdu.imada.console;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -28,6 +28,8 @@ public class Config {
 	
 	private String annotation_path;
 	private String output_path;
+	private String beta_path;
+	private String array_type;
 	private String variable;
 	private int threads;
 	private boolean background_correction;
@@ -85,13 +87,14 @@ public class Config {
 //			System.out.println(key+": "+parameters.get(key));
 //		}
 		
-		// check paramter validity, if something is wrong, this.check will be set to false and program will stop
+		// check parameter validity, if something is wrong, this.check will be set to false and program will stop
 		System.out.println("\nValid parameters:");
 		
 			check_project_path();
 			check_output_path();
 			check_threads();
 			
+			// variables only needed if no old project to load
 			if(this.dimmer_project_path==null){
 				
 				check_data_type();
@@ -105,10 +108,19 @@ public class Config {
 						check_t_test();
 					}
 				}
+				
 				check_annotation_path();
-				check_background_correction();
-				check_probe_filtering();
-				check_cell_composition();
+				check_beta_path();
+				
+				//only needed for idat input
+				if(this.beta_path == null){
+					check_background_correction();
+					check_probe_filtering();
+					check_cell_composition();
+				}
+				else{
+					check_array_type();
+				}
 				check_n_permutations_cpg();
 				check_save_permu_plots();
 				
@@ -363,10 +375,22 @@ public class Config {
 		this.model = value;
 	}
 	
+	private void check_array_type(){
+		String parameter = "array_type";
+		String[] choices = {"infinium","epic","1","2"};
+		String value = check_choices(parameter,choices);
+		this.array_type = value;
+	}
+	
 	private void check_regression(){
 		String parameter = "confounding_variables";
 		HashSet<String> value = null;
 		String entry = this.parameters.get(parameter);
+		
+		if(this.isPaired()){
+			this.check = false;
+			this.messages.add("Regression doesn't work with the paired data type. Please choose T-Test or change to unpaired");
+		}
 		if(entry == null){
 			this.check = false;
 			this.missing_fields.add(parameter);
@@ -653,6 +677,19 @@ public class Config {
 		this.output_path = value;
 	}
 	
+	//parameter is optional -> value doesn't have to exist
+	private void check_beta_path(){
+		
+		String value = null;
+		String parameter = "beta_path";
+		// path needs to be a readable file
+		if(this.parameters.get(parameter)!=null && !this.parameters.get(parameter).equals("")){
+			value = check_path(parameter,false,true,false,false);
+		}
+		this.beta_path = value;
+	}
+	
+	//parameter is optional -> value doesn't have to exist
 	private void check_project_path(){
 		String value = null;
 		String parameter = "dimmer_project_path";
@@ -881,6 +918,10 @@ public class Config {
 	public String getProjectPath(){
 		return this.dimmer_project_path;
 	}
+	
+	public String getArrayType(){
+		return this.array_type;
+	}
 	public boolean doDMRSearch(){
 		return this.dmr_search;
 	}
@@ -890,6 +931,14 @@ public class Config {
 			return this.cell_composition_path;
 		}
 		return this.cell_composition_path+"/";
+	}
+	
+	public String getBetaPath(){
+		return this.beta_path;
+	}
+	
+	public boolean useBetaInput(){
+		return this.beta_path!=null;
 	}
 	
 	public boolean load(){

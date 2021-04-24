@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.search.algorithms.DMRAlgorithm;
 import dk.sdu.imada.jlumina.search.algorithms.DMRPermutation;
+import dk.sdu.imada.jlumina.search.algorithms.DMRScoring;
 import dk.sdu.imada.jlumina.search.primitives.DMR;
 import dk.sdu.imada.jlumina.search.primitives.DMRDescription;
 import dk.sdu.imada.jlumina.search.util.DMRPermutationExecutor;
@@ -56,9 +57,12 @@ public class ConsoleDMRFinderController {
 			positions[i] = manifest.getCpgList()[i].getMapInfo();
 		}
 		
-		DMRAlgorithm dmrAlgorithm = new DMRAlgorithm(k, w, l, 1, positions, chrs);
+		DMRAlgorithm dmrAlgorithm = new DMRAlgorithm(k, w, l, 1, positions, chrs, mainController.getSearchPvalues());
 		dmrs = dmrAlgorithm.islandSearch(binaryArray);
 		this.mainController.setDMRs(dmrs);
+		
+		DMRScoring scoring = new DMRScoring(dmrs);
+		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l));
 		
 		ArrayList<DMRDescription> dmrDescriptions = new ArrayList<>();
 
@@ -76,7 +80,7 @@ public class ConsoleDMRFinderController {
 		int[] dmrPermuDist = Util.distributePermutations(numThreads, np);
 
 		for (int i = 0; i < numThreads; i++) {
-			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs), dmrs, binaryArray, dmrPermuDist[i]);
+			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs, mainController.getSearchPvalues()), dmrs, binaryArray, dmrPermuDist[i]);
 			executors[i] = new DMRPermutationExecutor(dmrPermutation[i]);
 			eThread[i] = new Thread(executors[i], "permutation_" + i);
 		}

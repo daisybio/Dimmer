@@ -63,7 +63,7 @@ public class DMRResultController {
 
 	@FXML ImageView view1;
 	@FXML ImageView view2;
-	//@FXML ImageView view3;
+	@FXML ImageView view3;
 	@FXML ImageView view4;
 	@FXML ImageView view5;
 	@FXML ImageView view6;
@@ -141,6 +141,10 @@ public class DMRResultController {
 	public ImageView getView2() {
 		return view2;
 	}
+	
+	public ImageView getView3(){
+		return this.view3;
+	}
 
 	public ImageView getView4() {
 		return view4;
@@ -177,8 +181,8 @@ public class DMRResultController {
 		col2.setTooltip(new Tooltip("Number of DMRs of at least that size found in the original (non-permuted) data"));
 		Label col3 = new Label("Avg.DMRs");
 		col3.setTooltip(new Tooltip("Average number of DMRs across all permutations of at least that size"));
-		Label col4 = new Label("p-value");
-		col4.setTooltip(new Tooltip("Probability to find at least the same number of DMRs of at least that size by chance across the given number of permutations"));
+		Label col4 = new Label("FDR");
+		col4.setTooltip(new Tooltip("Fraction of DMRs of a specific size that is expected to be noise "));
 		Label col5 = new Label("log-ratio");
 		col5.setTooltip(new Tooltip("-log10(#DMRs/Avg.DMRs)"));
 
@@ -200,7 +204,7 @@ public class DMRResultController {
 
 
 		TableColumn<FXDMRPermutationSummary, String> c4 = new TableColumn<FXDMRPermutationSummary, String>("");
-		c4.setCellValueFactory(new PropertyValueFactory<>("pvalue"));
+		c4.setCellValueFactory(new PropertyValueFactory<>("FDR"));
 		c4.setPrefWidth(90.0);
 		c4.setGraphic(col4);
 
@@ -402,6 +406,8 @@ public class DMRResultController {
 		col6.setTooltip(new Tooltip(" #CpGs/DMR lenght(bp)"));
 		Label col7 = new Label("Length (bp)");
 		col7.setTooltip(new Tooltip("Length in base pairs of the DMR"));
+		Label col8 = new Label("p-value");
+		col8.setTooltip(new Tooltip("Chance that a random region with the same size has an equally good or better CpG-score."));
 
 
 		TableColumn<FXDMRSummary, String> c1 = new TableColumn<FXDMRSummary, String>("");
@@ -431,15 +437,20 @@ public class DMRResultController {
 
 		TableColumn<FXDMRSummary, String> c6 = new TableColumn<FXDMRSummary, String>("");
 		c6.setCellValueFactory(new PropertyValueFactory<>("score"));
-		c6.setPrefWidth(200.0);
+		c6.setPrefWidth(100.0);
 		c6.setGraphic(col6);
 
 		TableColumn<FXDMRSummary, String> c7= new TableColumn<FXDMRSummary, String>("");
 		c7.setCellValueFactory(new PropertyValueFactory<>("size"));
 		c7.setPrefWidth(100.0);
 		c7.setGraphic(col7);
+		
+		TableColumn<FXDMRSummary, String> c8 = new TableColumn<FXDMRSummary, String>("");
+		c8.setCellValueFactory(new PropertyValueFactory<>("pvalue"));
+		c8.setPrefWidth(100.0);
+		c8.setGraphic(col8);
 
-		tableViewDMRSumary.getColumns().addAll(c1, c2, c3, c4, c5, c7, c6);
+		tableViewDMRSumary.getColumns().addAll(c1, c2, c3, c4, c5, c7, c6, c8);
 
 		StackPane pane = new StackPane();
 		pane.getChildren().add(tableViewDMRSumary);
@@ -467,6 +478,21 @@ public class DMRResultController {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPanel panel = new ChartPanel(mainController.dmrScoresDistributionChart);
+				JFrame frame = new JFrame("");
+				frame.setSize(600, 400);
+				frame.setLocationRelativeTo(null);
+				frame.add(panel);
+				frame.setVisible(true);
+				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);	
+			}
+		});
+	}
+	
+	@FXML public void plotPValueDistribution(ActionEvent actionEvent) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JPanel panel = new ChartPanel(mainController.getDmrPValueDistributionChart());
 				JFrame frame = new JFrame("");
 				frame.setSize(600, 400);
 				frame.setLocationRelativeTo(null);
@@ -538,6 +564,13 @@ public class DMRResultController {
 		BufferedImage img = chart.createBufferedImage(1200, 600);
 		exportChart(img);
 	}
+	
+	@FXML public void pushSavePValueDistribution(ActionEvent e) {
+
+		JFreeChart chart = mainController.getDmrPValueDistributionChart();
+		BufferedImage img = chart.createBufferedImage(1200, 600);
+		exportChart(img);
+	}
 
 	@FXML public void pushSavePvalue(ActionEvent e) {
 		try {
@@ -567,14 +600,15 @@ public class DMRResultController {
 
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score\n");
+				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, p-value\n");
 				for (DMRDescription d : mainController.getDmrDescriptions()) {
 					bw.write(d.getChromosome() + ", ");
 					bw.write(d.getBeginPosition() + ", ");
 					bw.write(d.getEndPosition() + ", ");
 					bw.write(d.getBeginCPG()+ ", ");
 					bw.write(d.getEndCPG() + ", ");
-					bw.write(d.getIsland().score + "\n");
+					bw.write(d.getIsland().score + ", ");
+					bw.write(d.getIsland().getPValue() + "\n");
 				}
 
 				bw.close();
@@ -603,10 +637,10 @@ public class DMRResultController {
 
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write("#CpG, Num.Islands, Average.Islands, p-value, log.ratio\n");
+				bw.write("#CpG, Num.Islands, Average.Islands, FDR, log.ratio\n");
 				for (int key : mainController.getDMRPermutationMap().keySet()) {
 					DMRPermutationSummary summary = mainController.getDMRPermutationMap().get(key);
-					bw.write(key + "," + summary.getNumberOfIslands() + "," + summary.getAverageOfIslands() + "," + summary.getpValue() + "," + summary.getLogRatio() + "\n");
+					bw.write(key + "," + summary.getNumberOfIslands() + "," + summary.getAverageOfIslands() + "," + summary.getFDR() + "," + summary.getLogRatio() + "\n");
 				}
 				bw.close();
 			}
