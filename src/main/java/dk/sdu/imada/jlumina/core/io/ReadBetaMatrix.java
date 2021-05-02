@@ -29,10 +29,12 @@ public class ReadBetaMatrix extends DataProgress{
 	private int numSamples;
 	
 	private ArrayList<String> errors;
+	private ArrayList<String> warnings;
 	
 	public ReadBetaMatrix(String path){
 		this.path = path;
 		this.errors = new ArrayList<>();
+		this.warnings = new ArrayList<>();
 	}
 	
 	/**
@@ -185,14 +187,15 @@ public class ReadBetaMatrix extends DataProgress{
 		
 		setMsg("Creating beta-matrix...");
 		setProgress(p++);
-		//create beta-matrix
+		
+		//Lists to store valid CpGs and beta rows from the matrix file
 		CpG[] cpgList = manifest.getCpgList();
 		ArrayList<CpG> newCpgList = new ArrayList<>();
+		ArrayList<float[]> betaList = new ArrayList<>();
 		
-		float[][] beta = new float[this.cpgMap.size()][];
+
 		
 		int missing = 0;
-		int index = 0;
 		for(CpG cpg : cpgList){
 			
 			float[] betas = this.cpgMap.get(cpg.getCpgName());
@@ -203,7 +206,7 @@ public class ReadBetaMatrix extends DataProgress{
 				for(int i = 0; i < betas.length; i++){
 					orderedBetas[positions[i]] = betas[i];
 				}
-				beta[index++] = orderedBetas;
+				betaList.add(orderedBetas);
 				newCpgList.add(cpg);
 			}
 			else{
@@ -211,16 +214,22 @@ public class ReadBetaMatrix extends DataProgress{
 			}
 		}
 		
+		//create beta-matrix
+		float[][] beta = new float[betaList.size()][];
+		for(int i = 0; i < betaList.size(); i++){
+			beta[i] = betaList.get(i);
+		}
+		
 		//check if some ids weren't in the manifest file
 		int notInManifest =   missing + cpgMap.keySet().size() - cpgList.length;
 		if(notInManifest != 0){
-			System.out.println(notInManifest + " CpG ids from the beta-matrix file, weren't in the manifest! Check, if the right array type is used!");
-			errors.add(notInManifest + " CpG ids from the beta-matrix file, weren't in the manifest! Check, if the right array type is used!");
-			this.setDone(true);
-			return;
+			warnings.add(notInManifest + " CpG ids from the beta-matrix file weren't in the manifest");
+		}
+		
+		if(missing>0){
+			warnings.add(missing + " CpG ids from the manifest weren't in the beta-matrix file");
 		}
 
-		System.out.println(missing + " CpG ids from the manifest weren't in the beta-matrix file");
 		manifest.setCpGList(newCpgList.toArray(new CpG[newCpgList.size()]));
 		
 		this.beta = beta;
@@ -297,7 +306,15 @@ public class ReadBetaMatrix extends DataProgress{
 		return Util.errorLog(this.errors);
 	}
 	
+	public String warningLog(){
+		return Util.errorLog(this.warnings);
+	}
+	
 	public boolean check(){
 		return this.errors.size()==0;
+	}
+	
+	public boolean hasWarnings(){
+		return this.warnings.size() != 0;
 	}
 }

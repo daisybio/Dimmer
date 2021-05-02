@@ -64,6 +64,9 @@ public class BetaMonitor implements Runnable{
 				Platform.runLater(() -> progressForm.getDialogStage().close());
 				Platform.runLater(() -> mainController.loadScreen("permutationParameters"));
 			}
+			if(betaReader.hasWarnings()){
+				Platform.runLater(() -> FXPopOutMsg.showWarning(betaReader.warningLog()));
+			}
 
 			long endTime   = System.currentTimeMillis();
 			long totalTime = endTime - startTime;

@@ -1,7 +1,9 @@
 package dk.sdu.imada.gui.controllers;
 
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 
 public class FXPopOutMsg {
 	
@@ -9,7 +11,7 @@ public class FXPopOutMsg {
 		
 		Alert alert = new Alert(AlertType.WARNING);
 
-		alert.setContentText(msg);
+		alert.getDialogPane().setContent(new Label(msg));
 
 		alert.showAndWait();
 	}
@@ -18,7 +20,7 @@ public class FXPopOutMsg {
 		
 		Alert alert = new Alert(AlertType.INFORMATION);
 
-		alert.setContentText(msg);
+		alert.getDialogPane().setContent(new Label(msg));
 
 		alert.showAndWait();
 	}

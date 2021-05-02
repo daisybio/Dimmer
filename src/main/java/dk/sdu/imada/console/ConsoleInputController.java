@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.google.common.io.ByteStreams;
 
 import au.com.bytecode.opencsv.CSVReader;
+import dk.sdu.imada.gui.controllers.FXPopOutMsg;
 import dk.sdu.imada.jlumina.core.io.Read450KSheet;
 import dk.sdu.imada.jlumina.core.io.ReadBetaMatrix;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
@@ -32,6 +33,7 @@ import dk.sdu.imada.jlumina.core.util.DataExecutor;
 import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.core.util.QualityControlImpl;
 import dk.sdu.imada.jlumina.core.util.RawDataLoader;
+import javafx.application.Platform;
 
 
 
@@ -499,6 +501,9 @@ public class ConsoleInputController {
 			else{
 				System.out.println("Error in startBetaPreprocessing()");
 			}
+		}
+		if(betaReader.hasWarnings()){
+			System.out.println(betaReader.warningLog());
 		}
 	}
 	
