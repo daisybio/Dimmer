@@ -46,6 +46,7 @@ public class DMRConfigScanner {
 		builder.append("Your current parameters are:\n");
 		builder.append("max_cpg_dist: " + config.getMaxCpgDist()+"\n");
 		builder.append("n_permutations_dmr: " + config.getNPermutationsDmr()+"\n");
+		builder.append("n_random_regions: " + config.getNRandomRegions()+"\n");
 		builder.append("w_size: " + config.getWSize()+"\n");
 		builder.append("n_exceptions: " + config.getNExceptions()+"\n");
 		builder.append("p_value_cutoff: " + config.getPValueCutoff()+"\n");
@@ -149,6 +150,9 @@ public class DMRConfigScanner {
 			case "n_permutations_dmr":
 				changeNPermutationsDmr(value);
 				break;
+			case "n_random_regions":
+				changeNRandomRegions(value);
+				break;
 			case "w_size":
 				changeWSize(value);
 				break;
@@ -198,6 +202,12 @@ public class DMRConfigScanner {
 		String field = "n_permutations_dmr";
 		config.put(field, value);
 		config.check_n_permutations_dmr();
+	}
+	
+	public void changeNRandomRegions(String value){
+		String field = "n_random_regions";
+		config.put(field, value);
+		config.check_n_random_regions();
 	}
 	
 	public void changeWSize(String value){

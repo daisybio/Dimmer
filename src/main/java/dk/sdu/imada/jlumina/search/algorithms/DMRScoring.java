@@ -35,7 +35,7 @@ public class DMRScoring {
 		}	
 	}
 	
-	public void calcPValues(float[] cpgPValues, int[] breakPoints){
+	public void calcPValues(float[] cpgPValues, int[] breakPoints, int nRandomRegions){
 		
 		//get regions for a score distribution
 		initCompactRegionMap(cpgPValues, breakPoints);
@@ -43,7 +43,7 @@ public class DMRScoring {
 		//get pvalue for each dmr
 		for(int size : sizes){
 			
-			float[] distribution = compactRegionMap.get(size).getScoreDistribution(100000);
+			float[] distribution = compactRegionMap.get(size).getScoreDistribution(nRandomRegions);
 			
 			for(DMR dmr : dmrSizeMap.get(size)){
 				float pValue = StatisticsUtil.pValueFromDistribution(distribution, dmr.getPValueScore());

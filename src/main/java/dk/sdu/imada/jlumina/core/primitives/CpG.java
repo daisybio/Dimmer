@@ -2,7 +2,7 @@ package dk.sdu.imada.jlumina.core.primitives;
 
 public class CpG {
 
-	String cpgName;
+	private String cpgName;
 	int addressA;
 	int addressB;
 	String inifniumType;
@@ -26,9 +26,19 @@ public class CpG {
 		this.colorChannel = colorChannel;
 		this.regionType = regionType;
 	}
+	
+	public CpG(String chromosome, int mapInfo){
+		this.chromosome = chromosome;
+		this.mapInfo = mapInfo; 
+	}
 
 	public String getCpgName() {
-		return cpgName;
+		if(cpgName == null){
+			return this.chromosome + ":" + this.mapInfo;
+		}
+		else{
+			return cpgName;
+		}
 	}
 
 	public void setCpgName(String cpgName) {
@@ -105,5 +115,9 @@ public class CpG {
 	
 	public void setRegionType(String regionType) {
 		this.regionType = regionType;
+	}
+	
+	public String toString(){
+		return this.getCpgName();
 	}
 }

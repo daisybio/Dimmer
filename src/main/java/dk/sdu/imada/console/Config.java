@@ -52,6 +52,7 @@ public class Config {
 	
 	private int max_cpg_dist;
 	private int n_permutations_dmr;
+	private int n_random_regions;
 	private int w_size;
 	private int n_exceptions;
 	private float p_value_cutoff;
@@ -135,6 +136,7 @@ public class Config {
 				check_pause();
 				check_max_cpg_dist();
 				check_n_permutations_dmr();
+				check_n_random_regions();
 				check_w_size();
 				check_n_exceptions();
 				check_p_value_cutoff();
@@ -583,6 +585,15 @@ public class Config {
 		}
 	}
 	
+	public void check_n_random_regions(){
+		int value = 0;
+		String parameter = "n_random_regions";
+		value = check_positive_integer(parameter,true);
+		if(value>=1){
+			this.n_random_regions = value;
+		}
+	}
+	
 	public void check_w_size(){
 		int value = 0;
 		String parameter = "w_size";
@@ -803,6 +814,10 @@ public class Config {
 		return this.cell_composition;
 	}
 	
+	public void setCellComposition(boolean cell_composition){
+		this.cell_composition = cell_composition;
+	}
+	
 	public int getNPermutationsCpG(){
 		return this.n_permutations_cpg;
 	}
@@ -881,6 +896,10 @@ public class Config {
 	
 	public int getNPermutationsDmr(){
 		return this.n_permutations_dmr;
+	}
+	
+	public int getNRandomRegions(){
+		return this.n_random_regions;
 	}
 	
 	public int getWSize(){

@@ -99,7 +99,8 @@ public class ExecuteDMRFinderController {
 		this.mainController.setDMRs(dmrs);
 		
 		DMRScoring scoring = new DMRScoring(dmrs);
-		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l));
+		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l), mainController.dmrParametersController.getNRandomRegions());
+		System.out.println(mainController.dmrParametersController.getNRandomRegions());
 		
 		ArrayList<DMRDescription> dmrDescriptions = new ArrayList<>();
 

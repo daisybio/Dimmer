@@ -9,7 +9,7 @@ public class DataExecutor implements Runnable{
 	}
 
 	@Override
-	public void run() {
+	public void run(){
 		try{
 			rawDataLoader.loadData();
 		}

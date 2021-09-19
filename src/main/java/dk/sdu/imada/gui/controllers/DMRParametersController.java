@@ -27,7 +27,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
 public class DMRParametersController {
-
+	
+	@FXML TextField nRandomRegions;
 	@FXML TextField p0Cutoff;
 	@FXML TextField numPermutations;
 	@FXML TextField windowSize;
@@ -97,6 +98,13 @@ public class DMRParametersController {
 		}
 
 		if (checkIntegerFormat(numPermutations.getText())) {
+			condition&=true;
+		}else {
+			condition&=false;
+			FXPopOutMsg.showWarning("You need a integer numerical value > 0 for permutations");
+		}
+		
+		if (checkIntegerFormat(nRandomRegions.getText())) {
 			condition&=true;
 		}else {
 			condition&=false;
@@ -229,6 +237,10 @@ public class DMRParametersController {
 
 	public Integer getNumPermutations() {
 		return Integer.parseInt(numPermutations.getText());
+	}
+	
+	public Integer getNRandomRegions(){
+		return Integer.parseInt(nRandomRegions.getText());
 	}
 
 	public Integer getNumException() {

@@ -77,7 +77,11 @@ public class ScatterPlot {
 		domainAxis.setAutoRangeIncludesZero(false);
 
 		Function2D function2d = new LineFunction2D(0, 1);
-		XYDataset line = DatasetUtilities.sampleFunction2D(function2d, 0, dataset.maxX, 2, "");
+		double maxX = dataset.maxX;
+		if(maxX==0){
+			maxX=0.1;
+		}
+		XYDataset line = DatasetUtilities.sampleFunction2D(function2d, 0, maxX, 2, "");
 		XYLineAndShapeRenderer lineRenderer = new XYLineAndShapeRenderer(true, false);
 		
 		lineRenderer.setSeriesPaint(0, Color.black);

@@ -8,7 +8,7 @@ import dk.sdu.imada.jlumina.core.primitives.CpG;
 public abstract class AbstractManifest {
 	String inputFile;
 	InputStream inputStream;
-	CpG [] cpgList;
+	CpG[] cpgList;
 	boolean done;
 	int progress;
 	

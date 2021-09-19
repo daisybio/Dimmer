@@ -15,7 +15,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.google.common.io.ByteStreams;
 
 import au.com.bytecode.opencsv.CSVReader;
-import dk.sdu.imada.gui.controllers.FXPopOutMsg;
 import dk.sdu.imada.jlumina.core.io.Read450KSheet;
 import dk.sdu.imada.jlumina.core.io.ReadBetaMatrix;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
@@ -29,15 +28,11 @@ import dk.sdu.imada.jlumina.core.statistics.Normalization;
 import dk.sdu.imada.jlumina.core.statistics.QuantileNormalization;
 import dk.sdu.imada.jlumina.core.util.AbstractQualityControl;
 import dk.sdu.imada.jlumina.core.util.CCFileCheck;
+import dk.sdu.imada.jlumina.core.util.CovLoader;
 import dk.sdu.imada.jlumina.core.util.DataExecutor;
 import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.core.util.QualityControlImpl;
 import dk.sdu.imada.jlumina.core.util.RawDataLoader;
-import javafx.application.Platform;
-
-
-
-
 
 public class ConsoleInputController {
 	
@@ -54,6 +49,9 @@ public class ConsoleInputController {
 	boolean hasGenderID = false;
 	
 	boolean usePairID = false;
+	
+	boolean bisulfite = false;
+	boolean bisulfite_error = false;
 	
 	ArrayList<String> labelsList;
 
@@ -99,12 +97,19 @@ public class ConsoleInputController {
 					setMaps(f.getAbsolutePath());
 					setLabelsList(f.getAbsolutePath());	
 					//only relevant for idat input
-					if(!config.useBetaInput()){
+					if(!config.useBetaInput() && !bisulfite){
 						warning(f.getParentFile().getAbsolutePath()+"/");
+					}
+					else if(bisulfite){
+						CovLoader covLoader = new CovLoader(f.getAbsolutePath());
+						if(!covLoader.quickCheck()){
+							System.out.println(Util.errorLog(covLoader.getErrors()));
+							bisulfite_error = true;
+						}
 					}
 					checkVariables();
 				}else {
-					System.out.println("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
+					System.out.println("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position or " + Variables.BISULFITE_SAMPLE+" for bisulfite sequencing input.");
 				}
 			}
 		} catch (IOException e) {
@@ -173,7 +178,7 @@ public class ConsoleInputController {
 	
 	boolean missingMandatoryColumns;
 	private boolean checkMandatoryColumns(String path) throws IOException {
-
+		
 		missingMandatoryColumns = false;
 		int count = 0;
 
@@ -196,10 +201,14 @@ public class ConsoleInputController {
 			if (cols.equals("Gender_ID")) {
 				hasGenderID = true;
 			}
+			
+			if (cols.equals(Variables.BISULFITE_SAMPLE)){
+				this.bisulfite = true;
+			}
 		}
 
-		missingMandatoryColumns = count<2;	
-		return count==2;
+		missingMandatoryColumns = (count<2) && !this.bisulfite;	
+		return (count==2) ^ this.bisulfite;
 	}
 	
 	private void setMaps(String path) {
@@ -243,7 +252,7 @@ public class ConsoleInputController {
 		// ParID mapp the pairs ...
 		for (String s : str) {
 			if (!s.equals("Sentrix_ID") && !s.equals("Sentrix_Position") 
-					  && !s.equals("Pair_ID") ) {
+					  && !s.equals("Pair_ID") &&!s.equals(Variables.BISULFITE_SAMPLE)) {
 				labelsList.add(s);
 			}
 		}
@@ -366,7 +375,7 @@ public class ConsoleInputController {
 	
 	public void pushContinue() {
 
-		if (fileProblem || duplication || missingFiles || missingMandatoryColumns  || missing_variable || missing_confounding_variable) {
+		if (fileProblem || duplication || missingFiles || missingMandatoryColumns  || missing_variable || missing_confounding_variable || bisulfite_error) {
 			System.out.println("Please, fix your sample annotation file");
 			System.exit(0);
 		}
@@ -475,14 +484,63 @@ public class ConsoleInputController {
 		if(config.useBetaInput()){
 			startBetaPreprocessing();
 		}
+		else if(bisulfite){
+			startBisulfitePreprocessing();
+		}
 		else{
 			startIdatPreprocessing();
 		}
 	}
 	
+	private void startBisulfitePreprocessing(){
+
+		CovLoader covLoader = new CovLoader(this.config.getAnnotationPath());
+		try{
+			
+			covLoader.load(this.config.getThreads());
+			
+		}catch(OutOfMemoryError e){
+			System.out.println("Memory ram problem. "
+					+ "Increase your java heap space with the parameters -Xmx and Xms");
+			System.exit(1);
+		}
+		
+		if(!covLoader.check()){
+			System.out.println(covLoader.errorLog());
+			System.exit(0);
+		}
+		else{
+			mainController.setBeta(covLoader.getBeta());
+			mainController.setManifest(covLoader.getManifest());
+			
+			if(config.getBackgroundCorrection()){
+				System.out.println("Background correction isn't supported for bisulfite sequencing data");
+			}
+			if(config.getProbeFiltering()){
+				System.out.println("Probe filtering isn't supported for bisulfite sequencing data");
+			}
+			if(config.getCellComposition()){
+				config.setCellComposition(false);
+				System.out.println("Cell composition estimation isn't supported for bisulfite sequencing data");
+			}
+			if(covLoader.hasWarnings()){
+				System.out.println(covLoader.warningLog());
+			}
+		}
+		
+	}
+	
 	private void startBetaPreprocessing(){
 		ReadBetaMatrix betaReader = new ReadBetaMatrix(config.getBetaPath());
-		betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());
+		
+		try{
+			betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());
+		}catch(OutOfMemoryError e){
+			System.out.println("Memory ram problem. "
+					+ "Increase your java heap space with the parameters -Xmx and Xms");
+			System.exit(1);
+		}
+		
 		if(!betaReader.check()){
 			System.out.println(betaReader.errorLog());
 			System.exit(0);

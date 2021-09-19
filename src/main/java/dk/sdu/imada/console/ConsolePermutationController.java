@@ -84,7 +84,7 @@ public class ConsolePermutationController {
 				splitPoint = gr.getSplitPoint();
 				System.out.println(gr.log());
 			}else{
-				gr = new Grouping(columnMap.get("Pair_ID"));
+				gr = new Grouping(columnMap.get(Variables.PAIR_ID));
 				originalIndex = gr.pairedIndices(columnMap.get(config.getVariable()));
 				splitPoint = mainController.getBeta()[0].length/2;
 				System.out.println(gr.log());

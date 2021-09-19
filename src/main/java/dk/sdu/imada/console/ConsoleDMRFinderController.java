@@ -62,7 +62,7 @@ public class ConsoleDMRFinderController {
 		this.mainController.setDMRs(dmrs);
 		
 		DMRScoring scoring = new DMRScoring(dmrs);
-		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l));
+		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l), config.getNRandomRegions());
 		
 		ArrayList<DMRDescription> dmrDescriptions = new ArrayList<>();
 

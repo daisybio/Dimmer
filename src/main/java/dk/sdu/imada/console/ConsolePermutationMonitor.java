@@ -24,6 +24,7 @@ import dk.sdu.imada.gui.plots.XYData;
 import dk.sdu.imada.gui.plots.XYLogData;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
+import dk.sdu.imada.jlumina.core.statistics.BenjaminiHochberg;
 import dk.sdu.imada.jlumina.core.util.MatrixUtil;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 
@@ -59,7 +60,7 @@ public class ConsolePermutationMonitor implements Runnable{
 	
 
 		float empiricalPvalues [] = getEmpiricalPvalues();
-		float fdrPvalues[] = getFdrPvalues();
+		float fdrPvalues[] = BenjaminiHochberg.adjustPValues(mainController.getOriginalPvalues());
 		float fwerPvalues[] = getFwerPvalues();
 		float stepDownMinPvalues[] = getStepDownMinPvalues();
 
@@ -136,21 +137,6 @@ public class ConsolePermutationMonitor implements Runnable{
 		return empiricalPvalue;
 	}
 
-	private float[] getFdrPvalues() {
-
-		float fdrPvalues[] = new float[mainController.getBeta().length];
-
-		for (CpGStatistics s : permutations) {
-			for (int i = 0; i < fdrPvalues.length; i++) {
-				fdrPvalues[i]+= s.getFdrCounter()[i];
-			}
-		}
-
-		for (int i = 0; i < fdrPvalues.length; i++) {
-			fdrPvalues[i] = fdrPvalues[i]/((mainController.getConfig().getNPermutationsCpG() * fdrPvalues.length));
-		}
-		return fdrPvalues;
-	}
 
 	private float[] getFwerPvalues() {
 
@@ -163,7 +149,7 @@ public class ConsolePermutationMonitor implements Runnable{
 		}
 
 		for (int i = 0; i < maxStatistics.length; i++) {
-			maxStatistics[i] = maxStatistics[i]/(mainController.getConfig().getNPermutationsCpG());
+			maxStatistics[i] = (maxStatistics[i] + 1 )/(mainController.getConfig().getNPermutationsCpG() + 1);
 		}
 
 		return maxStatistics;

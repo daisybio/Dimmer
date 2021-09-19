@@ -40,7 +40,7 @@ public class ReadBetaMatrix extends DataProgress{
 	/**
 	 * reads the beta matrix file, specified in the constructor
 	 */
-	public void read() throws OutOfMemoryError{
+	private void read() throws OutOfMemoryError{
 		int counter = 0;
 		try{
 			
@@ -120,124 +120,126 @@ public class ReadBetaMatrix extends DataProgress{
 	 */
 	public void initBetaMatrix(String[] sentrixIds, String[] sentrixPositions, String chipType) throws OutOfMemoryError{
 		
-		this.setMaxSteps(4);
-		setMsg("Checking header...");
-		int p = 0;
-		setProgress(p++);
-		
-		System.out.println("Reading beta-matrix input...");
-		
-		if(!checkHeader(sentrixIds,sentrixPositions)){
-			this.setDone(true);
-			return;
-		}
-		setMsg("Reading matrix...");
-		setProgress(p++);
-		//read data in (if not already the case)
-		if(this.cpgMap==null){
-			read();
-		}
-		
-		//check for errors so far
-		if(this.errors.size()!=0){
-			this.setDone(true);
-			return;
-		}
-		
-		setMsg("Map positions...");
-		setProgress(p++);
-		
-		//map the sample ids to the position in the sample annotation file
-		HashMap<String,Integer> positionMap = new HashMap<>();
-		for(int i = 0; i < sentrixIds.length; i++){
-			positionMap.put(sentrixIds[i]+"_"+sentrixPositions[i],i);
-		}
-		
-		//used to reorder the values if necessary
-		int[] positions = new int[sampleIds.length];
-		for(int i = 0; i < sampleIds.length; i++){
-			positions[i] = positionMap.get(this.sampleIds[i]);
-		}
-		
-		setMsg("Loading manifest...");
-		setProgress(p++);
-		//load manifest
-		String mf = null;
-		String mfProbes = null;
-		if (chipType.equals("infinium")) { 
-			System.out.println("Using infinium data type");
-			mf = Variables.RES_INFINIUM_MANIFEST;
-			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = Variables.INFINIUM_MANIFEST;
-			}
-		}else if (chipType.equals("epic")){
-			System.out.println("Using epic data type");
-			mf = Variables.RES_EPIC_MANIFEST;
-			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
-				mf = Variables.EPIC_MANIFEST;
-			}
-		}
-		else{
-			errors.add("Array type " + chipType +" is unknown");
-			this.setDone(true);
-			return;
-		}
-		ReadManifest manifest = new ReadManifest(mf);
-		manifest.loadManifest();
-		
-		setMsg("Creating beta-matrix...");
-		setProgress(p++);
-		
-		//Lists to store valid CpGs and beta rows from the matrix file
-		CpG[] cpgList = manifest.getCpgList();
-		ArrayList<CpG> newCpgList = new ArrayList<>();
-		ArrayList<float[]> betaList = new ArrayList<>();
-		
 
-		
-		int missing = 0;
-		for(CpG cpg : cpgList){
+			this.setMaxSteps(4);
+			setMsg("Checking header...");
+			int p = 0;
+			setProgress(p++);
 			
-			float[] betas = this.cpgMap.get(cpg.getCpgName());
+			System.out.println("Reading beta-matrix input...");
 			
-			if(betas!=null){
-				
-				float[] orderedBetas = new float[betas.length];
-				for(int i = 0; i < betas.length; i++){
-					orderedBetas[positions[i]] = betas[i];
+			if(!checkHeader(sentrixIds,sentrixPositions)){
+				this.setDone(true);
+				return;
+			}
+			setMsg("Reading matrix...");
+			setProgress(p++);
+			//read data in (if not already the case)
+			if(this.cpgMap==null){
+				read();
+			}
+			
+			//check for errors so far
+			if(this.errors.size()!=0){
+				this.setDone(true);
+				return;
+			}
+			
+			setMsg("Map positions...");
+			setProgress(p++);
+			
+			//map the sample ids to the position in the sample annotation file
+			HashMap<String,Integer> positionMap = new HashMap<>();
+			for(int i = 0; i < sentrixIds.length; i++){
+				positionMap.put(sentrixIds[i]+"_"+sentrixPositions[i],i);
+			}
+			
+			//used to reorder the values if necessary
+			int[] positions = new int[sampleIds.length];
+			for(int i = 0; i < sampleIds.length; i++){
+				positions[i] = positionMap.get(this.sampleIds[i]);
+			}
+			
+			setMsg("Loading manifest...");
+			setProgress(p++);
+			//load manifest
+			String mf = null;
+			String mfProbes = null;
+			if (chipType.equals("infinium")) { 
+				System.out.println("Using infinium data type");
+				mf = Variables.RES_INFINIUM_MANIFEST;
+				if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
+					mf = Variables.INFINIUM_MANIFEST;
 				}
-				betaList.add(orderedBetas);
-				newCpgList.add(cpg);
+			}else if (chipType.equals("epic")){
+				System.out.println("Using epic data type");
+				mf = Variables.RES_EPIC_MANIFEST;
+				if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
+					mf = Variables.EPIC_MANIFEST;
+				}
 			}
 			else{
-				missing++;
+				errors.add("Array type " + chipType +" is unknown");
+				this.setDone(true);
+				return;
 			}
-		}
-		
-		//create beta-matrix
-		float[][] beta = new float[betaList.size()][];
-		for(int i = 0; i < betaList.size(); i++){
-			beta[i] = betaList.get(i);
-		}
-		
-		//check if some ids weren't in the manifest file
-		int notInManifest =   missing + cpgMap.keySet().size() - cpgList.length;
-		if(notInManifest != 0){
-			warnings.add(notInManifest + " CpG ids from the beta-matrix file weren't in the manifest");
-		}
-		
-		if(missing>0){
-			warnings.add(missing + " CpG ids from the manifest weren't in the beta-matrix file");
-		}
+			ReadManifest manifest = new ReadManifest(mf);
+			manifest.loadManifest();
+			
+			setMsg("Creating beta-matrix...");
+			setProgress(p++);
+			
+			//Lists to store valid CpGs and beta rows from the matrix file
+			CpG[] cpgList = manifest.getCpgList();
+			ArrayList<CpG> newCpgList = new ArrayList<>();
+			ArrayList<float[]> betaList = new ArrayList<>();
+			
+	
+			
+			int missing = 0;
+			for(CpG cpg : cpgList){
+				
+				float[] betas = this.cpgMap.get(cpg.getCpgName());
+				
+				if(betas!=null){
+					
+					float[] orderedBetas = new float[betas.length];
+					for(int i = 0; i < betas.length; i++){
+						orderedBetas[positions[i]] = betas[i];
+					}
+					betaList.add(orderedBetas);
+					newCpgList.add(cpg);
+				}
+				else{
+					missing++;
+				}
+			}
+			
+			//create beta-matrix
+			float[][] beta = new float[betaList.size()][];
+			for(int i = 0; i < betaList.size(); i++){
+				beta[i] = betaList.get(i);
+			}
+			
+			//check if some ids weren't in the manifest file
+			int notInManifest =   missing + cpgMap.keySet().size() - cpgList.length;
+			if(notInManifest != 0){
+				warnings.add(notInManifest + " CpG ids from the beta-matrix file weren't in the manifest");
+			}
+			
+			if(missing>0){
+				warnings.add(missing + " CpG ids from the manifest weren't in the beta-matrix file");
+			}
+	
+			manifest.setCpGList(newCpgList.toArray(new CpG[newCpgList.size()]));
+			
+			this.beta = beta;
+			this.manifest = manifest;
+			
+			System.gc();
+			setProgress(p++);
+			this.setDone(true);
 
-		manifest.setCpGList(newCpgList.toArray(new CpG[newCpgList.size()]));
-		
-		this.beta = beta;
-		this.manifest = manifest;
-		
-		System.gc();
-		setProgress(p++);
-		this.setDone(true);
 
 	}
 	

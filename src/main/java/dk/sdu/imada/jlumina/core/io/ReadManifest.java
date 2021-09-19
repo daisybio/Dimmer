@@ -109,6 +109,10 @@ public class ReadManifest extends AbstractManifest {
 			System.out.println("Position column isn't numeric!");
 			return false;
 		}
+		catch(IndexOutOfBoundsException e){
+			System.out.println("Data array has wrong dimensions!");
+			return false;
+		}
 		done = true;
 		return true;
 	}

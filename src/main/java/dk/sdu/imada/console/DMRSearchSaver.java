@@ -22,8 +22,6 @@ import dk.sdu.imada.gui.plots.HistogramScoreDistribution;
 import dk.sdu.imada.jlumina.search.primitives.DMR;
 import dk.sdu.imada.jlumina.search.primitives.DMRDescription;
 import dk.sdu.imada.jlumina.search.primitives.DMRPermutationSummary;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 
 
 
@@ -251,7 +249,6 @@ public class DMRSearchSaver {
 
 		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", 11, java.awt.Color.BLUE, 0, 1);
 		JFreeChart chart = histogram.getChart();
-		Image mini = SwingFXUtils.toFXImage(chart.createBufferedImage(600, 400), null);
 		
 		this.dmrPValueDistribution = chart;
 

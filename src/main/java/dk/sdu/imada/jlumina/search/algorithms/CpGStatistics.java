@@ -22,7 +22,6 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	StatisticalEstimator statisticalEstimator;
 
 	int empiricalCounter[];
-	int fdrCounter[];
 	int fwerCounter[];
 	int stepDownMinPCounter[];
 
@@ -48,7 +47,6 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		float pvalues[] = new float[beta.length];
 
 		empiricalCounter = new int[beta.length];
-		fdrCounter = new int[beta.length];
 		fwerCounter = new int[beta.length];
 		stepDownMinPCounter = new int[beta.length];
 
@@ -75,7 +73,6 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			countEmpirical(pvalues);
 			countStepDownMinP(sortedOriginalPvalues, pvalues.clone());
 			Arrays.sort(pvalues);
-			countFdr(pvalues);
 			countFwerCounter(pvalues[0]);
 
 			setProgress(np, 0.05);
@@ -118,12 +115,6 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			if (newPvalues[i] <= pvalues[i]) {
 				empiricalCounter[i]++;
 			}
-		}
-	}
-
-	private void countFdr(float sortedPvalues[]) {
-		for (int i = 0; i < pvalues.length; i++) {
-			fdrCounter[i]+=countPvalues(sortedPvalues, pvalues[i]);
 		}
 	}
 
@@ -174,9 +165,6 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		return empiricalCounter;
 	}
 
-	public int[] getFdrCounter() {
-		return fdrCounter;
-	}
 
 	public int[] getFwerCounter() {
 		return fwerCounter;
