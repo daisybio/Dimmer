@@ -14,9 +14,9 @@ public class ConfigReader {
 	 * @return a Config object
 	 */
 	
-	public Config read(String path){
+	public Config read(String[] args){
 		
-		path = path.replace('\\', '/');
+		String path = args[0].replace('\\', '/');
 		HashMap<String,String> parameters = new HashMap<>();
 		
 		try {
@@ -42,7 +42,25 @@ public class ConfigReader {
 			System.out.println("The configuration file " + path +" does not exist or has no reading permission!");
 			System.exit(0);
 		}
+		//overwrites config file settings with console arguments (if given)
+		addConsoleParameters(args,parameters);
 		
 		return new Config(parameters);
 	}
+	
+	public void addConsoleParameters(String[] args,HashMap<String,String> map){
+		if(args.length > 1){
+			for(int i = 1; i < args.length; i++){
+				if(args[i].startsWith("--")){
+					if((i+1) >= args.length || args[i+1].startsWith("--")){
+						System.out.println("Argument " + args[i] + " has no value");
+					}else{
+						map.put(args[i].replace("--", ""),args[i+1]);
+						i++;
+					}
+				}
+			}
+		}
+	}
+	
 }

@@ -97,6 +97,30 @@ public class Util {
 		return builder.toString();
 	}
 	
+	public static long getMaxMemory() {
+	    return Runtime.getRuntime().maxMemory();
+	}
+
+	public static long getUsedMemory() {
+	    return getMaxMemory() - getFreeMemory();
+	}
+
+	public static long getTotalMemory() {
+	    return Runtime.getRuntime().totalMemory();
+	}
+
+	public static long getFreeMemory() {
+	    return Runtime.getRuntime().freeMemory();
+	}
+	
+	public static String memoryLog(){
+		long max = getMaxMemory();
+		long used = getUsedMemory();
+		long total = getTotalMemory();
+		long free = getFreeMemory();
+		return "Memory in GB:\nMax: " + (max/(double)1000000000) + " Used: " + (used/(double)1000000000) + " Total: " + (total/(double)1000000000) + " Free: " + (free/(double)1000000000);
+	}
+	
 
 	
 	//main for testing

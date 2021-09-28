@@ -59,6 +59,7 @@ public class Config {
 	private String p_value_type;
 	private boolean save_search_plots;
 	private boolean save_search_tables;
+	private boolean save_dmr_permu_plots;
 	
 	
 	public Config(HashMap<String,String> parameters){
@@ -143,6 +144,7 @@ public class Config {
 				check_p_value_type();
 				check_save_search_plots();
 				check_save_search_tables();
+				check_save_dmr_permu_plots();
 			}
 
 			
@@ -672,6 +674,14 @@ public class Config {
 		}
 	}
 	
+	public void check_save_dmr_permu_plots(){
+		String parameter = "save_dmr_permu_plots";
+		String value = check_boolean(parameter);
+		if(value!=null){
+			this.save_dmr_permu_plots = Boolean.parseBoolean(value);
+		}
+	}
+	
 	private void check_annotation_path(){
 		String value = null;
 		String parameter = "annotation_path";
@@ -926,6 +936,10 @@ public class Config {
 		return this.save_search_tables;
 	}
 	
+	public boolean getSaveDmrPermuPlots(){
+		return this.save_dmr_permu_plots;
+	}
+	
 	public ArrayList<String> getMalformattedValues(){
 		return this.malformatted_values;
 	}
@@ -941,6 +955,8 @@ public class Config {
 	public String getArrayType(){
 		return this.array_type;
 	}
+	
+	
 	public boolean doDMRSearch(){
 		return this.dmr_search;
 	}

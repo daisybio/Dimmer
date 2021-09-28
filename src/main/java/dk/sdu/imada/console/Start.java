@@ -12,7 +12,7 @@ public class Start {
 		// else calls the console interface
 		else{
 			ConfigReader configReader= new ConfigReader();
-			Config config = configReader.read(args[0]);
+			Config config = configReader.read(args);
 			ConsoleMainController mainController = new ConsoleMainController(config);
 			mainController.start();
 		}

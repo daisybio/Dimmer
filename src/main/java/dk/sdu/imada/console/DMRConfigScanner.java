@@ -53,6 +53,7 @@ public class DMRConfigScanner {
 		builder.append("p_value_type: " + config.getPValueType()+"\n");
 		builder.append("save_search_plots: " + config.getSaveSearchPlots()+"\n");
 		builder.append("save_search_tables: " + config.getSaveSearchTables()+"\n");
+		builder.append("save_dmr_permu_plots: " + config.getSaveDmrPermuPlots()+"\n");
 		return builder.toString();
 	}
 	
@@ -171,6 +172,9 @@ public class DMRConfigScanner {
 			case "save_search_tables":
 				changeSaveSearchTables(value);
 				break;
+			case "save_dmr_permu_plots":
+				changeSaveDmrPermuPlots(value);
+				break;
 			default:
 				System.out.println("\""+field+"\" is no valid parameter or command name. Please try again with a different input.");
 				return;
@@ -244,6 +248,12 @@ public class DMRConfigScanner {
 		String field = "save_search_tables";
 		config.put(field, value);
 		config.check_save_search_tables();
+	}
+	
+	public void changeSaveDmrPermuPlots(String value){
+		String field = "save_dmr_permu_plots";
+		config.put(field, value);
+		config.check_save_dmr_permu_plots();
 	}
 
 }

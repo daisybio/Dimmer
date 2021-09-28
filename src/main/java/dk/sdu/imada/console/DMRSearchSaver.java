@@ -56,7 +56,15 @@ public class DMRSearchSaver {
 			savePlots(dir);
 		}
 		else{
-			System.out.println("No DMR search plots will be saved");
+			System.out.println("No DMR search plots are saved");
+		}
+		
+		if(config.getSaveDmrPermuPlots()){
+			System.out.println("Saving DMR permutation plots in " + datetime);
+			savePermuPlots(dir);
+		}
+		else{
+			System.out.println("No DMR permutation plots are saved");
 		}
 		
 		if(config.getSaveSearchTables()){
@@ -64,7 +72,7 @@ public class DMRSearchSaver {
 			saveTables(dir);
 		}
 		else{
-			System.out.println("No DMR search tables will be saved");
+			System.out.println("No DMR search tables are saved");
 		}
 
 		
@@ -74,16 +82,10 @@ public class DMRSearchSaver {
 	
 	public void savePlots(String dir){
 		
-		setPvaluesChart();
 		setDMRScoreDistribution();
 		setDMRPValueDistribution();
 		
-		//save p-value charts
-		for (int selectedKey :mainController.getDMRPermutationMap().keySet()){
-			JFreeChart chart = this.pvaluesChart.get(selectedKey);
-			BufferedImage img = chart.createBufferedImage(1200, 800);
-			exportChart2(img, dir+"permutations_cpg_"+selectedKey);
-		}
+
 		
 		//save permuted score dist
 		JFreeChart chartScore = this.dmrScoreDistribution;
@@ -93,6 +95,16 @@ public class DMRSearchSaver {
 		JFreeChart chartPValue= this.dmrPValueDistribution;
 		BufferedImage imgPValue = chartPValue.createBufferedImage(1200, 600);
 		exportChart2(imgPValue, dir+"p-value_distribution");
+	}
+	
+	public void savePermuPlots(String dir){
+		setPvaluesChart();
+		//save p-value charts
+		for (int selectedKey :mainController.getDMRPermutationMap().keySet()){
+			JFreeChart chart = this.pvaluesChart.get(selectedKey);
+			BufferedImage img = chart.createBufferedImage(1200, 800);
+			exportChart2(img, dir+"permutations_cpg_"+selectedKey);
+		}
 	}
 	 
 	public void saveTables(String dir){

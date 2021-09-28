@@ -13,10 +13,13 @@ public class ReadCov implements Runnable{
 	private String sample;
 	private HashMap<String,HashMap<Integer,int[]>> map; //used for data storage (chr -> positions -> counts)
 	private int n_CpGs;
+	private int n_removed_CpGs;
 	
 	private ArrayList<String> errors;
 	private ArrayList<String> warnings;
 	private int max_errors = 10; //maximum number of errors before quitting the reading process
+	private int minCount = 10; //minimum number of reads mapped to each position
+
 	
 	
 	public ReadCov(String path){
@@ -26,6 +29,12 @@ public class ReadCov implements Runnable{
 		this.map = new HashMap<>();
 		this.sample = this.path.split("/")[this.path.split("/").length-1];
 		this.n_CpGs = 0;
+		this.n_removed_CpGs = 0;
+	}
+	
+	public ReadCov(String path, int minCount){
+		this(path);
+		this.minCount = minCount;
 	}
 	
 	/**
@@ -52,6 +61,7 @@ public class ReadCov implements Runnable{
 			errors.add("Number format error in sample " + sample + " line " + 1);
 		}
 	}
+	
 	/**
 	 * read data, data gets stored in a hashmap (chr -> positions -> counts)
 	 * counts are stored in an int array -> methylated counts in first, unmethylated counts in second position
@@ -72,25 +82,31 @@ public class ReadCov implements Runnable{
 					String[] splitted = line.split("\t");
 					
 					String chr = splitted[0];
+
 					int start = Integer.parseInt(splitted[1]);
 					int methylated = Integer.parseInt(splitted[4]);
 					int un_methylated = Integer.parseInt(splitted[5]);
 					
-					HashMap<Integer,int[]> chr_map = map.get(chr);
-					if(chr_map == null){
-						chr_map = new HashMap<Integer,int[]>();
-						map.put(chr, chr_map);
+					if(methylated+un_methylated >= minCount){
+						HashMap<Integer,int[]> chr_map = map.get(chr);
+						if(chr_map == null){
+							chr_map = new HashMap<Integer,int[]>();
+							map.put(chr, chr_map);
+						}
+						
+						int[] counts = chr_map.get(start);
+						if(counts != null){
+							warnings.add("Duplicate position " + chr + ":" + start + " in sample " +this.sample +" was overwritten.");
+							n_CpGs--;
+						}
+						counts = new int[] {methylated, un_methylated};
+						
+						chr_map.put(start,counts);
+						n_CpGs++;	
 					}
-					
-					int[] counts = chr_map.get(start);
-					if(counts != null){
-						warnings.add("Duplicate position " + chr + ":" + start + " in sample " +this.sample +" was overwritten.");
-						n_CpGs--;
-					}
-					counts = new int[] {methylated, un_methylated};
-					
-					chr_map.put(start,counts);
-					n_CpGs++;
+					else{
+						n_removed_CpGs++;
+					}	
 		
 				}
 				catch(NumberFormatException e){
@@ -111,6 +127,10 @@ public class ReadCov implements Runnable{
 				
 			}
 			br.close();
+			
+			if(n_removed_CpGs > 0){
+				warnings.add(n_removed_CpGs + " sites don't have enough mapped reads (<"+minCount+") and are removed");
+			}
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -151,7 +171,7 @@ public class ReadCov implements Runnable{
 	}
 	
 	public String toString(){
-		return this.sample + " Loaded CpGs: " + n_CpGs;
+		return this.sample + " Loaded CpGs: " + n_CpGs + " Removed CpGs: " + n_removed_CpGs;
 	}
 	
 	public void run() throws OutOfMemoryError{

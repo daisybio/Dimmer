@@ -1,8 +1,10 @@
 package dk.sdu.imada.jlumina.core.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,13 +52,14 @@ public class CovLoader extends DataProgress{
 	/**
 	 * loads .cov files specified by the constructor path
 	 * @param numThreads number of threads used for parallelization
+	 * @param minCount minimum reads mapped to a position
 	 */
-	public void load(int numThreads)  throws OutOfMemoryError{
+	public void load(int numThreads, int minCount)  throws OutOfMemoryError{
 		
 		this.numThreads = numThreads;
 		quickCheck(); //checks samples, sets samples_path variables
 		System.out.println("Reading data...");
-		readData(); //reads the data with multiple threads
+		readData(minCount); //reads the data with multiple threads
 		addReaderErrorsAndWarnings(); //Add reader errors and warnings to own list
 		if(!this.check()){ //stops if there are errors
 			return;
@@ -64,9 +67,20 @@ public class CovLoader extends DataProgress{
 		System.out.println("Merging and filtering...");
 		mergeData(); //retains only positions that are featured in all samples, creates manifest file and creates methylated/unmethylated matrices
 		//place for potential normalization work
-		System.out.println("Calculation beta values...");
+		System.out.println("Calculating beta values...");
 		initBeta(0); //creates the beta matrix, delets methylated and unmethylated matrices
 		System.out.println("Succesfully loaded " + this.manifest.getCpgList().length + " CpGs\n");
+	}
+	
+	/**
+	 * load function with a default minCount of 10
+	 * @param numThreads number of threads used for parallelization
+	 * @throws OutOfMemoryError
+	 */
+	
+	public void load(int numThreads)  throws OutOfMemoryError{
+		this.load(numThreads, 10);
+	
 	}
 	
 	/**
@@ -98,6 +112,51 @@ public class CovLoader extends DataProgress{
 		this.unmethylated = null;
 	}
 	
+/**
+ * same as initBeta but writes the methylation count matrices 
+ * @param offset
+ * @param path the directory path for the count matrices (has to end with "/")
+ * @throws OutOfMemoryError
+ */
+	
+private void initBetaWrite(double offset, String path) throws OutOfMemoryError{
+		try{
+	
+			BufferedWriter m = new BufferedWriter(new FileWriter(new File(path +"m.csv")));
+			BufferedWriter u = new BufferedWriter(new FileWriter(new File(path+"u.csv")));
+
+			CpG[] cpgs= this.manifest.getCpgList();
+			
+			if(this.methylated == null || this.unmethylated == null){
+				System.out.println("Data matrices missing!");
+				return;
+			}
+			
+			this.beta = new float[this.methylated.length][];
+			for(int i = 0; i < this.methylated.length; i++){
+				m.write(cpgs[i].getChromosome()+","+cpgs[i].getMapInfo());
+				u.write(cpgs[i].getChromosome()+","+cpgs[i].getMapInfo());
+				float[] cpg_beta = new float[this.methylated[i].length];
+				for(int j = 0; j < cpg_beta.length; j++){
+					cpg_beta[j] = (float) ( this.methylated[i][j] / (double) (this.methylated[i][j] + this.unmethylated[i][j] + offset));
+					m.write(","+this.methylated[i][j] );
+					u.write(","+this.unmethylated[i][j] );
+				}
+				m.write("\n");
+				u.write("\n");
+				this.methylated[i] = null;
+				this.unmethylated[i] = null;
+				
+				this.beta[i] = cpg_beta;
+			}
+			u.close();
+			m.close();
+			this.methylated = null;
+			this.unmethylated = null;
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * sorts out CpGs, that don't appear in all samples, creates a manifest and raw count matrices
 	 */
@@ -207,8 +266,9 @@ public class CovLoader extends DataProgress{
 	/**
 	 * reads the data specified in the annotation file (path variable in the constructor) with multiple threads
 	 * results get stored in hashmaps (chr -> position -> counts)
+	 * @param minCount minimum reads mapped to a position
 	 */
-	private void readData()  throws OutOfMemoryError {
+	private void readData(int minCount)  throws OutOfMemoryError {
 		
 		Queue<ReadCov> queue = new ConcurrentLinkedQueue<>(); // need to be read
 		LoadingQueue<ReadCov> loaded = new LoadingQueue<>(); // finished reading
@@ -216,7 +276,7 @@ public class CovLoader extends DataProgress{
 		
 		//create reader objects
 		for(String path : samples_path){
-			ReadCov reader = new ReadCov(path);
+			ReadCov reader = new ReadCov(path,minCount);
 			queue.add(reader);
 			reader_list.add(reader);
 		}

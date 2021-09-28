@@ -497,11 +497,10 @@ public class ConsoleInputController {
 		CovLoader covLoader = new CovLoader(this.config.getAnnotationPath());
 		try{
 			
-			covLoader.load(this.config.getThreads());
+			covLoader.load(this.config.getThreads(),10);
 			
 		}catch(OutOfMemoryError e){
-			System.out.println("Memory ram problem. "
-					+ "Increase your java heap space with the parameters -Xmx and Xms");
+			System.out.println(Messages.OUT_OF_MERMORY);
 			System.exit(1);
 		}
 		
@@ -536,8 +535,7 @@ public class ConsoleInputController {
 		try{
 			betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());
 		}catch(OutOfMemoryError e){
-			System.out.println("Memory ram problem. "
-					+ "Increase your java heap space with the parameters -Xmx and Xms");
+			System.out.println(Messages.OUT_OF_MERMORY);
 			System.exit(1);
 		}
 		
