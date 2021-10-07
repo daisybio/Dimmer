@@ -34,7 +34,33 @@ public class RegressionEstimator extends StatisticalEstimator {
 	@Override
 	public void setSignificance(double[] y) {
 		
-		mlr.newSampleData(y, x);
+		int counter = 0;
+		double[] y_mlr = y;
+		double[][] x_mlr = x;
+		
+		for(int i = 0; i < y.length; i++){
+			if(Double.isNaN(y[i])){
+				counter++;
+			}
+		}
+		
+		// remove samples if their y value is nan
+		if(counter > 0){
+			
+			y_mlr = new double[y.length - counter];
+			x_mlr = new double[y.length - counter][];
+			
+			int index = 0;
+			for(int i =  0; i < y.length; i++){
+				if(!Double.isNaN(y[i])){
+					y_mlr[index] = y[i];
+					x_mlr[index] = x[i];
+					index++;
+				}
+			}
+		}
+		
+		mlr.newSampleData(y_mlr, x_mlr);
 
 		float [] parameters = toFloat(mlr.estimateRegressionParameters());
 
@@ -42,7 +68,7 @@ public class RegressionEstimator extends StatisticalEstimator {
 
 		float[] pvalues = new float[parameters.length];
 
-		float degreesOfFreedom = x.length - parameters.length;
+		float degreesOfFreedom = x_mlr.length - parameters.length;
 
 		TDistribution tDistribution = new TDistribution(degreesOfFreedom);
 
@@ -57,6 +83,10 @@ public class RegressionEstimator extends StatisticalEstimator {
 
 		this.coefficients = parameters;
 		this.pvalue = pvalues[target];
+		
+		if (Double.isNaN(this.pvalue)) {
+			this.pvalue = 1.f;
+		}
 	}
 }
 

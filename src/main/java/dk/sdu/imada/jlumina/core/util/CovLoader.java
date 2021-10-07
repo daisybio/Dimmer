@@ -33,8 +33,6 @@ public class CovLoader extends DataProgress{
 	private ArrayList<ReadCov> reader_list;
 	
 	private ReadManifest manifest;
-	private int[][] methylated;
-	private int[][] unmethylated;
 	private float[][] beta;
 	
 	/**
@@ -54,7 +52,7 @@ public class CovLoader extends DataProgress{
 	 * @param numThreads number of threads used for parallelization
 	 * @param minCount minimum reads mapped to a position
 	 */
-	public void load(int numThreads, int minCount)  throws OutOfMemoryError{
+	public void load(int numThreads, int minCount, int missingValues)  throws OutOfMemoryError{
 		
 		this.numThreads = numThreads;
 		quickCheck(); //checks samples, sets samples_path variables
@@ -65,98 +63,77 @@ public class CovLoader extends DataProgress{
 			return;
 		}
 		System.out.println("Merging and filtering...");
-		mergeData(); //retains only positions that are featured in all samples, creates manifest file and creates methylated/unmethylated matrices
-		//place for potential normalization work
-		System.out.println("Calculating beta values...");
-		initBeta(0); //creates the beta matrix, delets methylated and unmethylated matrices
+		mergeData(missingValues); //retains only positions that are featured in all samples, creates manifest file and creates methylated/unmethylated matrices
+		System.out.println("Creating beta-matrix...");
+		initBeta();
 		System.out.println("Succesfully loaded " + this.manifest.getCpgList().length + " CpGs\n");
 	}
 	
 	/**
-	 * load function with a default minCount of 10
+	 * load function with a default minCount of 10, and 1 missing value
 	 * @param numThreads number of threads used for parallelization
 	 * @throws OutOfMemoryError
 	 */
 	
 	public void load(int numThreads)  throws OutOfMemoryError{
-		this.load(numThreads, 10);
+		this.load(numThreads, 10, 1);
 	
 	}
 	
 	/**
-	 * loads beta matrix from raw methylation counts, deletes raw counts
+	 * loads beta matrix
 	 * @param offset optional offset for the beta values
 	 */
 	
-	private void initBeta(double offset) throws OutOfMemoryError{
+	public void initBeta() throws OutOfMemoryError{
+		//create matrices for methylated and unmethylated counts, stored data in the ReadCov objects is deleted after every chromosome
+		CpG[] cpg_list = this.manifest.getCpgList();
+		this.beta = new float[cpg_list.length][];
+		String current_chr = null; //keeps track of current chromosome for data deletion
 		
-		if(this.methylated == null || this.unmethylated == null){
-			System.out.println("Data matrices missing!");
-			return;
-		}
-		
-		this.beta = new float[this.methylated.length][];
-		for(int i = 0; i < this.methylated.length; i++){
+		for(int i = 0; i < cpg_list.length; i++){
 			
-			float[] cpg_beta = new float[this.methylated[i].length];
-			for(int j = 0; j < cpg_beta.length; j++){
-				cpg_beta[j] = (float) ( this.methylated[i][j] / (double) (this.methylated[i][j] + this.unmethylated[i][j] + offset));
-			}
+			CpG cpg = cpg_list[i];
 			
-			this.methylated[i] = null;
-			this.unmethylated[i] = null;
-			
-			this.beta[i] = cpg_beta;
-		}
-		this.methylated = null;
-		this.unmethylated = null;
-	}
-	
-/**
- * same as initBeta but writes the methylation count matrices 
- * @param offset
- * @param path the directory path for the count matrices (has to end with "/")
- * @throws OutOfMemoryError
- */
-	
-private void initBetaWrite(double offset, String path) throws OutOfMemoryError{
-		try{
-	
-			BufferedWriter m = new BufferedWriter(new FileWriter(new File(path +"m.csv")));
-			BufferedWriter u = new BufferedWriter(new FileWriter(new File(path+"u.csv")));
-
-			CpG[] cpgs= this.manifest.getCpgList();
-			
-			if(this.methylated == null || this.unmethylated == null){
-				System.out.println("Data matrices missing!");
-				return;
-			}
-			
-			this.beta = new float[this.methylated.length][];
-			for(int i = 0; i < this.methylated.length; i++){
-				m.write(cpgs[i].getChromosome()+","+cpgs[i].getMapInfo());
-				u.write(cpgs[i].getChromosome()+","+cpgs[i].getMapInfo());
-				float[] cpg_beta = new float[this.methylated[i].length];
-				for(int j = 0; j < cpg_beta.length; j++){
-					cpg_beta[j] = (float) ( this.methylated[i][j] / (double) (this.methylated[i][j] + this.unmethylated[i][j] + offset));
-					m.write(","+this.methylated[i][j] );
-					u.write(","+this.unmethylated[i][j] );
+			//delete data if chromosome changes
+			if(cpg.getChromosome().equals(current_chr)){ 
+				for(ReadCov reader: this.reader_list){
+					reader.getMap().remove(current_chr);
 				}
-				m.write("\n");
-				u.write("\n");
-				this.methylated[i] = null;
-				this.unmethylated[i] = null;
-				
-				this.beta[i] = cpg_beta;
+				current_chr = cpg.getChromosome();
 			}
-			u.close();
-			m.close();
-			this.methylated = null;
-			this.unmethylated = null;
-		}catch(IOException e){
-			e.printStackTrace();
+			
+			//init new row
+			float[] beta_row = new float[reader_list.size()];
+			
+			//iterate through readers to fill rows
+			for(int j = 0; j < reader_list.size(); j++){
+				HashMap<Integer,Float> pos_map = reader_list.get(j).getMap().get(cpg.getChromosome());
+				if(pos_map!=null){
+					Float beta_value = pos_map.getOrDefault(cpg.getMapInfo(),(float)-1);
+					if(beta_value>=0){
+						beta_row[j] = beta_value;
+					}
+					else{
+						beta_row[j] = Float.NaN;
+					}			
+				}
+				else{
+					beta_row[j] = Float.NaN;
+				}
+			}
+			
+			//add rows
+			this.beta[i] = beta_row;
+		}
+		
+		//delete data maps of the readers
+		for(ReadCov reader: this.reader_list){
+			reader.setMap(null);
 		}
 	}
+	
+
 	/**
 	 * sorts out CpGs, that don't appear in all samples, creates a manifest and raw count matrices
 	 */
@@ -168,7 +145,7 @@ private void initBetaWrite(double offset, String path) throws OutOfMemoryError{
 		
 		for(ReadCov reader: reader_list){
 			
-			HashMap<String,HashMap<Integer,int[]>> reader_map = reader.getMap();
+			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
 			
 			if(retained_chrs == null){
 				retained_chrs = new HashSet<>();
@@ -185,7 +162,7 @@ private void initBetaWrite(double offset, String path) throws OutOfMemoryError{
 		
 		for(ReadCov reader : reader_list){
 			
-			HashMap<String,HashMap<Integer,int[]>> reader_map = reader.getMap();
+			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
 			
 			if(intersect_map == null){
 				intersect_map = new HashMap<>();
@@ -224,45 +201,73 @@ private void initBetaWrite(double offset, String path) throws OutOfMemoryError{
 		}
 		manifest.setCpGList(cpg_list);
 		
-		//create matrices for methylated and unmethylated counts, stored data in the ReadCov objects is deleted after every chromosome
-		this.methylated = new int[cpg_list.length][];
-		this.unmethylated = new int[cpg_list.length][];
-		String current_chr = null; //keeps track of current chromosome for data deletion
-		
-		for(i = 0; i < cpg_list.length; i++){
-			
-			CpG cpg = cpg_list[i];
-			
-			//delete data if chromosome changes
-			if(cpg.getChromosome().equals(current_chr)){ 
-				for(ReadCov reader: this.reader_list){
-					reader.getMap().remove(current_chr);
-				}
-				current_chr = cpg.getChromosome();
-			}
-			
-			//init new rows 
-			int[] cpg_methylated = new int[reader_list.size()];
-			int[] cpg_unmethylated = new int[reader_list.size()];
-			
-			//iterate through readers to fill rows
-			for(int j = 0; j < reader_list.size(); j++){
-				int[] counts = reader_list.get(j).getMap().get(cpg.getChromosome()).get(cpg.getMapInfo());
-				cpg_methylated[j] = counts[0];
-				cpg_unmethylated[j] = counts[1];
-			}
-			
-			//add rows
-			this.methylated[i] = cpg_methylated;
-			this.unmethylated[i] = cpg_unmethylated;
-		}
-		
-		//delete data maps of the readers
-		for(ReadCov reader: this.reader_list){
-			reader.setMap(null);
-		}
 	}
 	
+	private void mergeData(int missingValues)  throws OutOfMemoryError {
+		
+		//get all chromosomes
+		
+		HashSet<String> all_chrs = new HashSet<>();
+		
+		for(ReadCov reader: reader_list){
+			
+			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
+			
+			all_chrs.addAll(reader_map.keySet());
+		}
+			
+		//get all positions
+		HashMap<String,HashMap<Integer,Short>> full_map = new HashMap<>();
+		for(String chr : all_chrs){
+			full_map.put(chr, new HashMap<Integer,Short>());
+		}
+		
+		for(ReadCov reader : reader_list){
+			
+			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
+			
+			for(String chr : all_chrs){
+				HashMap<Integer,Short> count_map = full_map.get(chr);
+				HashMap<Integer,Float> pos_map = reader_map.get(chr);
+				
+				if(pos_map!=null){
+					for(int pos : reader_map.get(chr).keySet()){
+						count_map.put(pos, (short) (count_map.getOrDefault(pos, (short) 0) +  1)); //count appearance
+					}
+				}
+			}
+		}
+		
+		//filter
+		int min_count = reader_list.size() - missingValues;
+		for(String chr: all_chrs){
+			HashMap<Integer,Short> count_map = full_map.get(chr);
+			count_map.entrySet().removeIf(
+                entry -> (entry.getValue()) < min_count);
+		}
+		
+		//init manifest 
+		this.manifest = new ReadManifest();
+		int n_CpGs = 0; //count CpGs to get size of the cpg list
+		for(String chr: all_chrs){
+			n_CpGs += full_map.get(chr).size();
+		}
+		CpG[] cpg_list = new CpG[n_CpGs];
+		
+
+		int i = 0; 	//fill cpg_list
+		for(String chr: all_chrs){
+			ArrayList<Integer> position_list = new ArrayList<>(full_map.get(chr).keySet());
+			full_map.remove(chr);
+			Collections.sort(position_list); //sorts the positions, in case they aren't sorted in the input files
+			for(int position : position_list){
+				cpg_list[i] = new CpG(chr,position);
+				i++;
+			}
+		}
+		manifest.setCpGList(cpg_list);
+		
+	}
 	/**
 	 * reads the data specified in the annotation file (path variable in the constructor) with multiple threads
 	 * results get stored in hashmaps (chr -> position -> counts)

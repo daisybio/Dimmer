@@ -1,5 +1,9 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
+
 /**
  * @author diogo
  * 
@@ -12,6 +16,8 @@ public abstract class AbstractTTestEstimator extends StatisticalEstimator {
 	boolean twoSided;
 	float divide = 2.f;
 	int splitPoint;
+	double[] sample1;
+	double[] sample2;
 	
 	/**
 	 * Constructor this constructor set the division of the p-value in case one-sided. One has to check the 
@@ -59,4 +65,49 @@ public abstract class AbstractTTestEstimator extends StatisticalEstimator {
 	}
 	
 	public abstract float compute(double[] sample1, double[] sample2);
+	
+	@Override
+	public void setSignificance(double[] y) {
+		//double [] sample1 = Arrays.copyOfRange(y, 0, splitPoint);
+		//double [] sample2 = Arrays.copyOfRange(y, splitPoint, y.length);
+		//sample1 = StatisticsUtil.filterNaN(sample1);
+		//sample2 = StatisticsUtil.filterNaN(sample2);
+		setSamples(y);
+		setPvalue(compute(this.sample1, this.sample2));		
+	}
+	
+	public void setSamples(double[] y){
+		
+		int counter1 = 0;
+		int counter2 = 0;
+		
+		for(int i = 0; i < y.length; i++){
+			if(Double.isNaN(y[i])){
+				if(i<splitPoint){
+					counter1++;
+				}else{
+					counter2++;
+				}
+			}
+		}
+		
+		this.sample1 = new double[splitPoint - counter1];
+		this.sample2 = new double[y.length - splitPoint - counter2];
+		
+		int index = 0;
+		for(int i = 0; i < splitPoint; i++){
+			if(!Double.isNaN(y[i])){
+				sample1[index++] = y[i];
+			}
+		}
+		
+		index = 0;
+		for(int i = splitPoint; i < y.length; i++){
+			if(!Double.isNaN(y[i])){
+				sample2[index++] = y[i];
+			}
+		}
+	}
+	
+	
 }

@@ -1,5 +1,7 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
+import java.util.stream.DoubleStream;
+
 public class StatisticsUtil {
 	
 	/**
@@ -71,6 +73,15 @@ public class StatisticsUtil {
 	public static float pValueFromDistribution(float[] distribution, float value){
 		int index = largestSmallerElementIndex(distribution, value);
 		return ((float) distribution.length - (index+1) + 1) / (distribution.length + 1); 
+	}
+	/**
+	 * removes nans from a double array
+	 * @param input
+	 * @return
+	 */
+	
+	public static double[] filterNaN(double[] input){
+		return DoubleStream.of(input).filter(d -> !Double.isNaN(d)).toArray();
 	}
 	
 	

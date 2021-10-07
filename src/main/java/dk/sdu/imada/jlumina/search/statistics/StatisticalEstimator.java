@@ -81,4 +81,5 @@ public abstract class StatisticalEstimator {
 	}
 	
 	public abstract void setSignificance(double[]y);
+	
 }

@@ -496,8 +496,9 @@ public class ConsoleInputController {
 
 		CovLoader covLoader = new CovLoader(this.config.getAnnotationPath());
 		try{
-			
-			covLoader.load(this.config.getThreads(),10);
+			int minCount = 10;
+			int missingValues = 2;
+			covLoader.load(this.config.getThreads(),minCount,missingValues);
 			
 		}catch(OutOfMemoryError e){
 			System.out.println(Messages.OUT_OF_MERMORY);

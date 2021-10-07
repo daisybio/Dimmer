@@ -11,7 +11,7 @@ public class ReadCov implements Runnable{
 	
 	private String path;
 	private String sample;
-	private HashMap<String,HashMap<Integer,int[]>> map; //used for data storage (chr -> positions -> counts)
+	private HashMap<String,HashMap<Integer,Float>> map; //used for data storage (chr -> positions -> counts)
 	private int n_CpGs;
 	private int n_removed_CpGs;
 	
@@ -87,21 +87,20 @@ public class ReadCov implements Runnable{
 					int methylated = Integer.parseInt(splitted[4]);
 					int un_methylated = Integer.parseInt(splitted[5]);
 					
-					if(methylated+un_methylated >= minCount){
-						HashMap<Integer,int[]> chr_map = map.get(chr);
+					if(methylated > 0 && un_methylated > 0 && (methylated+un_methylated) >= minCount){
+						HashMap<Integer,Float> chr_map = map.get(chr);
 						if(chr_map == null){
-							chr_map = new HashMap<Integer,int[]>();
+							chr_map = new HashMap<Integer,Float>();
 							map.put(chr, chr_map);
 						}
 						
-						int[] counts = chr_map.get(start);
-						if(counts != null){
+						Float beta = chr_map.get(start);
+						if(beta != null){
 							warnings.add("Duplicate position " + chr + ":" + start + " in sample " +this.sample +" was overwritten.");
 							n_CpGs--;
 						}
-						counts = new int[] {methylated, un_methylated};
-						
-						chr_map.put(start,counts);
+						beta = (methylated / (float) (methylated + un_methylated));
+						chr_map.put(start,beta);
 						n_CpGs++;	
 					}
 					else{
@@ -128,9 +127,6 @@ public class ReadCov implements Runnable{
 			}
 			br.close();
 			
-			if(n_removed_CpGs > 0){
-				warnings.add(n_removed_CpGs + " sites don't have enough mapped reads (<"+minCount+") and are removed");
-			}
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -138,11 +134,11 @@ public class ReadCov implements Runnable{
 
 	}
 	
-	public HashMap<String,HashMap<Integer,int[]>> getMap(){
+	public HashMap<String,HashMap<Integer,Float>> getMap(){
 		return this.map;
 	}
 	
-	public void setMap(HashMap<String,HashMap<Integer,int[]>> map){
+	public void setMap(HashMap<String,HashMap<Integer,Float>> map){
 		this.map = map;
 	}
 	

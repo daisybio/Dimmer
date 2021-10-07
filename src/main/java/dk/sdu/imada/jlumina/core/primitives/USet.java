@@ -28,12 +28,16 @@ public class USet extends MethylationData {
 		
 		numSamples = rgSet.getSampleIDs().size();
 		data = new HashMap<String, float[]>();
+		int counter = 0;
 		
 		for (CpG cpg : manifest.getCpgList()) {
 
 			if (cpg.getInifniumType().equals("II")) { 
 				float[] values = rgSet.getRedSet().get(cpg.getAddressA());
 				data.put(cpg.getCpgName(), values);
+				if(values == null){
+					counter++;
+				}
 			}
 			
 			if (cpg.getInifniumType().equals("I")) {
@@ -43,11 +47,15 @@ public class USet extends MethylationData {
 				}else {
 					values = rgSet.getGreenSet().get(cpg.getAddressA());
 				}
+				if(values == null){
+					counter++;
+				}
 				data.put(cpg.getCpgName(), values);
 			}
 			progress++;
 			notify();
 		}
+		System.out.println(counter);
 		done = true;
 		notify();
 	}

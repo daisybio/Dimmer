@@ -57,11 +57,4 @@ public class PairedTestLeft extends AbstractTTestEstimator {
 	}
 
 
-	@Override
-	public void setSignificance(double[] y) {
-		double [] sample1 = Arrays.copyOfRange(y, 0, splitPoint);
-		double [] sample2 = Arrays.copyOfRange(y, splitPoint, y.length);
-		setPvalue(compute(sample1, sample2));	
-
-	}
 }

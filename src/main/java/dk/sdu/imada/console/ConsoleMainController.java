@@ -56,6 +56,8 @@ public class ConsoleMainController {
 	//all start methods in here do not start a new thread but run in sequence
 	public void start(){
 		
+		long startTime = System.currentTimeMillis();
+		
 		if(config.load()){
 			System.out.println("Loading existing dimmer project "+config.getProjectPath());
 			dimmerProject = new ConsoleReadDimmerProject(this,config.getProjectPath());
@@ -80,7 +82,12 @@ public class ConsoleMainController {
 			dmrFinderController.start();
 		}
 		
-		System.out.println("DiMmer finished");
+		long endTime = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		
+		System.out.println("\nFinished successfully");
+		System.out.println("Total time: " + (((double)totalTime/1000.0)/60.0) + " minutes");
+
 		
 	}
 	

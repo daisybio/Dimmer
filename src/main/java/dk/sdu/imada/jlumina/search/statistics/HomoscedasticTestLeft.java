@@ -31,9 +31,9 @@ public class HomoscedasticTestLeft extends AbstractTTestEstimator {
 		
 		float m2 = (float)StatUtils.mean((sample2));
 		
-		float v1 = (float)StatUtils.variance((sample1));
+		float v1 = (float)StatUtils.variance(sample1,m1);
         
-		float v2 = (float)StatUtils.variance((sample2));
+		float v2 = (float)StatUtils.variance(sample2,m2);
         
 		float n1 = sample1.length;
         
@@ -64,10 +64,4 @@ public class HomoscedasticTestLeft extends AbstractTTestEstimator {
 		return pvalue;
 	}
 
-	@Override
-	public void setSignificance(double[] y) {
-		double [] sample1 = Arrays.copyOfRange(y, 0, splitPoint);
-		double [] sample2 = Arrays.copyOfRange(y, splitPoint, y.length);
-		setPvalue(compute(sample1, sample2));	
-	}
 }
