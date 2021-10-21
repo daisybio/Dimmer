@@ -44,7 +44,7 @@ public class HistogramScoreDistribution {
     	Arrays.sort(reference);
     	this.max = reference[reference.length-1];
     	
-    	if (this.max <= values[values.length - 1]) this.max = values[values.length - 1]; 
+    	if (values.length > 0 && this.max <= values[values.length - 1]) this.max = values[values.length - 1]; 
 	}
 
 	/**

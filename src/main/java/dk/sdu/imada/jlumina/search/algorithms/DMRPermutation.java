@@ -20,14 +20,16 @@ public class DMRPermutation extends PermutationProgress {
 	ArrayList<DMR> dmrs;
 	ArrayList<Float> permutedScores;
 	TreeMap<Integer, DMRPermutationSummary> resultMap;
+	private int[] breakPoints;
 
-	public DMRPermutation(DMRAlgorithm dmrAlgorithm, ArrayList<DMR> dmrs, int[] binaryArray, int numPermutations) {
+	public DMRPermutation(DMRAlgorithm dmrAlgorithm, ArrayList<DMR> dmrs, int[] binaryArray, int numPermutations, int[] breakPoints) {
 		this.maxIterations = numPermutations;
 		this.dmrAlgorithm = dmrAlgorithm;
 		this.binaryArray = binaryArray;
 		this.progress = 0;
 		this.progressAux  = 0;
 		this.dmrs = dmrs;
+		this.breakPoints = Arrays.copyOf(breakPoints, breakPoints.length);
 	}
 
 	public void computePermutation() {
@@ -56,7 +58,7 @@ public class DMRPermutation extends PermutationProgress {
 				index++;
 			}
 
-			ArrayList<DMR> permutedIslands = dmrAlgorithm.islandSearch(binaryP);
+			ArrayList<DMR> permutedIslands = dmrAlgorithm.islandSearch(binaryP, breakPoints);
 			permutationIslandsMapping.put(i, permutedIslands);
 
 			for(DMR island : permutedIslands) {

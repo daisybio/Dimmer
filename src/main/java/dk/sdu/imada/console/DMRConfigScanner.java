@@ -50,6 +50,7 @@ public class DMRConfigScanner {
 		builder.append("w_size: " + config.getWSize()+"\n");
 		builder.append("n_exceptions: " + config.getNExceptions()+"\n");
 		builder.append("p_value_cutoff: " + config.getPValueCutoff()+"\n");
+		builder.append("min_diff: "+config.getMinDiff()+"\n");
 		builder.append("p_value_type: " + config.getPValueType()+"\n");
 		builder.append("save_search_plots: " + config.getSaveSearchPlots()+"\n");
 		builder.append("save_search_tables: " + config.getSaveSearchTables()+"\n");
@@ -166,6 +167,9 @@ public class DMRConfigScanner {
 			case "p_value_type":
 				changePValueType(value);
 				break;
+			case "min_diff":
+				changeMinDiff(value);
+				break;
 			case "save_search_plots":
 				changeSaveSearchPlots(value);
 				break;
@@ -187,7 +191,7 @@ public class DMRConfigScanner {
 			config.getMissingValues().remove(field);
 			System.out.println("Input \""+field+"\" has no value. Please try again with a different input.");
 		}
-		else if(config.getMalformattedValues().contains(field)){
+		else if(config.getMalformattedValues().keySet().contains(field)){
 			config.getMalformattedValues().remove(field);
 			System.out.println("\""+value+"\" is no accepted value for the field \""+field+"\". Please try again with a different input.");
 		}
@@ -236,6 +240,12 @@ public class DMRConfigScanner {
 		String field = "p_value_type";
 		config.put(field, value);
 		config.check_p_value_type();
+	}
+	
+	public void changeMinDiff(String value){
+		String field = "min_diff";
+		config.put(field, value);
+		config.check_min_diff();
 	}
 	
 	public void changeSaveSearchPlots(String value){

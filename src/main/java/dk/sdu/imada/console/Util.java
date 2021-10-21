@@ -58,6 +58,15 @@ public class Util {
 		}
 	}
 	
+	public static boolean containsNegatives(float[] array){
+		for(int i = 0; i< array.length; i++){
+			if(array[i]<0){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static void writeBetaMatrix(String path, float[][] beta, String[] sentrixID, String[] sentrixPosition, String[] cpgIDs){
 		System.out.println("Writing beta matrix to "+path);
 		try{
@@ -91,7 +100,36 @@ public class Util {
 	public static String errorLog(ArrayList<String> errors){
 		StringBuilder builder = new StringBuilder();
 		for(String error: errors){
+			builder.append("ERROR\t");
 			builder.append(error);
+			builder.append("\n");
+		}
+		return builder.toString();
+	}
+	
+	public static String warningLog(ArrayList<String> warnings){
+		StringBuilder builder = new StringBuilder();
+		for(String error: warnings){
+			builder.append("WARN\t");
+			builder.append(error);
+			builder.append("\n");
+		}
+		return builder.toString();
+	}
+	
+
+	public static String errorLog(String error){
+		return "ERROR\t"+error;
+	}
+	
+	public static String warningLog(String warning){
+		return "WARN\t"+warning;
+	}
+	
+	public static String log(ArrayList<String> logs){
+		StringBuilder builder = new StringBuilder();
+		for(String log: logs){
+			builder.append(log);
 			builder.append("\n");
 		}
 		return builder.toString();

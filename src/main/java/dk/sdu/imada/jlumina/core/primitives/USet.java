@@ -1,6 +1,8 @@
 package dk.sdu.imada.jlumina.core.primitives;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import dk.sdu.imada.console.Util;
 
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 
@@ -28,37 +30,60 @@ public class USet extends MethylationData {
 		
 		numSamples = rgSet.getSampleIDs().size();
 		data = new HashMap<String, float[]>();
-		int counter = 0;
+		
+		//missing data sites have -1 values, indices get stored to be filtered later
+		this.bad_CpG_indices = new HashSet<>();
+		int cpg_index = 0;
 		
 		for (CpG cpg : manifest.getCpgList()) {
 
 			if (cpg.getInifniumType().equals("II")) { 
 				float[] values = rgSet.getRedSet().get(cpg.getAddressA());
-				data.put(cpg.getCpgName(), values);
+				
 				if(values == null){
-					counter++;
+					bad_CpG_indices.add(cpg_index);
 				}
+				else {
+					if(Util.containsNegatives(values)){
+						bad_CpG_indices.add(cpg_index);
+					}
+					else{
+						data.put(cpg.getCpgName(), values);
+					}
+				}
+				
 			}
 			
 			if (cpg.getInifniumType().equals("I")) {
 				float values [];
+				
 				if (cpg.colorChannel.equals("Red")) {
 					values = rgSet.getRedSet().get(cpg.getAddressA());
 				}else {
 					values = rgSet.getGreenSet().get(cpg.getAddressA());
 				}
+				
 				if(values == null){
-					counter++;
+					bad_CpG_indices.add(cpg_index);
 				}
-				data.put(cpg.getCpgName(), values);
+				else {
+					if(Util.containsNegatives(values)){
+						bad_CpG_indices.add(cpg_index);
+					}
+					else{
+						data.put(cpg.getCpgName(), values);
+					}
+				}
+
 			}
+			cpg_index++;
 			progress++;
 			notify();
 		}
-		System.out.println(counter);
 		done = true;
 		notify();
 	}
+	
 	
 	
 	public int getNumSamples() {

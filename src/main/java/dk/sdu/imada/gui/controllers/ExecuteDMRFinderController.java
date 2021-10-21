@@ -15,6 +15,7 @@ import dk.sdu.imada.jlumina.search.algorithms.DMRScoring;
 import dk.sdu.imada.jlumina.search.primitives.DMRDescription;
 import dk.sdu.imada.jlumina.search.primitives.DMR;
 import dk.sdu.imada.jlumina.search.util.DMRPermutationExecutor;
+import dk.sdu.imada.jlumina.search.util.SearchUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,8 +63,13 @@ public class ExecuteDMRFinderController {
 			numThreads = np;
 		}
 		
+		float[] p_values = mainController.getSearchPvalues();
+		float[] diffs = mainController.getMethylationDifference();
+		float p_value_cutoff = mainController.getP0Cutoff();
+		float min_diff = mainController.getMinDiff();
 		
-		int[] binaryArray = getBinaryArray(mainController.getSearchPvalues(), mainController.getP0Cutoff());
+		int[] binaryArray = SearchUtil.getBinaryArray(p_values,diffs,p_value_cutoff,min_diff);
+		
 		int MAX = binaryArray.length;
 
 		int [] positions  = new int[MAX];
@@ -99,7 +105,8 @@ public class ExecuteDMRFinderController {
 		this.mainController.setDMRs(dmrs);
 		
 		DMRScoring scoring = new DMRScoring(dmrs);
-		scoring.calcPValues(mainController.getSearchPvalues(), dmrAlgorithm.getBreakingPoints(positions, chrs, l), mainController.dmrParametersController.getNRandomRegions());
+		int[] bp = dmrAlgorithm.getBreakingPoints(positions, chrs, l);
+		scoring.calcPValues(mainController.getSearchPvalues(), bp, mainController.dmrParametersController.getNRandomRegions());
 		System.out.println(mainController.dmrParametersController.getNRandomRegions());
 		
 		ArrayList<DMRDescription> dmrDescriptions = new ArrayList<>();
@@ -122,7 +129,7 @@ public class ExecuteDMRFinderController {
 		int[] dmrPermuDist = Util.distributePermutations(numThreads, np);
 
 		for (int i = 0; i < numThreads; i++) {
-			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs, mainController.getSearchPvalues()), dmrs, binaryArray, dmrPermuDist[i]);
+			dmrPermutation[i] = new DMRPermutation(new DMRAlgorithm(k, w, l, 1, positions, chrs, mainController.getSearchPvalues()), dmrs, binaryArray, dmrPermuDist[i], bp);
 			executors[i] = new DMRPermutationExecutor(dmrPermutation[i]);
 			eThread[i] = new Thread(executors[i], "permutation_" + i);
 			threads.add(eThread[i]);

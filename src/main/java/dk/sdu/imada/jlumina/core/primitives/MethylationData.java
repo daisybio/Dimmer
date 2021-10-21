@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.jlumina.core.util.CSVUtil;
@@ -13,6 +14,7 @@ public abstract class MethylationData extends RGSet{
 
 	int progress;
 	boolean done;
+	protected HashSet<Integer> bad_CpG_indices;
 
 	public MethylationData() {
 		progress = 0;
@@ -106,6 +108,10 @@ public abstract class MethylationData extends RGSet{
 
 	public int getProgress() {
 		return progress;
+	}
+	
+	public HashSet<Integer> getBadIndices(){
+		return this.bad_CpG_indices;
 	}
 
 	public synchronized void checkProgress() {

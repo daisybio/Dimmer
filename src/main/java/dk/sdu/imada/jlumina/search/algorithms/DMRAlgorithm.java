@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import dk.sdu.imada.jlumina.search.primitives.DMRDescription;
@@ -76,23 +77,22 @@ public class DMRAlgorithm {
 		return false;
 	}
 
+	public ArrayList<DMR> islandSearch(int[] binaryArray){
+		// breaking points
+		int [] bp = getBreakingPoints(positions, chrs, l); 
+		return islandSearch(binaryArray, bp);
+	}
+
 	/**
 	 * Perform the Island search in the Binary array
 	 * @param binaryArray an array representing the differentially methylated (1) and non (0) differentially CpG sites
 	 * @return the found DMRs 
 	 */
-	public ArrayList<DMR> islandSearch(int[] binaryArray) {
+	public ArrayList<DMR> islandSearch(int[] binaryArray, int[] bp) {
 
-		// breaking points
-		int [] bp = getBreakingPoints(positions, chrs, l); 
 
 		// ArrayList positions in which you have ones in the binary array
-		ArrayList<Integer> cpgStartList = methylationStartPoints(binaryArray); 
-
-
-		// Array of positions in which you have ones in the binary array
-		int [] cpgStarts = new int[cpgStartList.size()];
-		for (int i = 0; i < cpgStartList.size(); i++) cpgStarts[i] = cpgStartList.get(i);
+		HashMap<Integer,Integer> dmrMap = new HashMap<>();
 
 		// global index for accessing the binaryArray
 		int i = 0;
@@ -103,7 +103,6 @@ public class DMRAlgorithm {
 		// array which counts how many CpGs an Island has. 
 		//Every methylated CpG is a potential Island and it's distribution 
 		///is associated with how many more methylated CpGs it has. 
-		int [] islandDistribution = new int[cpgStarts.length];
 		
 		//System.out.println("w: " + w);
 
@@ -111,53 +110,38 @@ public class DMRAlgorithm {
 
 			if (binaryArray[i] == 1) {
 
-				int [] slice = Arrays.copyOfRange(binaryArray, i, i + w+1);
+				int zeros = countElements(binaryArray, i , i + w + 1, 0);
+				boolean bpCondition = isBreak(i + 1, i + w + 1, bp);
 
-				int zeros = countElements(slice, 0);
-				boolean bpCondition = isBreak(i+1, i+w+1, bp);
+				int islandIndex = i;
+				int dmr_size = w ;
 
-				int islandIndex = 0;
-				int it = 0;
+				boolean slidingCondition = zeros <= k && !bpCondition;
 
-				boolean slidingCondition = false;
-
-				if (zeros <= k && !bpCondition) {
+				if (slidingCondition) {
 					
-					slidingCondition = true;
-
 					//slide while the exceptions are fine and no breaking points are ahead
 					while (slidingCondition) {
 
-						// if it is the first iteration we need to check where the DMR start
-						if (it == 0) {
-							islandIndex = cpgStartList.indexOf(i);
-						}
-
-						//telling how many CpG sites the DMR have
-						islandDistribution[islandIndex]++;
-
 						// sliding the window
+						dmr_size++;
 						i++;
 						
 						if(i+w<limit){
-							slice = Arrays.copyOfRange(binaryArray, i, i + w+1);
-							zeros = countElements(slice, 0);
-							bpCondition = isBreak(i+1, i+w+1, bp);
+							zeros += binaryArray[i - 1];
+							zeros -= binaryArray[i + w];
+							bpCondition = isBreak(i + w, i + w + 1, bp); //only last position needs check
 						}
 						else{
 							slidingCondition = false;
 						}
 
-						
 						if (zeros > k || bpCondition) {
 							slidingCondition = false;
 						}
-						
-						it++;
+					
 					}
-
-					// correcting the total number of CpG sites in the window
-					islandDistribution[islandIndex]+=w;
+					dmrMap.put(islandIndex,dmr_size);
 
 				}else {
 					i++;
@@ -169,7 +153,7 @@ public class DMRAlgorithm {
 			}
 		}
 		// . 
-		ArrayList<DMR> islands = getIslands(cpgStarts, islandDistribution, binaryArray, cpgPValues);
+		ArrayList<DMR> islands = getIslands(positions, dmrMap, binaryArray, cpgPValues);
 		setScores(islands, positions);
 		return islands;
 	}
@@ -198,56 +182,49 @@ public class DMRAlgorithm {
 		return breakingPoints;
 	}
 
-	/**
-	 * Every methylated (ones in the binaryArray) CpG is a potential Island for each position we associate a total number of Islands stored in islandDistribution. If islandDistribution > 0 you have an Island.
-	 * However this value can be reduced if the edges are non-methylated CpGs (zeros in the binary array)
-	 * 
-	 * @param positions	of all methylated CpGs 
-	 * @param islandDistribution	number of CpGs for the potential Island
-	 * @param binaryArray	binary array 
-	 * @return	return the and array of islands
-	 */
-	private ArrayList<DMR> getIslands(int [] positions, int [] islandDistribution, int[] binaryArray, float[] cpgPValues) {
+
+	
+	private ArrayList<DMR> getIslands(int [] positions, HashMap<Integer,Integer> dmrMap, int[] binaryArray, float[] cpgPValues) {
 
 		ArrayList<DMR> islands = new ArrayList<DMR>();
-
-		for (int i = 0; i < positions.length; i++) {
-
-			if (islandDistribution[i] > 0) {
-
-				DMR island = new DMR();
-
-				island.beginPosition = positions[i];
-
-				island.totalCpgs = islandDistribution[i];
-
-				while (binaryArray[island.beginPosition + island.totalCpgs - 1] == 0) {
-					island.totalCpgs--;
-				}
-				
-				island.setCpgPValues(Arrays.copyOfRange(cpgPValues, island.beginPosition, island.beginPosition + island.totalCpgs));
-				if(island.totalCpgs != Arrays.copyOfRange(cpgPValues, island.beginPosition, island.beginPosition + island.totalCpgs).length){
-					System.out.println("fuck"); 
-				}
-				islands.add(island);
+		Integer[] dmrStartIndices = dmrMap.keySet().toArray(new Integer[dmrMap.keySet().size()]);
+		Arrays.sort(dmrStartIndices);
+		
+		for(Integer startIndex : dmrStartIndices){
+			DMR island = new DMR();
+			island.beginPosition = startIndex;
+			island.totalCpgs = dmrMap.get(startIndex);
+			
+			while (binaryArray[island.beginPosition + island.totalCpgs - 1] == 0) {
+				island.totalCpgs--;
 			}
+			
+			island.setCpgPValues(Arrays.copyOfRange(cpgPValues, island.beginPosition, island.beginPosition + island.totalCpgs));
+			if(island.totalCpgs != Arrays.copyOfRange(cpgPValues, island.beginPosition, island.beginPosition + island.totalCpgs).length){
+				System.out.println("error in getIslands()"); 
+			}
+			islands.add(island);
 		}
 
 		return islands;
 	}
 	
+	
 	/**
-	 * Count how many e are in the array 
-	 * @param array
-	 * @param e
+	 * Count how many e are in the array range
+	 * @param array the array
+	 * @param start inclusive start
+	 * @param end exclusive end
+	 * @param e the element to count
 	 * @return
 	 */
-	private int countElements(int [] array, int e) {
+
+	private int countElements(int [] array, int start, int end, int e) {
 
 		int count  = 0;
-
-		for (int i : array) {
-			if (i == e) {
+		
+		for(int i = start; i < end; i++){
+			if(array[i]==e){
 				count++;
 			}
 		}
@@ -295,26 +272,6 @@ public class DMRAlgorithm {
 
 		return count;
 	}
-
-
-	/**
-	 * 
-	 * @param binaryArray
-	 * @return integer arraylist with the index positions of CpGs with value 1
-	 */
-	private ArrayList<Integer> methylationStartPoints(int [] binaryArray) {
-
-		ArrayList<Integer> cpgStartList = new ArrayList<Integer>();
-
-		for (int i = 0; i < binaryArray.length; i++) {
-			if (binaryArray[i] == 1) {
-				cpgStartList.add(i);
-			}
-		}
-
-		return cpgStartList;
-	}
-
 
 	/**
 	 * @param islands

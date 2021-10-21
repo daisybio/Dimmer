@@ -923,6 +923,10 @@ public class MainController implements Initializable {
 	public float getP0Cutoff() {
 		return dmrParametersController.getP0Cutoff();
 	}
+	
+	public float getMinDiff(){
+		return dmrParametersController.getMinDiff();
+	}
 
 	public DMRResultController getDmrResultController() {
 		return dmrResultController;

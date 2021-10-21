@@ -34,6 +34,9 @@
                   <TextField fx:id="p0Cutoff" layoutX="110.0" layoutY="539.0" maxWidth="-Infinity" prefWidth="80.0" text="0.05" />
                   <Label layoutX="10.0" layoutY="544.0" text="P-value Cutoff " />
                   
+                  <TextField fx:id="minDiff" layoutX="450.0" layoutY="539.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
+                  <Label layoutX="230.0" layoutY="544.0" text="Minimum mean methylation difference " />
+                  
                   <TextField fx:id="cpgDistance" layoutX="360.0" layoutY="240.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
                   <Label layoutX="240.0" layoutY="245.0" text="Max. CpG distance " />
                   

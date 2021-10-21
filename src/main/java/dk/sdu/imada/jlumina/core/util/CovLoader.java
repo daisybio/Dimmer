@@ -391,7 +391,7 @@ public class CovLoader extends DataProgress{
 						ReadCov readCov = new ReadCov(sample_file.getAbsolutePath());
 						readCov.quickCheck();
 						if(!readCov.check()){
-							errors.add(Util.errorLog(readCov.getErrors()));
+							errors.addAll(readCov.getErrors());
 						}
 					}
 				}
@@ -416,7 +416,7 @@ public class CovLoader extends DataProgress{
 	}
 	
 	public String warningLog(){
-		return Util.errorLog(this.warnings);
+		return Util.warningLog(this.warnings);
 	}
 	
 	public boolean check(){

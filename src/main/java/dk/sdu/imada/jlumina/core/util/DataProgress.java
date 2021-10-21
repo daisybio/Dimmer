@@ -1,5 +1,7 @@
 package dk.sdu.imada.jlumina.core.util;
 
+import java.util.ArrayList;
+
 public class DataProgress {
 
 	boolean done;
@@ -7,6 +9,8 @@ public class DataProgress {
 	boolean oveflow;
 	double progress;
 	String msg;
+	protected ArrayList<String> warnings;
+	protected ArrayList<String> errors;
 	
 	public DataProgress(){
 		done = false;
@@ -56,6 +60,38 @@ public class DataProgress {
 	
 	public int getMaxSteps() {
 		return maxSteps;
+	}
+	
+	public boolean hasWarnings(){
+		if(this.warnings == null){
+			return false;
+		}
+		else if(this.warnings.size() != 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public boolean hasErrors(){
+		if(this.errors == null){
+			return false;
+		}
+		else if(this.errors.size() != 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public ArrayList<String> getWarnings(){
+		return this.warnings;
+	}
+	
+	public ArrayList<String> getErrors(){
+		return this.errors;
 	}
 	
 }

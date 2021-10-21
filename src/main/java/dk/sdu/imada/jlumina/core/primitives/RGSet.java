@@ -25,12 +25,16 @@ public class RGSet {
 	
 	int progress;
 	
+	ArrayList<String> warnings;
+	ArrayList<String> errors;
+	
 	public RGSet() {
 	}
 
 	public RGSet(String input) {
 		this.input = input;
 		done = false;
+		
 	}
 
 	public void setProgress(int progress) {
@@ -101,6 +105,95 @@ public class RGSet {
 			redSet.put(ids, redMeans[index]);
 			index++;
 		}
+		done = true;
+		notify();
+	}
+	
+	/**
+	 * Same functionality as loadIdats but handles missing sites and different sized files
+	 */
+	public synchronized void loadIDATsMap() {
+		
+		progress = 0;
+		
+		this.warnings = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
+
+		greenSet = new HashMap<Integer, float[]>();
+		redSet = new HashMap<Integer, float[]>();
+		
+		sampleIDs = new ArrayList<String>();
+
+		Read450KSheet s = new Read450KSheet(this.input);
+
+		String basenames[] = s.getBaseName();
+
+		int colId = 0;
+		ReadIDAT gIdat = new ReadIDAT();
+		ReadIDAT rIdat = new ReadIDAT();
+		ReadIDAT aux = new ReadIDAT();
+		
+		aux.readNonEncryptedIDAT(basenames[0] + "_Grn.idat");
+		int SIZE = aux.getnSNPsRead();
+		boolean diff_sizes = false;
+		
+		//checks if array sizes differ
+		for (String b : basenames) {
+			String greenIdatFile = b + "_Grn.idat";
+			String redIdatFile = b + "_Red.idat";
+			if( (aux.readnSNPs(greenIdatFile)!=SIZE) || (aux.readnSNPs(redIdatFile)!=SIZE) ){
+				diff_sizes = true;
+			}
+			
+		}
+		
+		if(diff_sizes){
+			warnings.add("IDAT files have different array sizes");
+		}
+		
+
+		numberSamples = basenames.length;
+		
+		for (String b : basenames) {
+
+			sampleIDs.add(b);
+			
+			String greenIdatFile = b + "_Grn.idat";
+			String redIdatFile = b + "_Red.idat";
+			
+			gIdat.readNonEncryptedIDAT(greenIdatFile);
+			rIdat.readNonEncryptedIDAT(redIdatFile);
+			
+			int[] g_ids = gIdat.getIlluminaID();
+			int[] r_ids = rIdat.getIlluminaID();
+			
+			int[] g_means = gIdat.getMean();
+			int[] r_means = rIdat.getMean();
+			
+			
+			//-1 is used for initialization to later filter out missing values
+			for (int i = 0; i < g_ids.length; i++){
+				float[] values = greenSet.get(g_ids[i]);
+				if(values == null){
+					values = initMinusOnes(numberSamples);
+					greenSet.put(g_ids[i], values);
+				}
+				values[colId] = g_means[i];
+			}
+			
+			for (int i = 0; i < r_ids.length; i++) {
+				float[] values = redSet.get(r_ids[i]);
+				if(values == null){
+					values = initMinusOnes(numberSamples);
+					redSet.put(r_ids[i], values);
+				}
+				values[colId] = r_means[i];
+			}
+			
+			colId++;
+			notify();
+			progress++;
+		}
 
 		done = true;
 		notify();
@@ -116,6 +209,14 @@ public class RGSet {
 	
 	public int getNumberSamples() {
 		return numberSamples;
+	}
+	
+	private float[] initMinusOnes(int size){
+		float[] array = new float [size];
+		for(int i = 0; i < array.length; i++){
+			array[i] = -1;
+		}
+		return array;
 	}
 	
 
@@ -195,5 +296,16 @@ public class RGSet {
 
 	public HashMap<Integer, float[]> getRedSet() {
 		return redSet;
+	}
+	
+	public boolean hasWarnings(){
+		if(this.warnings==null){
+			return false;
+		}
+		return this.warnings.size()!=0;
+	}
+	
+	public ArrayList<String> getWarnings(){
+		return this.warnings;
 	}
 }

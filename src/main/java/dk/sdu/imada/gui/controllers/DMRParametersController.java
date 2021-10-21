@@ -30,6 +30,7 @@ public class DMRParametersController {
 	
 	@FXML TextField nRandomRegions;
 	@FXML TextField p0Cutoff;
+	@FXML TextField minDiff;
 	@FXML TextField numPermutations;
 	@FXML TextField windowSize;
 	@FXML TextField cpgDistance;
@@ -95,6 +96,13 @@ public class DMRParametersController {
 		}else {
 			condition&=false;
 			FXPopOutMsg.showWarning("You need a numerical value for p0 between [0, 1]");
+		}
+		
+		if (checkDoubleFormat(minDiff.getText())) {
+			condition&=true;
+		}else {
+			condition&=false;
+			FXPopOutMsg.showWarning("You need a numerical value for the minimum mean methylation difference between [0, 1]");
 		}
 
 		if (checkIntegerFormat(numPermutations.getText())) {
@@ -229,6 +237,10 @@ public class DMRParametersController {
 
 	public Float getP0Cutoff() {
 		return Float.parseFloat(p0Cutoff.getText());
+	}
+	
+	public Float getMinDiff(){
+		return Float.parseFloat(minDiff.getText());
 	}
 
 	public Integer getWindowSize() {

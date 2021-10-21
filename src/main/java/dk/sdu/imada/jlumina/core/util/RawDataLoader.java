@@ -2,7 +2,9 @@ package dk.sdu.imada.jlumina.core.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.MSet;
@@ -144,13 +146,22 @@ public class RawDataLoader extends DataProgress {
 	}
 
 	public void loadData() throws OutOfMemoryError{
+		
+		this.warnings = new ArrayList<>();
 
 		this.done = false;
 		setMsg("Processing raw data...");
 		int p = 0;
 		setProgress(p++);
+		
 		System.out.println("Reading IDAT files");
-		this.rgSet.loadIDATs();
+		this.rgSet.loadIDATsMap();
+		
+		if(rgSet.hasWarnings()){
+			System.out.println(Util.warningLog(rgSet.getWarnings()));
+			this.warnings.addAll(rgSet.getWarnings());
+		}
+		
 		
 		setMsg("Loading CpG probe info...");
 		System.out.println("Loading CpG probe info...");
@@ -197,6 +208,17 @@ public class RawDataLoader extends DataProgress {
 		try {
 			this.uSet.loadData();
 			this.mSet.loadData();
+			
+			//check for missing sites
+			HashSet<Integer> badCpGIndices = uSet.getBadIndices();
+			badCpGIndices.addAll(mSet.getBadIndices());
+			if(badCpGIndices.size()!=0){
+				
+				System.out.println(Util.warningLog(badCpGIndices.size()+" were ignored because of missing data"));
+				this.warnings.add(badCpGIndices.size()+" were ignored because of missing data");
+				manifest.removeByIndex(badCpGIndices);
+			}
+
 		}catch(OutOfMemoryError e) {
 			this.setOveflow(true);
 			System.out.println("Memory ram problem. "

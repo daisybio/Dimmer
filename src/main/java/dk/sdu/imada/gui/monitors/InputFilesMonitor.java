@@ -1,5 +1,6 @@
 package dk.sdu.imada.gui.monitors;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.gui.controllers.FXPopOutMsg;
 import dk.sdu.imada.gui.controllers.MainController;
 import dk.sdu.imada.gui.controllers.ProgressForm;
@@ -47,6 +48,10 @@ public class InputFilesMonitor implements Runnable {
 				}catch(InterruptedException e) {
 				}
 			}
+		}
+		
+		if(rawDataLoader.hasWarnings()){
+			Platform.runLater(() -> FXPopOutMsg.showWarning(Util.warningLog(rawDataLoader.getWarnings())));
 		}
 
 		this.progressForm.getText().setText("Almost done....");

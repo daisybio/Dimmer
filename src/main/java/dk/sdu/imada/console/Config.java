@@ -11,7 +11,7 @@ public class Config {
 	
 	private ArrayList<String> missing_fields; 
 	private ArrayList<String> missing_values;
-	private ArrayList<String> malformatted_values;
+	private HashMap<String,String> malformatted_values;
 	private ArrayList<String> messages;
 	private HashMap<String,String> parameters;
 	
@@ -56,6 +56,7 @@ public class Config {
 	private int w_size;
 	private int n_exceptions;
 	private float p_value_cutoff;
+	private float min_diff;
 	private String p_value_type;
 	private boolean save_search_plots;
 	private boolean save_search_tables;
@@ -81,7 +82,7 @@ public class Config {
 		this.check = true;
 		this.missing_fields = new ArrayList<>();
 		this.missing_values = new ArrayList<>();
-		this.malformatted_values = new ArrayList<>();
+		this.malformatted_values = new HashMap<>();
 		this.messages = new ArrayList<>();
 		this.parameters = parameters;
 		
@@ -141,6 +142,7 @@ public class Config {
 				check_w_size();
 				check_n_exceptions();
 				check_p_value_cutoff();
+				if(model == null || model.equals("T-test")) check_min_diff();
 				check_p_value_type();
 				check_save_search_plots();
 				check_save_search_tables();
@@ -150,6 +152,8 @@ public class Config {
 			
 		
 		System.out.println("");
+		System.out.println("Ignored parameters:");
+		System.out.println(ignored_report()+"\n");
 		if(!check){
 			System.out.println(error_report());
 			System.exit(0);
@@ -170,7 +174,7 @@ public class Config {
 	private String check_choices(String parameter,String[] choices){
 		
 		String value = null;
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		HashSet<String> choices_set = new HashSet<>(Arrays.asList(choices));
 		
 		if(entry == null){
@@ -183,7 +187,7 @@ public class Config {
 		}
 		else if(!choices_set.contains(entry)){
 			this.check = false;
-			this.malformatted_values.add(parameter);
+			this.malformatted_values.put(parameter,entry);
 		}
 		else if(entry.length()==1){
 			value = choices[Integer.parseInt(entry)-1];
@@ -205,7 +209,7 @@ public class Config {
 	
 	private String check_boolean(String parameter){
 		String value = null;
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		
 		String[] choices = {"false","true","0","1"};
 		HashSet<String> choices_set = new HashSet<>(Arrays.asList(choices));
@@ -220,7 +224,7 @@ public class Config {
 		}
 		else if(!choices_set.contains(entry)){
 			this.check = false;
-			this.malformatted_values.add(parameter);
+			this.malformatted_values.put(parameter,entry);
 		}
 		else if(entry.length()==1){
 			value = choices[Integer.parseInt(entry)];
@@ -243,7 +247,7 @@ public class Config {
 	
 	private int check_positive_integer(String parameter,boolean non_zero){
 		
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		int value = -1;
 		if(entry == null){
 			this.check = false;
@@ -259,20 +263,20 @@ public class Config {
 					if(!(value>0)){
 						value=-1;
 						this.check = false;
-						this.malformatted_values.add(parameter);
+						this.malformatted_values.put(parameter,entry);
 					}
 				}else{
 					if(!(value>=0)){
 						value=-1;
 						this.check = false;
-						this.malformatted_values.add(parameter);
+						this.malformatted_values.put(parameter,entry);
 					}
 				}
 
 			}
 			catch(Exception e){
 				this.check = false;
-				this.malformatted_values.add(parameter);
+				this.malformatted_values.put(parameter,entry);
 			}
 		}
 		if(value!=-1){
@@ -293,7 +297,7 @@ public class Config {
 	
 	private String check_path(String parameter,boolean directory, boolean read, boolean write, boolean execute){
 		
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		String value = null;
 		boolean path_ok = true;
 		
@@ -389,7 +393,7 @@ public class Config {
 	private void check_regression(){
 		String parameter = "confounding_variables";
 		HashSet<String> value = null;
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		
 		if(this.isPaired()){
 			this.check = false;
@@ -443,7 +447,7 @@ public class Config {
 	private void check_variable(){
 		String value = null;
 		String parameter = "variable";
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		if(entry == null){
 			this.check = false;
 			this.missing_fields.add(parameter);
@@ -617,7 +621,7 @@ public class Config {
 	public void check_p_value_cutoff(){
 		float value = -1;
 		String parameter = "p_value_cutoff";
-		String entry = this.parameters.get(parameter);
+		String entry = this.parameters.remove(parameter);
 		if(entry == null){
 			this.check = false;
 			this.missing_fields.add(parameter);
@@ -632,18 +636,53 @@ public class Config {
 				value = Float.parseFloat(entry);
 				if(value>1||value<0){
 					this.check = false;
-					this.malformatted_values.add(parameter);
+					this.malformatted_values.put(parameter,entry);
 					value = -1;
 				}
 			}
 			catch(Exception e){
 				this.check = false;
-				this.malformatted_values.add(parameter);
+				this.malformatted_values.put(parameter,entry);
 				value = -1;
 			}
 			if(value!=-1){
 				System.out.println(parameter+": "+value);
 				this.p_value_cutoff = value;
+			}
+
+		}
+	}
+	
+	public void check_min_diff(){
+		float value = -1;
+		String parameter = "min_diff";
+		String entry = this.parameters.remove(parameter);
+		if(entry == null){
+			this.check = false;
+			this.missing_fields.add(parameter);
+		}
+		else if(entry.equals("")){
+			this.check = false;
+			this.missing_values.add(parameter);
+		}
+		else{
+			entry = entry.replace(',', '.');
+			try{
+				value = Float.parseFloat(entry);
+				if(value>1||value<0){
+					this.check = false;
+					this.malformatted_values.put(parameter,entry);
+					value = -1;
+				}
+			}
+			catch(Exception e){
+				this.check = false;
+				this.malformatted_values.put(parameter,entry);
+				value = -1;
+			}
+			if(value!=-1){
+				System.out.println(parameter+": "+value);
+				this.min_diff = value;
 			}
 
 		}
@@ -707,6 +746,7 @@ public class Config {
 		if(this.parameters.get(parameter)!=null && !this.parameters.get(parameter).equals("")){
 			value = check_path(parameter,false,true,false,false);
 		}
+		this.parameters.remove(parameter);
 		this.beta_path = value;
 	}
 	
@@ -718,6 +758,7 @@ public class Config {
 		if(this.parameters.get(parameter)!=null && !this.parameters.get(parameter).equals("")){
 			value = check_path(parameter,false,true,false,false);
 		}
+		this.parameters.remove(parameter);
 		this.dimmer_project_path = value;
 	}
 	
@@ -762,8 +803,8 @@ public class Config {
 			
 			if(!this.malformatted_values.isEmpty()){
 				builder.append("\nMalformatted/unaccepted values:\n");
-				for(String error: this.malformatted_values){
-					builder.append(error+": "+parameters.get(error)+"\n");
+				for(String error: this.malformatted_values.keySet()){
+					builder.append(error+": "+malformatted_values.get(error)+"\n");
 				}
 			}
 			if(!this.messages.isEmpty()){
@@ -775,6 +816,15 @@ public class Config {
 			
 		}
 			
+		return builder.toString();
+	}
+	
+	public String ignored_report(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("");
+		for(String key : this.parameters.keySet()){
+			builder.append(key+": "+parameters.get(key)+"\n");
+		}
 		return builder.toString();
 	}
 	
@@ -924,6 +974,10 @@ public class Config {
 		return this.p_value_cutoff;
 	}
 	
+	public float getMinDiff(){
+		return this.min_diff;
+	}
+	
 	public String getPValueType(){
 		return this.p_value_type;
 	}
@@ -940,7 +994,7 @@ public class Config {
 		return this.save_dmr_permu_plots;
 	}
 	
-	public ArrayList<String> getMalformattedValues(){
+	public HashMap<String,String> getMalformattedValues(){
 		return this.malformatted_values;
 	}
 	

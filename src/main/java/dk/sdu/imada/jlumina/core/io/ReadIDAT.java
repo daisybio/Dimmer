@@ -222,6 +222,7 @@ public class ReadIDAT {
 				} else {
 
 					numFields = readInt();
+					System.out.println(fileName + ", num Fields: " + numFields);
 
 					// rows: fieldCode, byteOffset, bytes
 					fields = new long[3][numFields];
@@ -243,6 +244,7 @@ public class ReadIDAT {
 					reset(minByteOffset);
 					
 					nSNPsRead = readInt();
+					System.out.println(fileName + ", nSNPsRead: " + nSNPsRead);
 
 					IlluminaID = new int[nSNPsRead];
 					SD = new int[nSNPsRead];
@@ -334,6 +336,56 @@ public class ReadIDAT {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public int readnSNPs(String fileName){	
+		try {
+			bytes = ByteStreams.toByteArray(new FileInputStream(new File(fileName)));
+			fileSize = bytes.length;
+			String fileType = new String(ArrayUtils.subarray(bytes, 0, 4));
+
+			if (fileType.equals("IDAT")) {
+
+				bytePosition = 4;
+				version = readLong();
+
+				if (version < 3) {
+					System.err.println("Cannot handle IDAT file with version: " + bytes[4]);
+				} else {
+
+					numFields = readInt();
+
+					// rows: fieldCode, byteOffset, bytes
+					fields = new long[3][numFields];
+
+
+					for (int i = 0 ; i < numFields; i++) {
+						fields[0][i] = readUnsignedShort();
+						fields[1][i] = readLong();
+					}
+
+					long minByteOffset = NumberUtils.min((fields[1]));
+					long SNPsReadByteOffset = fields[1][0];
+
+					if (minByteOffset != SNPsReadByteOffset) {
+						System.err.println("Problem found. exiting... ");
+						System.exit(-1);
+					}
+
+					reset(minByteOffset);
+					
+					return readInt();
+				}
+			}	
+			else {
+				System.err.println("IDAT file not acessible");
+			}
+		}	
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		return 0;
+		
 	}
 
 	/**

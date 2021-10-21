@@ -23,7 +23,7 @@ public class ConsoleInputMonitor implements Runnable {
 		synchronized (rawDataLoader) {
 			while(!rawDataLoader.isDone()) {
 				try {
-					rawDataLoader.wait();
+					rawDataLoader.wait(300000);
 					if(rawDataLoader.isOveflow()) {
 						System.out.println("A memory exception was detected. Use the java command line with -Xms2024M -Xmx3024M. "	+ 
 								"If the problem persists try to increase the cited values... good luck");
@@ -31,7 +31,7 @@ public class ConsoleInputMonitor implements Runnable {
 					}
 
 				}catch(InterruptedException e) {
-					
+					e.printStackTrace();
 				}
 			}
 		}

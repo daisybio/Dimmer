@@ -309,7 +309,7 @@ public class ReadBetaMatrix extends DataProgress{
 	}
 	
 	public String warningLog(){
-		return Util.errorLog(this.warnings);
+		return Util.warningLog(this.warnings);
 	}
 	
 	public boolean check(){

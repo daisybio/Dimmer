@@ -1,7 +1,9 @@
 package dk.sdu.imada.jlumina.core.primitives;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 
 public class MSet extends MethylationData {
@@ -27,12 +29,25 @@ public class MSet extends MethylationData {
 
 		numSamples = rgSet.getSampleIDs().size();
 		data = new HashMap<String, float[]>();
+		this.bad_CpG_indices = new HashSet<>();
+		
+		int cpg_index = 0;
 
 		for (CpG cpg : manifest.getCpgList()) {
 
 			if (cpg.getInifniumType().equals("II")) { 
 				float[] values = rgSet.getGreenSet().get(cpg.addressA);
-				data.put(cpg.getCpgName(), values);
+				if(values == null){
+					bad_CpG_indices.add(cpg_index);
+				}
+				else {
+					if(Util.containsNegatives(values)){
+						bad_CpG_indices.add(cpg_index);
+					}
+					else{
+						data.put(cpg.getCpgName(), values);
+					}
+				}
 			}
 
 			if (cpg.getInifniumType().equals("I")) {
@@ -42,8 +57,19 @@ public class MSet extends MethylationData {
 				}else {
 					values = rgSet.getGreenSet().get(cpg.getAddressB());
 				}
-				data.put(cpg.getCpgName(), values);
+				if(values == null){
+					bad_CpG_indices.add(cpg_index);
+				}
+				else {
+					if(Util.containsNegatives(values)){
+						bad_CpG_indices.add(cpg_index);
+					}
+					else{
+						data.put(cpg.getCpgName(), values);
+					}
+				}
 			}
+			cpg_index++;
 			progress++;
 			notify();
 		}

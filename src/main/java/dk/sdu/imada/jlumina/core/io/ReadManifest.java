@@ -2,6 +2,7 @@ package dk.sdu.imada.jlumina.core.io;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
@@ -115,5 +116,20 @@ public class ReadManifest extends AbstractManifest {
 		}
 		done = true;
 		return true;
+	}
+	
+	public void removeByIndex(HashSet<Integer> indices){
+		
+		CpG[] newCpGs = new CpG [this.cpgList.length-indices.size()];
+		int newIndex = 0;
+		
+		for(int i = 0; i< this.cpgList.length; i++){
+			if(!indices.contains(i)){
+				newCpGs[newIndex] = this.cpgList[i];
+				newIndex++;
+			}
+		}
+		
+		this.cpgList = newCpGs;
 	}
 }

@@ -259,7 +259,7 @@ public class DMRSearchSaver {
 			pValues[index++] = dmr.getPValue();
 		}
 
-		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", 11, java.awt.Color.BLUE, 0, 1);
+		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", 100, java.awt.Color.BLUE, 0, 1);
 		JFreeChart chart = histogram.getChart();
 		
 		this.dmrPValueDistribution = chart;
