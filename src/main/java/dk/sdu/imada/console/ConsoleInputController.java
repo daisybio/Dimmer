@@ -50,7 +50,6 @@ public class ConsoleInputController {
 	
 	boolean usePairID = false;
 	
-	boolean bisulfite = false;
 	boolean bisulfite_error = false;
 	
 	ArrayList<String> labelsList;
@@ -97,10 +96,10 @@ public class ConsoleInputController {
 					setMaps(f.getAbsolutePath());
 					setLabelsList(f.getAbsolutePath());	
 					//only relevant for idat input
-					if(!config.useBetaInput() && !bisulfite){
+					if(!config.useBetaInput() && !config.useBisulfiteInput()){
 						warning(f.getParentFile().getAbsolutePath()+"/");
 					}
-					else if(bisulfite){
+					else if(config.useBisulfiteInput()){
 						CovLoader covLoader = new CovLoader(f.getAbsolutePath());
 						if(!covLoader.quickCheck()){
 							System.out.println(Util.errorLog(covLoader.getErrors()));
@@ -134,11 +133,6 @@ public class ConsoleInputController {
 				System.out.println("The annotation file is not readable, check if this is a valid CSV file or if you have reading permissions");
 
 			}
-
-//			if (!f.canExecute()) {
-//				fileProblem = true;
-//				System.out.println("The annotation file is not readable, check if this is a valid CSV file or if you have reading permissions");
-//			}
 
 		}
 
@@ -181,6 +175,7 @@ public class ConsoleInputController {
 		
 		missingMandatoryColumns = false;
 		int count = 0;
+		boolean bisulfite = false;
 
 		reader = new CSVReader(new FileReader(path));
 
@@ -202,13 +197,18 @@ public class ConsoleInputController {
 				hasGenderID = true;
 			}
 			
-			if (cols.equals(Variables.BISULFITE_SAMPLE)){
-				this.bisulfite = true;
+			if (config.useBisulfiteInput() && cols.equals(Variables.BISULFITE_SAMPLE)){
+				bisulfite = true;
 			}
 		}
+		
+		if(config.useBisulfiteInput() && !bisulfite){
+			this.bisulfite_error = true;
+			System.out.println(Util.errorLog("Bisulfite input requires the colum \"" + Variables.BISULFITE_SAMPLE + "\" in the annotation file."));
+		}
 
-		missingMandatoryColumns = (count<2) && !this.bisulfite;	
-		return (count==2) ^ this.bisulfite;
+		missingMandatoryColumns = (count<2) && !bisulfite;	
+		return (count==2) ^ bisulfite;
 	}
 	
 	private void setMaps(String path) {
@@ -484,7 +484,7 @@ public class ConsoleInputController {
 		if(config.useBetaInput()){
 			startBetaPreprocessing();
 		}
-		else if(bisulfite){
+		else if(config.useBisulfiteInput()){
 			startBisulfitePreprocessing();
 		}
 		else{
@@ -496,9 +496,12 @@ public class ConsoleInputController {
 
 		CovLoader covLoader = new CovLoader(this.config.getAnnotationPath());
 		try{
-			int minCount = 10;
-			int missingValues = 2;
-			covLoader.load(this.config.getThreads(),minCount,missingValues);
+			
+			int minCount = config.getMinReads();
+			int missingValues = config.getMinReadExceptions();
+			float minVariance = config.getMinVariance();
+			
+			covLoader.load(this.config.getThreads(),minCount,missingValues,minVariance);
 			
 		}catch(OutOfMemoryError e){
 			System.out.println(Messages.OUT_OF_MERMORY);

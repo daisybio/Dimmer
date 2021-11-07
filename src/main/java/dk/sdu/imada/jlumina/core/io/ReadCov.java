@@ -87,7 +87,7 @@ public class ReadCov implements Runnable{
 					int methylated = Integer.parseInt(splitted[4]);
 					int un_methylated = Integer.parseInt(splitted[5]);
 					
-					if(methylated > 0 && un_methylated > 0 && (methylated+un_methylated) >= minCount){
+					if((methylated+un_methylated) >= minCount){
 						HashMap<Integer,Float> chr_map = map.get(chr);
 						if(chr_map == null){
 							chr_map = new HashMap<Integer,Float>();
@@ -167,7 +167,13 @@ public class ReadCov implements Runnable{
 	}
 	
 	public String toString(){
-		return this.sample + " Loaded CpGs: " + n_CpGs + " Removed CpGs: " + n_removed_CpGs;
+		if(n_CpGs != 0 || n_removed_CpGs != 0){
+			return this.sample + " Loaded CpGs: " + n_CpGs + " Ignored CpGs: " + n_removed_CpGs;
+		}
+		else{
+			return this.sample;
+		}
+
 	}
 	
 	public void run() throws OutOfMemoryError{

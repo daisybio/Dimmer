@@ -26,15 +26,15 @@ public class Config {
 	private boolean assume_equal_variance;
 	private HashSet<String> confounding_variables;
 	
+	private String input_type;
 	private String annotation_path;
 	private String output_path;
-	private String beta_path;
-	private String array_type;
+	
 	private String variable;
 	private int threads;
+	
 	private boolean background_correction;
 	private boolean probe_filtering;
-	
 	private boolean cell_composition;
 	private String cell_composition_path;
 	private boolean cd8t;
@@ -44,6 +44,12 @@ public class Config {
 	private boolean mono;
 	private boolean gran;
 	
+	private String beta_path;
+	private String array_type;
+	
+	private int min_reads;
+	private int n_min_read_exceptions;
+	private float min_variance;
 	private int n_permutations_cpg;
 	private boolean save_permu_plots;
 	
@@ -113,17 +119,26 @@ public class Config {
 				}
 				
 				check_annotation_path();
-				check_beta_path();
+				check_input_type();
 				
-				//only needed for idat input
-				if(this.beta_path == null){
-					check_background_correction();
-					check_probe_filtering();
-					check_cell_composition();
+				if(input_type!=null){
+					
+					if(input_type.equals("idat")){
+						check_background_correction();
+						check_probe_filtering();
+						check_cell_composition();
+					}
+					else if(input_type.equals("beta")){
+						check_beta_path();
+						check_array_type();
+					}
+					else if(input_type.equals("bisulfite")){
+						check_min_reads();
+						check_min_read_exceptions();
+						check_min_variance();
+					}
 				}
-				else{
-					check_array_type();
-				}
+				
 				check_n_permutations_cpg();
 				check_save_permu_plots();
 				
@@ -133,6 +148,7 @@ public class Config {
 				load = true;
 			}
 	
+			
 			check_dmr_search();
 			if(dmr_search){
 				check_pause();
@@ -284,6 +300,57 @@ public class Config {
 		}
 		return value;
 	}
+	/**
+	 * @param parameter : the parameter name
+	 * @param lower : lower bound
+	 * @param upper : upper bound
+	 * @param inclusive : whether bounds are inclusive or not
+	 * @return a float between lower and upper, if parameter can be parsed, else -1 (a negative value will always return -1, regardless of the choice of the lower bound)
+	 */
+	
+	private float check_positive_float(String parameter, double lower, double upper, boolean inclusive){
+		
+		String entry = this.parameters.remove(parameter);
+		float value = -1;
+		if(entry == null){
+			this.check = false;
+			this.missing_fields.add(parameter);
+		}
+		else if(entry.equals("")){
+			this.check = false;
+			this.missing_values.add(parameter);
+		}
+		else{
+			entry = entry.replace(',', '.');
+			try{
+				value = Float.parseFloat(entry);
+				if(inclusive){
+					if(value>upper||value<lower||value<0){
+						this.check = false;
+						this.malformatted_values.put(parameter,entry);
+						value = -1;
+					}
+				}
+				else{
+					if(value>=upper||value<=lower||value<0){
+						this.check = false;
+						this.malformatted_values.put(parameter,entry);
+						value = -1;
+					}	
+				}
+
+			}
+			catch(Exception e){
+				this.check = false;
+				this.malformatted_values.put(parameter,entry);
+				value = -1;
+			}
+		}
+		if(value != -1){
+			System.out.println(parameter+": "+value);
+		}
+		return value;
+	}
 	
 	/**
 	 * checks if a parameter exists and is a valid path 
@@ -381,6 +448,13 @@ public class Config {
 		String[] choices = {"Regression","T-test","1","2"};
 		String value = check_choices(parameter,choices);
 		this.model = value;
+	}
+	
+	private void check_input_type(){
+		String parameter = "input_type";
+		String[] choices = {"idat","beta","bisulfite","1","2","3"};
+		String value = check_choices(parameter,choices);
+		this.input_type = value;
 	}
 	
 	private void check_array_type(){
@@ -542,6 +616,35 @@ public class Config {
 		}
 	}
 	
+	private void check_min_reads(){
+		int value = 0;
+		String parameter = "min_reads";
+		value = check_positive_integer(parameter,false);
+		if(value>=0){
+			this.min_reads = value;	
+		}
+	}
+	
+	private void check_min_read_exceptions(){
+		int value = 0;
+		String parameter = "n_min_read_exceptions";
+		value = check_positive_integer(parameter,false);
+		if(value>=0){
+			this.n_min_read_exceptions = value;	
+		}
+	}
+	
+	private void check_min_variance(){
+		float value = -1;
+		String parameter = "min_variance";
+		value = check_positive_float(parameter,0,1,true);
+		if(value!=-1){
+			this.min_variance = value;
+		}
+	}
+	
+	
+	
 	private void check_n_permutations_cpg(){
 		int value = 0;
 		String parameter = "n_permutations_cpg";
@@ -621,70 +724,18 @@ public class Config {
 	public void check_p_value_cutoff(){
 		float value = -1;
 		String parameter = "p_value_cutoff";
-		String entry = this.parameters.remove(parameter);
-		if(entry == null){
-			this.check = false;
-			this.missing_fields.add(parameter);
-		}
-		else if(entry.equals("")){
-			this.check = false;
-			this.missing_values.add(parameter);
-		}
-		else{
-			entry = entry.replace(',', '.');
-			try{
-				value = Float.parseFloat(entry);
-				if(value>1||value<0){
-					this.check = false;
-					this.malformatted_values.put(parameter,entry);
-					value = -1;
-				}
-			}
-			catch(Exception e){
-				this.check = false;
-				this.malformatted_values.put(parameter,entry);
-				value = -1;
-			}
-			if(value!=-1){
-				System.out.println(parameter+": "+value);
-				this.p_value_cutoff = value;
-			}
-
+		value = check_positive_float(parameter,0,1,true);
+		if(value!=-1){
+			this.p_value_cutoff = value;
 		}
 	}
 	
 	public void check_min_diff(){
 		float value = -1;
 		String parameter = "min_diff";
-		String entry = this.parameters.remove(parameter);
-		if(entry == null){
-			this.check = false;
-			this.missing_fields.add(parameter);
-		}
-		else if(entry.equals("")){
-			this.check = false;
-			this.missing_values.add(parameter);
-		}
-		else{
-			entry = entry.replace(',', '.');
-			try{
-				value = Float.parseFloat(entry);
-				if(value>1||value<0){
-					this.check = false;
-					this.malformatted_values.put(parameter,entry);
-					value = -1;
-				}
-			}
-			catch(Exception e){
-				this.check = false;
-				this.malformatted_values.put(parameter,entry);
-				value = -1;
-			}
-			if(value!=-1){
-				System.out.println(parameter+": "+value);
-				this.min_diff = value;
-			}
-
+		value = check_positive_float(parameter,0,1,true);
+		if(value!=-1){
+			this.min_diff = value;
 		}
 	}
 	
@@ -1010,6 +1061,29 @@ public class Config {
 		return this.array_type;
 	}
 	
+	public boolean useBetaInput(){
+		return this.input_type.equals("beta");
+	}
+	public boolean useIdatInput(){
+		return this.input_type.equals("idat");
+	}
+	public boolean useBisulfiteInput(){
+		return this.input_type.equals("bisulfite");
+	}
+	
+	public int getMinReads(){
+		return this.min_reads;
+	}
+	
+	public int getMinReadExceptions(){
+		return this.n_min_read_exceptions;
+	}
+	
+	public float getMinVariance(){
+		return this.min_variance;
+	}
+	
+	
 	
 	public boolean doDMRSearch(){
 		return this.dmr_search;
@@ -1026,9 +1100,6 @@ public class Config {
 		return this.beta_path;
 	}
 	
-	public boolean useBetaInput(){
-		return this.beta_path!=null;
-	}
 	
 	public boolean load(){
 		return this.load;

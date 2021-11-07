@@ -20,6 +20,7 @@ import dk.sdu.imada.console.Variables;
 import dk.sdu.imada.jlumina.core.io.ReadCov;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
+import dk.sdu.imada.jlumina.core.statistics.LowVarianceFilter;
 
 public class CovLoader extends DataProgress{
 	
@@ -52,7 +53,7 @@ public class CovLoader extends DataProgress{
 	 * @param numThreads number of threads used for parallelization
 	 * @param minCount minimum reads mapped to a position
 	 */
-	public void load(int numThreads, int minCount, int missingValues)  throws OutOfMemoryError{
+	public void load(int numThreads, int minCount, int missingValues, float minVariance)  throws OutOfMemoryError{
 		
 		this.numThreads = numThreads;
 		quickCheck(); //checks samples, sets samples_path variables
@@ -66,6 +67,12 @@ public class CovLoader extends DataProgress{
 		mergeData(missingValues); //retains only positions that are featured in all samples, creates manifest file and creates methylated/unmethylated matrices
 		System.out.println("Creating beta-matrix...");
 		initBeta();
+		System.out.println("Created beta matrix with " + this.manifest.getCpgList().length + " CpGs\n");
+		System.out.println("Filtering low variance CpG sites...");
+		LowVarianceFilter filter = new LowVarianceFilter(this.manifest,this.beta, minVariance);
+		filter.filter();
+		this.manifest = filter.getManifest();
+		this.beta = filter.getBeta();
 		System.out.println("Succesfully loaded " + this.manifest.getCpgList().length + " CpGs\n");
 	}
 	
@@ -76,8 +83,7 @@ public class CovLoader extends DataProgress{
 	 */
 	
 	public void load(int numThreads)  throws OutOfMemoryError{
-		this.load(numThreads, 10, 1);
-	
+		this.load(numThreads, 10, 2, 0.001f);
 	}
 	
 	/**
@@ -108,15 +114,19 @@ public class CovLoader extends DataProgress{
 			
 			//iterate through readers to fill rows
 			for(int j = 0; j < reader_list.size(); j++){
+				
 				HashMap<Integer,Float> pos_map = reader_list.get(j).getMap().get(cpg.getChromosome());
+				
 				if(pos_map!=null){
+					
 					Float beta_value = pos_map.getOrDefault(cpg.getMapInfo(),(float)-1);
 					if(beta_value>=0){
 						beta_row[j] = beta_value;
 					}
 					else{
 						beta_row[j] = Float.NaN;
-					}			
+					}	
+					
 				}
 				else{
 					beta_row[j] = Float.NaN;
@@ -133,75 +143,6 @@ public class CovLoader extends DataProgress{
 		}
 	}
 	
-
-	/**
-	 * sorts out CpGs, that don't appear in all samples, creates a manifest and raw count matrices
-	 */
-	private void mergeData()  throws OutOfMemoryError {
-		
-		//retain only chromosomes that are in all samples
-		
-		HashSet<String> retained_chrs = null;
-		
-		for(ReadCov reader: reader_list){
-			
-			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
-			
-			if(retained_chrs == null){
-				retained_chrs = new HashSet<>();
-				retained_chrs.addAll(reader_map.keySet());
-			}
-			
-			else{
-				retained_chrs.retainAll(reader_map.keySet());
-			}
-		}
-			
-		//retrain only positions that are in all samples
-		HashMap<String,HashSet<Integer>> intersect_map = null;
-		
-		for(ReadCov reader : reader_list){
-			
-			HashMap<String,HashMap<Integer,Float>> reader_map = reader.getMap();
-			
-			if(intersect_map == null){
-				intersect_map = new HashMap<>();
-				for(String chr: retained_chrs){
-					HashSet<Integer> positions = new HashSet<>();
-					positions.addAll(reader_map.get(chr).keySet());
-					intersect_map.put(chr, positions);
-				}
-			}
-			
-			else{
-				for(String chr: retained_chrs){
-					intersect_map.get(chr).retainAll(reader_map.get(chr).keySet());					
-				}
-			}
-		}
-		
-		//init manifest 
-		this.manifest = new ReadManifest();
-		int n_CpGs = 0; //count CpGs to get size of the cpg list
-		for(String chr: retained_chrs){
-			n_CpGs += intersect_map.get(chr).size();
-		}
-		CpG[] cpg_list = new CpG[n_CpGs];
-		
-
-		int i = 0; 	//fill cpg_list
-		for(String chr: retained_chrs){
-			ArrayList<Integer> position_list = new ArrayList<>(intersect_map.get(chr));
-			intersect_map.remove(chr);
-			Collections.sort(position_list); //sorts the positions, in case they aren't sorted in the input files
-			for(int position : position_list){
-				cpg_list[i] = new CpG(chr,position);
-				i++;
-			}
-		}
-		manifest.setCpGList(cpg_list);
-		
-	}
 	
 	private void mergeData(int missingValues)  throws OutOfMemoryError {
 		

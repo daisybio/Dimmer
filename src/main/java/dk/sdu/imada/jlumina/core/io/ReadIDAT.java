@@ -222,7 +222,6 @@ public class ReadIDAT {
 				} else {
 
 					numFields = readInt();
-					System.out.println(fileName + ", num Fields: " + numFields);
 
 					// rows: fieldCode, byteOffset, bytes
 					fields = new long[3][numFields];
@@ -244,7 +243,6 @@ public class ReadIDAT {
 					reset(minByteOffset);
 					
 					nSNPsRead = readInt();
-					System.out.println(fileName + ", nSNPsRead: " + nSNPsRead);
 
 					IlluminaID = new int[nSNPsRead];
 					SD = new int[nSNPsRead];

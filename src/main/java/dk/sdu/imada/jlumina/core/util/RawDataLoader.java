@@ -214,8 +214,8 @@ public class RawDataLoader extends DataProgress {
 			badCpGIndices.addAll(mSet.getBadIndices());
 			if(badCpGIndices.size()!=0){
 				
-				System.out.println(Util.warningLog(badCpGIndices.size()+" were ignored because of missing data"));
-				this.warnings.add(badCpGIndices.size()+" were ignored because of missing data");
+				System.out.println(Util.warningLog(badCpGIndices.size()+" CpGs were ignored because of missing data"));
+				this.warnings.add(badCpGIndices.size()+" CpGs were ignored because of missing data");
 				manifest.removeByIndex(badCpGIndices);
 			}
 
