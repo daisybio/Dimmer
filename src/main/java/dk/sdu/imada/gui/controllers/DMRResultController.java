@@ -742,4 +742,8 @@ public class DMRResultController {
 		t.start();
 		tm.start();
 	}
+	
+	@FXML public void SaveBeta(ActionEvent event){
+		
+	}
 }

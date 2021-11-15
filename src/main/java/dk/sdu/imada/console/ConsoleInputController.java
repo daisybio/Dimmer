@@ -99,7 +99,7 @@ public class ConsoleInputController {
 					if(!config.useBetaInput() && !config.useBisulfiteInput()){
 						warning(f.getParentFile().getAbsolutePath()+"/");
 					}
-					else if(config.useBisulfiteInput()){
+					else if(config.useBisulfiteInput() && !bisulfite_error){
 						CovLoader covLoader = new CovLoader(f.getAbsolutePath());
 						if(!covLoader.quickCheck()){
 							System.out.println(Util.errorLog(covLoader.getErrors()));
@@ -618,21 +618,21 @@ public class ConsoleInputController {
 
 			System.out.println("Using infinium data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
-			mfProbes = Variables.RES_CONTROLE;
+			mfProbes = Variables.RES_CONTROL;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.INFINIUM_MANIFEST;
-				mfProbes = Variables.CONTROLE;	
+				mfProbes = Variables.CONTROL;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
 			mf = Variables.RES_EPIC_MANIFEST;
-			mfProbes = Variables.RES_CONTROLE;
+			mfProbes = Variables.RES_CONTROL;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.EPIC_MANIFEST;
-				mfProbes = Variables.CONTROLE;
+				mfProbes = Variables.CONTROL;
 			}
 		}
 

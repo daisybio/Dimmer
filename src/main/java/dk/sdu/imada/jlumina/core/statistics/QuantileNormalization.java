@@ -150,8 +150,9 @@ public class QuantileNormalization implements Normalization, Runnable {
 					xy.add(k);
 				k++;
 			}
-
+			
 			float[][] xyData = getSubSetMatrix(sex, xy);
+			
 			float[][] xxData = getSubSetMatrix(sex, xx);
 			
 			//float [][] xyNormalized = getQuantileNormalizedData(xyData);
@@ -214,7 +215,7 @@ public class QuantileNormalization implements Normalization, Runnable {
 		this.manifest = (ReadManifest) manifest;
 		this.gender = gender;
 
-		float toNormalize[][] = new float[methylationData.getData().size()][];
+		float toNormalize[][] = new float[manifest.getCpgList().length][];
 
 		int index = 0;
 		for (String cpg : manifest.getCpGsIDs()) {
@@ -227,6 +228,7 @@ public class QuantileNormalization implements Normalization, Runnable {
 //				System.out.println("");
 //			}
 		}
+		
 
 		toNormalize = getNonStratifiedNormalization(toNormalize, nt);
 		notify();

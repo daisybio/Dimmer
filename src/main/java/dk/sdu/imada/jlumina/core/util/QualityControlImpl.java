@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
@@ -51,6 +52,11 @@ public class QualityControlImpl extends AbstractQualityControl{
 		 int[] controlIdx = controlProbe.getControlAddress("NEGATIVE",controlProbe,0);
 		 HashMap<Integer,float[]> rBg = getBackground(rgset.getRedSet(),controlIdx);
 		 HashMap<Integer,float[]> gBg = getBackground(rgset.getGreenSet(),controlIdx);
+		 
+		 if(rBg == null || gBg == null){
+			 System.out.println(Util.warningLog("Probe filtering won't be performed!"));
+			 return new HashMap<String,float[]>();
+		 }
 		 float[] medianRed = findMedian(rBg,controlIdx, sampleNo);
 		 float[] medianGreen = findMedian(gBg,controlIdx, sampleNo);
 		 float[] redMAD = MedianAbsoluteDerivation(rBg,controlIdx,medianRed);
@@ -70,6 +76,10 @@ public class QualityControlImpl extends AbstractQualityControl{
 		 for(int i = 0;i<addresses.length;i++){
 				int key = addresses[i];
 				float[] address = color.get(addresses[i]);
+				if(address == null){
+					System.out.println(Util.warningLog("Missing control probe address: " + key));
+					return null;
+				}
 				newSet.put(key, address);
 			}
 		 return newSet;
@@ -81,7 +91,7 @@ public class QualityControlImpl extends AbstractQualityControl{
 	  * @param sampleNo : number of total samples 
 	  * @return a array containing the medians of the background distribution for every sample
 	  */
-	 public float[] findMedian(HashMap<Integer,float[]> color,int[] addresses, int sampleNo){
+	 public float[] findMedian(HashMap<Integer,float[]> color, int[] addresses, int sampleNo){
 			int noAddresses = addresses.length;
 			int mid = addresses.length/2;
 			float[] results = new float[sampleNo];

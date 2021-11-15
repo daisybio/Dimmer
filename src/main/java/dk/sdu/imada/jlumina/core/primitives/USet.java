@@ -31,25 +31,17 @@ public class USet extends MethylationData {
 		numSamples = rgSet.getSampleIDs().size();
 		data = new HashMap<String, float[]>();
 		
-		//missing data sites have -1 values, indices get stored to be filtered later
-		this.bad_CpG_indices = new HashSet<>();
-		int cpg_index = 0;
-		
 		for (CpG cpg : manifest.getCpgList()) {
 
 			if (cpg.getInifniumType().equals("II")) { 
 				float[] values = rgSet.getRedSet().get(cpg.getAddressA());
 				
 				if(values == null){
-					bad_CpG_indices.add(cpg_index);
+					System.out.println("Missing CpG address for: " + cpg.getCpgName());
 				}
 				else {
-					if(Util.containsNegatives(values)){
-						bad_CpG_indices.add(cpg_index);
-					}
-					else{
-						data.put(cpg.getCpgName(), values);
-					}
+					data.put(cpg.getCpgName(), values);
+
 				}
 				
 			}
@@ -64,17 +56,51 @@ public class USet extends MethylationData {
 				}
 				
 				if(values == null){
-					bad_CpG_indices.add(cpg_index);
+					System.out.println("Missing CpG address for: " + cpg.getCpgName());
 				}
 				else {
-					if(Util.containsNegatives(values)){
-						bad_CpG_indices.add(cpg_index);
-					}
-					else{
-						data.put(cpg.getCpgName(), values);
-					}
+					data.put(cpg.getCpgName(), values);
 				}
+			}
+			progress++;
+			notify();
+		}
+		done = true;
+		notify();
+	}
+	
+	public synchronized HashSet<Integer> getBadIndices() throws OutOfMemoryError {
+		
+		done = false;
+		progress = 0;
+		
+		numSamples = rgSet.getSampleIDs().size();
+		HashSet<Integer> bad_CpG_indices = new HashSet<>();
 
+		
+		int cpg_index = 0;
+		
+		for (CpG cpg : manifest.getCpgList()) {
+
+			if (cpg.getInifniumType().equals("II")) { 
+				float[] values = rgSet.getRedSet().get(cpg.getAddressA());
+				if(values == null){
+					bad_CpG_indices.add(cpg_index);
+				}		
+			}
+			
+			if (cpg.getInifniumType().equals("I")) {
+				float values [];
+				
+				if (cpg.colorChannel.equals("Red")) {
+					values = rgSet.getRedSet().get(cpg.getAddressA());
+				}else {
+					values = rgSet.getGreenSet().get(cpg.getAddressA());
+				}
+				
+				if(values == null){
+					bad_CpG_indices.add(cpg_index);
+				}
 			}
 			cpg_index++;
 			progress++;
@@ -82,6 +108,7 @@ public class USet extends MethylationData {
 		}
 		done = true;
 		notify();
+		return bad_CpG_indices;
 	}
 	
 	

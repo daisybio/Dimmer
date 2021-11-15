@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -23,6 +24,7 @@ import dk.sdu.imada.gui.plots.VolcanoPlot;
 import dk.sdu.imada.gui.plots.XYData;
 import dk.sdu.imada.gui.plots.XYLogData;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
+import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
 import dk.sdu.imada.jlumina.core.statistics.BenjaminiHochberg;
 import dk.sdu.imada.jlumina.core.util.MatrixUtil;
@@ -90,8 +92,21 @@ public class ConsolePermutationMonitor implements Runnable{
 		else{
 			System.out.println("\nNo plots will be saved...");
 		}
-
+		
+		if(mainController.getConfig().getSaveBeta()){
+			String path = mainController.getConfig().getOutputDirectory();
+			HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
+			CpG[] cpgs = mainController.getManifest().getCpgList();
+			float[][] beta = mainController.getBeta();
+			String input_type = mainController.getConfig().getInputType();
+			String array_type = mainController.getConfig().getArrayType();
+			WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
+			betaWriter.write();
+		}
+		mainController.setBeta(null);
+		
 		savePermutationParameters(mainController.getConfig().getOutputDirectory() + "dimmer_project.csv");
+		
 	}
 	
 	private void doWait() {

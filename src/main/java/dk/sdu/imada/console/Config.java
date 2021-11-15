@@ -52,6 +52,7 @@ public class Config {
 	private float min_variance;
 	private int n_permutations_cpg;
 	private boolean save_permu_plots;
+	private boolean save_beta;
 	
 	private boolean dmr_search;
 	private boolean pause;
@@ -123,16 +124,16 @@ public class Config {
 				
 				if(input_type!=null){
 					
-					if(input_type.equals("idat")){
+					if(input_type.equals(Variables.IDAT)){
 						check_background_correction();
 						check_probe_filtering();
 						check_cell_composition();
 					}
-					else if(input_type.equals("beta")){
+					else if(input_type.equals(Variables.BETA)){
 						check_beta_path();
 						check_array_type();
 					}
-					else if(input_type.equals("bisulfite")){
+					else if(input_type.equals(Variables.BISULFITE)){
 						check_min_reads();
 						check_min_read_exceptions();
 						check_min_variance();
@@ -141,6 +142,7 @@ public class Config {
 				
 				check_n_permutations_cpg();
 				check_save_permu_plots();
+				check_save_beta();
 				
 			}
 			
@@ -452,7 +454,7 @@ public class Config {
 	
 	private void check_input_type(){
 		String parameter = "input_type";
-		String[] choices = {"idat","beta","bisulfite","1","2","3"};
+		String[] choices = {Variables.IDAT,Variables.BETA,Variables.BISULFITE,"1","2","3"};
 		String value = check_choices(parameter,choices);
 		this.input_type = value;
 	}
@@ -657,6 +659,14 @@ public class Config {
 		String value = check_boolean(parameter);
 		if(value!=null){
 			this.save_permu_plots = Boolean.parseBoolean(value);
+		}
+	}
+	
+	private void check_save_beta(){
+		String parameter = "save_beta";
+		String value = check_boolean(parameter);
+		if(value!=null){
+			this.save_beta = Boolean.parseBoolean(value);
 		}
 	}
 	
@@ -997,6 +1007,10 @@ public class Config {
 		return this.save_permu_plots;
 	}
 	
+	public boolean getSaveBeta(){
+		return this.save_beta;
+	}
+	
 	public boolean getPause(){
 		return this.pause;
 	}
@@ -1062,13 +1076,17 @@ public class Config {
 	}
 	
 	public boolean useBetaInput(){
-		return this.input_type.equals("beta");
+		return this.input_type.equals(Variables.BETA);
 	}
 	public boolean useIdatInput(){
-		return this.input_type.equals("idat");
+		return this.input_type.equals(Variables.IDAT);
 	}
 	public boolean useBisulfiteInput(){
-		return this.input_type.equals("bisulfite");
+		return this.input_type.equals(Variables.BISULFITE);
+	}
+	
+	public String getInputType(){
+		return this.input_type;
 	}
 	
 	public int getMinReads(){

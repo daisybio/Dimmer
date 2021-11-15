@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.jlumina.core.io.AbstractManifest;
 import dk.sdu.imada.jlumina.core.io.ReadControlProbe;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
@@ -25,6 +26,10 @@ public class BackgroundCorrection implements Normalization {
 		int[] negative = readControl.getControlAddress("NEGATIVE", readControl,0);
 		float[] bgGreen = calculateNoise(methylationData.getGreenSet(),negative,nt);
 		float[] bgRed = calculateNoise(methylationData.getRedSet(),negative,nt);
+		if(bgGreen == null || bgRed == null){
+			 System.out.println(Util.warningLog("Background correction won't be performed!"));
+			return;
+		}
 		HashMap<Integer,float[]> greenBG =  calculateBackground(methylationData.getGreenSet(),bgGreen);
 		HashMap<Integer,float[]> redBG =  calculateBackground(methylationData.getRedSet(),bgRed);
 		methylationData.setGreenSet(greenBG); 
@@ -39,6 +44,10 @@ public class BackgroundCorrection implements Normalization {
 			float[] sort = new float[noAddresses];
 			for(int j=0;j<noAddresses;j++){
 				float[] address = color.get(addresses[j]);
+				if(address==null){
+					System.out.println(Util.warningLog("Missing control probe address: " + addresses[j]));
+					return null;
+				}
 				sort[j]=address[i];
 			}
 			Arrays.sort(sort);

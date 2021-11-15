@@ -213,10 +213,10 @@ public class InputController {
 	}
 	
 	@FXML public void selectInputType(ActionEvent actionEvent) {
-		if(inputType.getValue().equals("IDAT format")){
+		if(inputType.getValue().equals(Variables.IDAT)){
 			paneIDAT.setVisible(true);
 			paneBeta.setVisible(false);
-		}else if(inputType.getValue().equals("Beta-matrix")){
+		}else if(inputType.getValue().equals(Variables.BETA)){
 			paneIDAT.setVisible(false);
 			paneBeta.setVisible(true);
 		}
@@ -533,7 +533,7 @@ public class InputController {
 		output.setText(null);
 		ccPath.setText(null);
 		betaPath.setText(null);
-		inputType.setValue("IDAT format");
+		inputType.setValue(Variables.IDAT);
 		arrayType.setValue(null);
 		cellComposition.setSelected(false);
 		cd8t.setSelected(false);
@@ -725,7 +725,7 @@ public class InputController {
 
 		}else {
 			//only relevant if idat
-			if(this.inputType.getValue().equals("IDAT format")){
+			if(this.inputType.getValue().equals(Variables.IDAT)){
 				warning(new File(labels.getText()).getParentFile().getAbsolutePath()+"/");
 			}
 			if (fileProblem || duplication || missingFiles || missingMandatoryColumns) {
@@ -837,12 +837,20 @@ public class InputController {
 	boolean performProbeFiltering;
 	
 	private void startPreprocessing() {
-		if(this.inputType.getValue().equals("Beta-matrix")){
+		if(this.inputType.getValue().equals(Variables.BETA)){
 			startBetaPreprocessing();
 		}
 		else{
 			startIdatPreprocessing();
 		}
+	}
+	
+	public String getInputType(){
+		return this.inputType.getValue();
+	}
+	
+	public String getArrayType(){
+		return this.arrayType.getValue();
 	}
 	
 	private void startBetaPreprocessing(){
@@ -951,21 +959,21 @@ public class InputController {
 
 			System.out.println("Using infinium data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
-			mfProbes = Variables.RES_CONTROLE;
+			mfProbes = Variables.RES_CONTROL;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.INFINIUM_MANIFEST;
-				mfProbes = Variables.CONTROLE;	
+				mfProbes = Variables.CONTROL;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
 			mf = Variables.RES_EPIC_MANIFEST;
-			mfProbes = Variables.RES_CONTROLE;
+			mfProbes = Variables.RES_CONTROL;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.EPIC_MANIFEST;
-				mfProbes = Variables.CONTROLE;
+				mfProbes = Variables.CONTROL;
 			}
 		}
 

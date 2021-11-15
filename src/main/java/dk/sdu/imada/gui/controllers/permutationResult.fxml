@@ -20,6 +20,7 @@
                   <Button mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
                   <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="continue" />
                   <Button mnemonicParsing="false" onAction="#saveAll" styleClass="ButtonPanel" text="save plots" />
+                  <Button mnemonicParsing="false" onAction="#saveBeta" styleClass="ButtonPanel" text="save beta-matrix" />
                </children>
             </HBox>
             <Pane prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
@@ -127,7 +128,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="This plot depicts the correlation of the calculated p-values to their empirical p-values. Most of the dots are supposed to be on the main diagonal. However, there will be cases where CpGs with bad (i.e. high) p-values may become significant in their empirical p-value (i.e. it’s unlikely to achieve better p-values in randomly permuted data) and vice versa (initially good p-values become insignificant because they achieve good p-values in randomly permuted data as well)." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their empirical p-values. Most of the dots are supposed to be on the main diagonal. However, there will be cases where CpGs with bad (i.e. high) p-values may become significant in their empirical p-value (i.e. it���s unlikely to achieve better p-values in randomly permuted data) and vice versa (initially good p-values become insignificant because they achieve good p-values in randomly permuted data as well)." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>

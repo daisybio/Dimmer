@@ -58,14 +58,6 @@ public class Util {
 		}
 	}
 	
-	public static boolean containsNegatives(float[] array){
-		for(int i = 0; i< array.length; i++){
-			if(array[i]<0){
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	public static void writeBetaMatrix(String path, float[][] beta, String[] sentrixID, String[] sentrixPosition, String[] cpgIDs){
 		System.out.println("Writing beta matrix to "+path);

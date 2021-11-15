@@ -129,7 +129,6 @@ public class ReadManifest extends AbstractManifest {
 				newIndex++;
 			}
 		}
-		
 		this.cpgList = newCpGs;
 	}
 }

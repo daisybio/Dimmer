@@ -14,7 +14,6 @@ public abstract class MethylationData extends RGSet{
 
 	int progress;
 	boolean done;
-	protected HashSet<Integer> bad_CpG_indices;
 
 	public MethylationData() {
 		progress = 0;
@@ -110,9 +109,13 @@ public abstract class MethylationData extends RGSet{
 		return progress;
 	}
 	
-	public HashSet<Integer> getBadIndices(){
-		return this.bad_CpG_indices;
+	public void removIds(HashSet<String> ids){
+		
+		for(String id: ids){
+			this.data.remove(id);
+		}
 	}
+	
 
 	public synchronized void checkProgress() {
 		while (!done) {

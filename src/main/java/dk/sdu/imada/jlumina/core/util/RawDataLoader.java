@@ -170,6 +170,25 @@ public class RawDataLoader extends DataProgress {
 		int numSamples = this.rgSet.getSampleIDs().size();
 		this.manifest.loadManifest();
 		
+		setMsg("Setting U and M probes");
+		System.out.println("Setting U and M probes");
+		setProgress(p++);
+		
+		this.uSet.setManifest(manifest);
+		this.uSet.setRgSet(rgSet);
+
+		this.mSet.setManifest(manifest);
+		this.mSet.setRgSet(rgSet);
+		
+		//check for missing sites
+		HashSet<Integer> badCpGIndices = uSet.getBadIndices();
+		badCpGIndices.addAll(mSet.getBadIndices());
+		if(badCpGIndices.size()!=0){
+			System.out.println(Util.warningLog(badCpGIndices.size()+" CpGs were ignored because of missing data"));
+			this.warnings.add(badCpGIndices.size()+" CpGs were ignored because of missing data");
+			manifest.removeByIndex(badCpGIndices);
+		}
+		
 		ReadControlProbe controlProbe = this.readControlProbe;
 		controlProbe.loadManifest();
 		
@@ -192,32 +211,13 @@ public class RawDataLoader extends DataProgress {
 			BackgroundCorrection bc = new BackgroundCorrection(controlProbe,0.05);
 			bc.performNormalization(rgSet, controlProbe, null, numSamples);
 		}
-
 		
-		
-		setMsg("Setting U and M probes");
-		System.out.println("Setting U and M probes");
-		setProgress(p++);
-		
-		this.uSet.setManifest(manifest);
-		this.uSet.setRgSet(rgSet);
-
-		this.mSet.setManifest(manifest);
-		this.mSet.setRgSet(rgSet);
+		setMsg("Loading U and M set");
+		System.out.println("Loading U and M set");
 
 		try {
 			this.uSet.loadData();
 			this.mSet.loadData();
-			
-			//check for missing sites
-			HashSet<Integer> badCpGIndices = uSet.getBadIndices();
-			badCpGIndices.addAll(mSet.getBadIndices());
-			if(badCpGIndices.size()!=0){
-				
-				System.out.println(Util.warningLog(badCpGIndices.size()+" CpGs were ignored because of missing data"));
-				this.warnings.add(badCpGIndices.size()+" CpGs were ignored because of missing data");
-				manifest.removeByIndex(badCpGIndices);
-			}
 
 		}catch(OutOfMemoryError e) {
 			this.setOveflow(true);

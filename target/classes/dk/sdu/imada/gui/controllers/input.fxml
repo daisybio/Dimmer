@@ -28,11 +28,11 @@
                         <TextField fx:id="numThreads" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="304.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="91.0" text="4" />
                         <Label layoutX="10.0" layoutY="284.0" styleClass="FontHeader" text="Number of CPU threads" />
                         
-		                <ChoiceBox fx:id="inputType" layoutX="10.0" layoutY="364.0"  onAction="#selectInputType" value="IDAT format">
+		                <ChoiceBox fx:id="inputType" layoutX="10.0" layoutY="364.0"  onAction="#selectInputType" value="idat">
 		    				<items>
 		        			<FXCollections fx:factory="observableArrayList">
-		            			<String fx:value="IDAT format" />
-		            			<String fx:value="Beta-matrix" />
+		            			<String fx:value="idat" />
+		            			<String fx:value="beta" />
 		        			</FXCollections>
 		   					</items>
 						</ChoiceBox>

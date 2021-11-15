@@ -89,8 +89,9 @@ public class RGSet {
 			gIdat.readNonEncryptedIDAT(greenIdatFile);
 			rIdat.readNonEncryptedIDAT(redIdatFile);
 
+
 			for (int i = 0; i < SIZE; i++) {
-				ilumminaIDs[i] = gIdat.getIlluminaID()[i];
+				ilumminaIDs[i] = rIdat.getIlluminaID()[i];
 				greenMeans[i][colId] = gIdat.getMean()[i];
 				redMeans[i][colId] = rIdat.getMean()[i];
 			}
@@ -98,7 +99,6 @@ public class RGSet {
 			notify();
 			progress++;
 		}
-
 		int index = 0;
 		for (int ids : ilumminaIDs) {
 			greenSet.put(ids, greenMeans[index]);
@@ -174,6 +174,7 @@ public class RGSet {
 			//-1 is used for initialization to later filter out missing values
 			for (int i = 0; i < g_ids.length; i++){
 				float[] values = greenSet.get(g_ids[i]);
+				//create value array if it doesnt exist
 				if(values == null){
 					values = initMinusOnes(numberSamples);
 					greenSet.put(g_ids[i], values);
@@ -183,6 +184,7 @@ public class RGSet {
 			
 			for (int i = 0; i < r_ids.length; i++) {
 				float[] values = redSet.get(r_ids[i]);
+				//create value array if it doesnt exist
 				if(values == null){
 					values = initMinusOnes(numberSamples);
 					redSet.put(r_ids[i], values);
@@ -194,6 +196,13 @@ public class RGSet {
 			notify();
 			progress++;
 		}
+		
+		//filter missing values
+		
+		greenSet.entrySet().removeIf(
+                entry -> (containsNegatives(entry.getValue())));
+		redSet.entrySet().removeIf(
+                entry -> (containsNegatives(entry.getValue())));
 
 		done = true;
 		notify();
@@ -217,6 +226,15 @@ public class RGSet {
 			array[i] = -1;
 		}
 		return array;
+	}
+	
+	public static boolean containsNegatives(float[] array){
+		for(int i = 0; i< array.length; i++){
+			if(array[i]<0){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 

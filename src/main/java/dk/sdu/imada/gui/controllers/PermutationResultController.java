@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -18,8 +19,11 @@ import org.jfree.chart.JFreeChart;
 import dk.sdu.imada.gui.controllers.util.DMRParametersUtil;
 import dk.sdu.imada.gui.controllers.util.SaveAll;
 import dk.sdu.imada.gui.monitors.SaveAllMonitor;
+import dk.sdu.imada.gui.monitors.WriteBetaMonitor;
 import dk.sdu.imada.gui.plots.VolcanoPlot;
 import dk.sdu.imada.gui.plots.XYLogData;
+import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
+import dk.sdu.imada.jlumina.core.primitives.CpG;
 import dk.sdu.imada.jlumina.core.util.MatrixUtil;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -93,6 +97,7 @@ public class PermutationResultController {
 
 	@FXML public void pushContinue(ActionEvent actionEvent) {
 		DMRParametersUtil dmrParametersUtil = new DMRParametersUtil(mainController);
+		mainController.setBeta(null);
 		dmrParametersUtil.setScreen();
 		mainController.loadScreen("dmrParameters");
 	}
@@ -239,6 +244,32 @@ public class PermutationResultController {
 		Platform.runLater(pf);
 		t.start();
 		tm.start();
+	}
+	
+	@FXML public void saveBeta(ActionEvent e){
+
+		String path = mainController.getOutputDirectory();
+		HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
+		CpG[] cpgs = mainController.getManifest().getCpgList();
+		float[][] beta = mainController.getBeta();
+		String input_type = mainController.getInputController().getInputType();
+		String array_type = mainController.getInputController().getArrayType();
+		
+		ProgressForm pf = new ProgressForm("Saving beta-matrix in " + path);
+		
+		WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
+		
+		Thread t = new Thread(betaWriter);
+		Thread m = new Thread(new WriteBetaMonitor(betaWriter,pf));
+		ArrayList<Thread> threads = new ArrayList<>();
+		threads.add(t);
+		threads.add(m);
+		pf.setThreads(threads);
+
+		
+		Platform.runLater(pf);
+		t.start();
+		m.start();
 	}
 
 	// fwer pvalues ........................................................
