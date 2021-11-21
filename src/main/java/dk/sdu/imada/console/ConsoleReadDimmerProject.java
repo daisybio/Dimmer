@@ -50,6 +50,7 @@ public class ConsoleReadDimmerProject {
 
 			String [] nextLine = reader.readNext();
 			int i = 0;
+			boolean has_diff = false;
 
 			if (nextLine[0].equals("CPG")) {
 				original = new float[numRows];
@@ -57,7 +58,10 @@ public class ConsoleReadDimmerProject {
 				fwer = new float[numRows];
 				sdc = new float[numRows];
 				fdr = new float[numRows];
-				diff = new float[numRows];
+				if(nextLine.length>=9){
+					diff = new float[numRows];
+					has_diff = true;
+				}
 
 				while ((nextLine = reader.readNext()) != null) {
 					data[i][0] = nextLine[0];
@@ -69,7 +73,9 @@ public class ConsoleReadDimmerProject {
 					fdr[i] = Float.parseFloat(nextLine[5]);
 					fwer[i] = Float.parseFloat(nextLine[6]);
 					sdc[i] = Float.parseFloat(nextLine[7]);
-					diff[i] = Float.parseFloat(nextLine[8]);
+					if(has_diff){
+						diff[i] = Float.parseFloat(nextLine[8]);
+					}
 					i++;
 
 					progress = (double) i/(double) numRows;

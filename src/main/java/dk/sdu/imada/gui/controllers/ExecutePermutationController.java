@@ -53,8 +53,7 @@ public class ExecutePermutationController {
 		
 		float beta[][] = mainController.getBeta();
 		float[] pvalue = null;
-		float[] methylationDiff = new float[beta.length];
-		
+		float[] methylationDiff = null;
 		
 		// 0 = isPaired, 1 = isRegression, 2 = twoSided, 3 = left, 4 = right, 5 = assumeEqualVariance
 		boolean options [] = getOptions();
@@ -78,6 +77,8 @@ public class ExecutePermutationController {
 			originalIndex = gr.unGroupedIndices();
 		}
 		if(!options[1]){
+			methylationDiff = new float[beta.length];
+			
 			if(!options[0]){
 				gr = new Grouping(columnMap.get(mainController.inputController.getCoefficient()));
 				originalIndex = gr.getIndices();

@@ -13,9 +13,11 @@ import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
+import dk.sdu.imada.console.Util;
 import dk.sdu.imada.gui.plots.HistogramPvalueDistribution;
 import dk.sdu.imada.jlumina.core.io.ReadManifest;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
+import dk.sdu.imada.jlumina.core.util.MatrixUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +26,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 public class DMRParametersController {
@@ -36,6 +39,10 @@ public class DMRParametersController {
 	@FXML TextField cpgDistance;
 	@FXML TextField numException;
 	@FXML ImageView imageView;
+	
+	@FXML Pane paneDiff;
+	@FXML ImageView imageViewDiff;
+	
 	@FXML Button backButton;
 	
 	@FXML RadioButton empPvalueRadioButton;
@@ -52,6 +59,10 @@ public class DMRParametersController {
 
 	public void setImageView(ImageView imageView) {
 		this.imageView = imageView;
+	}
+	
+	public void setImageViewDiff(ImageView imageView) {
+		this.imageViewDiff = imageView;
 	}
 
 	@FXML public void pushBack(ActionEvent actionEvent) {
@@ -178,6 +189,23 @@ public class DMRParametersController {
 			}
 		});
 	}
+	
+	@FXML public void plotDistributionDiff(ActionEvent actionEvent) {
+
+		JFreeChart chart = canvasController.getCpgDiffChart();
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JPanel panel = new ChartPanel(chart);
+				JFrame frame = new JFrame("");
+				frame.setSize(600, 400);
+				frame.setLocationRelativeTo(null);
+				frame.add(panel);
+				frame.setVisible(true);
+				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			}
+		});
+	}
 
 	private boolean checkDoubleFormat(String str) {
 		Double d;
@@ -219,6 +247,12 @@ public class DMRParametersController {
 		exportChart(img);
 	}
 
+	@FXML public void pushSaveHistogramDiff(ActionEvent e) {
+		JFreeChart chart = canvasController.getCpgDiffChart();
+		BufferedImage img = chart.createBufferedImage(1200, 800);
+		exportChart(img);
+	}
+	
 	private void exportChart(BufferedImage bufferedImage) {
 		try {
 			FileChooser fileChooser = new FileChooser();
@@ -271,6 +305,22 @@ public class DMRParametersController {
 		canvasController.setCpgDistanceChart(chart);
 		Image mni = SwingFXUtils.toFXImage(chart.createBufferedImage(600, 400), null);
 		imageView.setImage(mni);
+	}
+	
+	public void setDiffDistribution(float[] diff){
+		if(diff!=null){
+			float[] min_max = Util.getMinMax(diff, -1f, 1f);
+			float min = min_max[0];
+			float max = min_max[1];
+			
+			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylatin difference", "Frequency", 100, java.awt.Color.BLUE, min, max, min, max);
+			JFreeChart chart = his.getChart();
+			canvasController.setCpgDiffChart(chart);
+			Image mni = SwingFXUtils.toFXImage(chart.createBufferedImage(600, 400), null);
+			imageViewDiff.setImage(mni);
+		}else{
+			this.paneDiff.setVisible(false);
+		}
 	}
 
 	private double[] getCpGDistribution(double treshold) {

@@ -151,6 +151,54 @@ public class Util {
 		return "Memory in GB:\nMax: " + (max/(double)1000000000) + " Used: " + (used/(double)1000000000) + " Total: " + (total/(double)1000000000) + " Free: " + (free/(double)1000000000);
 	}
 	
+	/**
+	 * 
+	 * @param array
+	 * @return returns min ([0])and max ([1]) values of an array. If the array is empty the default values are returned
+	 */
+	public static float[] getMinMax(float[] array, float min_default, float max_default){
+		float[] min_max =  {min_default, max_default};
+		if(array != null && array.length > 0){
+			float min = array[0];
+			float max = array[0];
+			for(float element : array){
+				if (element < min){
+					min = element;
+				}
+				if (element > max){
+					max = element;
+				}
+			}
+			min_max[0] = min;
+			min_max[1] = max;
+		}
+		return min_max;
+	}
+	
+	/**
+	 * 
+	 * @param array
+	 * @return returns min ([0])and max ([1]) values of an array. If the array is empty the default values are returned
+	 */
+	public static double[] getMinMax(double[] array, double min_default, double max_default){
+		double[] min_max =  {min_default, max_default};
+		if(array != null && array.length > 0){
+			double min = array[0];
+			double max = array[0];
+			for(double element : array){
+				if (element < min){
+					min = element;
+				}
+				if (element > max){
+					max = element;
+				}
+			}
+			min_max[0] = min;
+			min_max[1] = max;
+		}
+		return min_max;
+	}
+	
 
 	
 	//main for testing

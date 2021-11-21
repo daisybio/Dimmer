@@ -329,8 +329,13 @@ public class PermutationTestMonitor implements Runnable{
 
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 
-			fw.write("CPG, CHR, POS, ORG, EMP, FDR, FWER, SDMP, DIFF\n");
-
+			fw.write("CPG, CHR, POS, ORG, EMP, FDR, FWER, SDMP");
+			if(methylationDiff!=null){
+				fw.write(", DIFF\n");
+			}
+			else{
+				fw.write("\n");
+			}
 			for (int i = 0; i < empirical.length; i++) {	
 				fw.write(manifest.getCpgList()[i].getCpgName() + ",");
 				fw.write(manifest.getCpgList()[i].getChromosome() + ",");
@@ -339,12 +344,12 @@ public class PermutationTestMonitor implements Runnable{
 				fw.write(empirical[i] + ",");
 				fw.write(fdr[i] + ",");
 				fw.write(fwer[i] + ",");
-				fw.write(sdmp[i] + ",");
+				fw.write(sdmp[i] +"");
 
 				if (methylationDiff!=null) {
-					fw.write(methylationDiff[i] + "\n");
+					fw.write( "," + methylationDiff[i] + "\n");
 				} else { 
-					fw.write("0.0\n");
+					fw.write("\n");
 				}
 			}
 			BufferedWriter bw = new BufferedWriter(fw);

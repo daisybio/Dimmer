@@ -38,6 +38,7 @@ public class DimmerProjectMonitor implements Runnable {
 				@Override
 				public void run() {
 					mainController.getDmrParametersController().setCpgAnnotation(projectUtil.getData()); 
+					mainController.getDmrParametersController().setDiffDistribution(projectUtil.getDiff()); 
 					mainController.setEmpiricalPvalues(projectUtil.getEmpirical());
 					mainController.setOriginalPvalues(projectUtil.getOriginal());
 					mainController.setFwerPvalues(projectUtil.getFwer());

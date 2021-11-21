@@ -22,10 +22,10 @@
                <children>
                   <HBox layoutY="10.0" maxWidth="-Infinity" prefHeight="60.0" prefWidth="200.0" styleClass="hboxParagraph">
                      <children>
-                        <Label text="Here, you need to set the parameters to find differentially methylated regions (DMRs). First, we need to account for the distances of CpGs across the chip. Two consecutive CpG's will not count as â€œconsecutiveâ€� if they are more than a specified â€œmax. CpG distanceâ€� apart. In doubt, keep the standard of 1,000." textAlignment="JUSTIFY" wrapText="true" />
+                        <Label text="Here, you need to set the parameters to find differentially methylated regions (DMRs). First, we need to account for the distances of CpGs across the chip. Two consecutive CpG's will not count as �������consecutive�������� if they are more than a specified �������max. CpG distance�������� apart. In doubt, keep the standard of 1,000." textAlignment="JUSTIFY" wrapText="true" />
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="134.0" prefWidth="458.0">
+                  <HBox alignment="CENTER_LEFT" layoutX="230.0" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0">
                      <children>
                         <Label text="This figure depicts the distribution of the distances between two neighboring CpGs. This figure can help to define a good distance cut-off for the region detection." textAlignment="JUSTIFY" wrapText="true" />
                      </children>
@@ -34,11 +34,10 @@
                   <TextField fx:id="p0Cutoff" layoutX="110.0" layoutY="539.0" maxWidth="-Infinity" prefWidth="80.0" text="0.05" />
                   <Label layoutX="10.0" layoutY="544.0" text="P-value Cutoff " />
                   
-                  <TextField fx:id="minDiff" layoutX="450.0" layoutY="539.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
-                  <Label layoutX="230.0" layoutY="544.0" text="Minimum mean methylation difference " />
+
                   
-                  <TextField fx:id="cpgDistance" layoutX="360.0" layoutY="240.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
-                  <Label layoutX="240.0" layoutY="245.0" text="Max. CpG distance " />
+                  <TextField fx:id="cpgDistance" layoutX="350.0" layoutY="240.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
+                  <Label layoutX="230.0" layoutY="245.0" text="Max. CpG distance " />
                   
                   <TextField fx:id="numPermutations" layoutX="10.0" layoutY="450.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
                   <Label layoutX="10.0" layoutY="430.0" text="Permutations " />
@@ -56,6 +55,17 @@
                   <Button layoutX="117.0" layoutY="240.0" mnemonicParsing="false" onAction="#pushSaveHistogram" text="save" />
                   <Button layoutX="60.0" layoutY="240.0" mnemonicParsing="false" onAction="#plotDistribution" text="zoom" />
                   <Label layoutX="34.0" layoutY="78.0" styleClass="FontHeader" text="CpG distance distribution:" />
+                  
+                  <Pane fx:id="paneDiff" layoutX="450.0"  layoutY="78.0" prefHeight="200.0" prefWidth="250.0" visible="true">
+	                  <ImageView fx:id="imageViewDiff" fitHeight="133.0" fitWidth="225.0" layoutX="0.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+	                  <Button layoutX="107.0" layoutY="162.0" mnemonicParsing="false" onAction="#pushSaveHistogramDiff" text="save" />
+	                  <Button layoutX="50.0" layoutY="162.0" mnemonicParsing="false" onAction="#plotDistributionDiff" text="zoom" />
+	                  <Label layoutX="4.0" layoutY="0.0" styleClass="FontHeader" text="Methylation difference distribution:" />
+	                  
+	                  <TextField fx:id="minDiff" layoutX="0.0" layoutY="461.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
+                  	  <Label layoutX="-220.0" layoutY="466.0" text="Minimum mean methylation difference " />
+                  </Pane>
+                  
                   <RadioButton fx:id="empPvalueRadioButton" layoutX="5.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectEmpirical" selected="true" text="Emp. p-values">
                      <toggleGroup>
                         <ToggleGroup fx:id="group" />
@@ -65,7 +75,7 @@
                   <RadioButton disable="true" layoutX="414.0" layoutY="520.0" mnemonicParsing="false" text="FDR. p-values" toggleGroup="$group" visible="false" />
                   <HBox layoutY="286.0" maxWidth="-Infinity" prefHeight="140.0" prefWidth="200.0" styleClass="hboxParagraph">
                      <children>
-                        <Label text="The DMR finding algorithm scans for regions that are enriched with significantly differentially methylated CpGs. It reports all DMRs where within a windows of specified size (â€œwindow sizeâ€� in nr. of CpGs) all CpGs are significantly differentially methylated but at most a given number of â€œexceptionsâ€�. If you set window size = 5 and exceptions = 2, DiMmer will report all instances where within 5 CpGs at least 3 (=5-2) are significantly differentially methylated. In order to determine the statistical significance of the DMRs, the given number of â€œpermutationsâ€� is performed. Afterwards, the frequency of finding a DMR of at least the same size using the same parameters in any randomized permutation data is calculated and given as p-value. In doubt, leave the standard parameters of 1,000 permutations, with 2 exceptions in a 5 CpG window size." textAlignment="JUSTIFY" wrapText="true" />
+                        <Label text="The DMR finding algorithm scans for regions that are enriched with significantly differentially methylated CpGs. It reports all DMRs where within a windows of specified size (�������window size�������� in nr. of CpGs) all CpGs are significantly differentially methylated but at most a given number of �������exceptions��������. If you set window size = 5 and exceptions = 2, DiMmer will report all instances where within 5 CpGs at least 3 (=5-2) are significantly differentially methylated. In order to determine the statistical significance of the DMRs, the given number of �������permutations�������� is performed. Afterwards, the frequency of finding a DMR of at least the same size using the same parameters in any randomized permutation data is calculated and given as p-value. In doubt, leave the standard parameters of 1,000 permutations, with 2 exceptions in a 5 CpG window size." textAlignment="JUSTIFY" wrapText="true" />
                      </children>
                   </HBox>
                   <HBox layoutY="498.0" maxWidth="-Infinity" prefHeight="35.0" prefWidth="200.0" styleClass="hboxParagraph">

@@ -26,14 +26,14 @@ public class HistogramPvalueDistribution {
 	
 	JFreeChart chart;
 	ChartPanel panel;
-	int domainMin, domainMax;	
-    public HistogramPvalueDistribution(String title, double values[], String xlabel, String ylabel, int binningSize, Color awtColot, double min, double max, int domainMin, int domainMax) {
+	double domainMin, domainMax;	
+    public HistogramPvalueDistribution(String title, double values[], String xlabel, String ylabel, int binningSize, Color awtColot, double min, double max, double domainMin, double domainMax) {
     	this.domainMin = domainMin;
     	this.domainMax = domainMax;
         createDemoPanel(values, title, xlabel, ylabel, binningSize, awtColot, min, max);
 	}
     
-    public HistogramPvalueDistribution(String title, double values[], String xlabel, String ylabel, int binningSize, Color awtColot,int domainMin, int domainMax) {
+    public HistogramPvalueDistribution(String title, double values[], String xlabel, String ylabel, int binningSize, Color awtColot,double domainMin, double domainMax) {
     	this.domainMax = domainMax;
     	this.domainMin = domainMin;
         createDemoPanel(values, title, xlabel, ylabel, binningSize, awtColot);

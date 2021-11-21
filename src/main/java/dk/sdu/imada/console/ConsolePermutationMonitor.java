@@ -309,7 +309,13 @@ public class ConsolePermutationMonitor implements Runnable{
 
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 
-			fw.write("CPG, CHR, POS, ORG, EMP, FDR, FWER, SDMP, DIFF\n");
+			fw.write("CPG, CHR, POS, ORG, EMP, FDR, FWER, SDMP");
+			if(methylationDiff!= null){
+				fw.write(", DIFF\n");
+			}
+			else{
+				fw.write("\n");
+			}
 
 			for (int i = 0; i < empirical.length; i++) {	
 				fw.write(manifest.getCpgList()[i].getCpgName() + ",");
@@ -319,12 +325,12 @@ public class ConsolePermutationMonitor implements Runnable{
 				fw.write(empirical[i] + ",");
 				fw.write(fdr[i] + ",");
 				fw.write(fwer[i] + ",");
-				fw.write(sdmp[i] + ",");
+				fw.write(sdmp[i] + "");
 
 				if (methylationDiff!=null) {
-					fw.write(methylationDiff[i] + "\n");
+					fw.write("," + methylationDiff[i] + "\n");
 				} else { 
-					fw.write("0.0\n");
+					fw.write("\n");
 				}
 			}
 			BufferedWriter bw = new BufferedWriter(fw);
@@ -399,6 +405,16 @@ public class ConsolePermutationMonitor implements Runnable{
 					"Methylation difference Vs. Step-down minP values", "Methylation difference", "Step-down minP values (-log10)").createBufferedImage(1800, 1200), dir+"sdc_vulcano_plot.png");
 			exportChart(vulcanoPlot(mainController.getOriginalPvalues(), mainController.getMethylationDifference(),
 					"Methylation difference Vs. Orig. p-values", "Methylation difference", "Orig. p-values (-log10)").createBufferedImage(1800, 1200), dir+"orig_vulcano_plot.png");
+		}
+		
+		if(mainController.getMethylationDifference() != null){
+			float[] diff = mainController.getMethylationDifference();
+			float[] min_max = Util.getMinMax(diff, -1f, 1f);
+			float min = min_max[0];
+			float max = min_max[1];
+			
+			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylatin difference", "Frequency", 100, java.awt.Color.BLUE, min, max, min, max);
+			exportChart( his.getChart().createBufferedImage(1800, 1200), dir + "mean_diff_methylation_hist.png");
 		}
 		
 		//distance

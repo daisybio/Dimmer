@@ -108,6 +108,7 @@ public class MainController implements Initializable {
 	JFreeChart dmrScoresDistributionChart;
 	JFreeChart dmrPValueDistributionChart;
 	JFreeChart cpgDistanceChart;
+	JFreeChart cpgDiffChart;
 	TreeMap<Integer, JFreeChart> pvaluesChart;
 
 	JFreeChart empiricalPvaluesDistributionChart;
@@ -373,6 +374,10 @@ public class MainController implements Initializable {
 	public void setCpgDistanceChart(JFreeChart cpgDistanceChart) {
 		this.cpgDistanceChart = cpgDistanceChart;
 	}
+	
+	public void setCpgDiffChart(JFreeChart cpgDiffChart) {
+		this.cpgDiffChart = cpgDiffChart;
+	}
 
 	public void setEmpiricalPvaluesDistributionChart(JFreeChart empiricalPvaluesDistributionChart) {
 		this.empiricalPvaluesDistributionChart = empiricalPvaluesDistributionChart;
@@ -408,6 +413,10 @@ public class MainController implements Initializable {
 
 	public JFreeChart getCpgDistanceChart() {
 		return cpgDistanceChart;
+	}
+	
+	public JFreeChart getCpgDiffChart() {
+		return cpgDiffChart;
 	}
 
 	public JFreeChart getFdrDistributionChart() {
@@ -912,8 +921,17 @@ public class MainController implements Initializable {
 
 	public void setDMRParametersScreen() {
 		dmrParametersController.p0Cutoff.setText(""+permutationParametersController.getPvalueCutoff());
+		
 		Image mini1 = SwingFXUtils.toFXImage(cpgDistanceChart.createBufferedImage(600, 400), null);
 		dmrParametersController.imageView.setImage(mini1);
+		
+		if(cpgDiffChart != null){
+			Image mini2 = SwingFXUtils.toFXImage(cpgDiffChart.createBufferedImage(600, 400), null);
+			dmrParametersController.imageViewDiff.setImage(mini2);
+		}else{
+			dmrParametersController.paneDiff.setVisible(false);
+		}
+
 	}
 
 	public String getOutputDirectory() {

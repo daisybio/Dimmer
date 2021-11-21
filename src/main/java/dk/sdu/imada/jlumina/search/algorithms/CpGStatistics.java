@@ -103,7 +103,9 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			}
 
 			statisticalEstimator.setSignificance(y);
-			diff[i] = statisticalEstimator.getDiff();
+			if(diff!=null){
+				diff[i] = statisticalEstimator.getDiff();
+			}
 			originalPvalues[i] = statisticalEstimator.getPvalue();
 		}
 		

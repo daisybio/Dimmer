@@ -57,7 +57,7 @@ public class ConsolePermutationController {
 		
 		float beta[][] = mainController.getBeta();
 		float[] pvalue = null;
-		float[] methylationDiff = new float[beta.length];
+		float[] methylationDiff = null;
 		
 		//for regression
 		float[][] phenotype = null;
@@ -78,6 +78,7 @@ public class ConsolePermutationController {
 			originalIndex = gr.unGroupedIndices();
 		}
 		if(config.isTTest()){
+			methylationDiff = new float[beta.length];
 			if(!config.isPaired()){
 				gr = new Grouping(columnMap.get(config.getVariable()));
 				originalIndex = gr.getIndices();

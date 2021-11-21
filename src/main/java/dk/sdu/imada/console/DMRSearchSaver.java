@@ -258,8 +258,11 @@ public class DMRSearchSaver {
 		for (DMR dmr : mainController.getDMRs()) {
 			pValues[index++] = dmr.getPValue();
 		}
+		
+		double[] min_max = Util.getMinMax(pValues, 0, 1);
+		int bins = (int) (100 * min_max[1]);
 
-		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", 100, java.awt.Color.BLUE, 0, 1);
+		HistogramPvalueDistribution histogram = new HistogramPvalueDistribution("DMR p-value distribution", pValues, "p-values", "Count", bins, java.awt.Color.BLUE, 0, 1);
 		JFreeChart chart = histogram.getChart();
 		
 		this.dmrPValueDistribution = chart;
