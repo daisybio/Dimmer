@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -44,13 +45,17 @@ public class ConsoleInputController {
 	HashMap<String, String[]> columnMap;
 	HashMap<Integer, String[]> rowMap;
 	
+	ArrayList<String> errors;
+	ArrayList<String> warnings;
+	
 	boolean hasGroupID = false;
 	boolean hasPairID = false;
 	boolean hasGenderID = false;
 	
 	boolean usePairID = false;
 	
-	boolean bisulfite_error = false;
+	
+	boolean fileProblem = false;
 	
 	ArrayList<String> labelsList;
 
@@ -82,55 +87,55 @@ public class ConsoleInputController {
 	public void start(){
 		// checks files
 		openLabels();
-		// starts preprocessing if no errors 
+		
+		if(this.errors.size()!=0){
+			System.out.println(Util.errorLog(errors));
+			System.exit(1);
+		}
+		
+		//checks input type specific requirements and executes pre-processing
 		pushContinue();
 	}
 	
 	public void openLabels() {
+		
+		this.errors = new ArrayList<>();
+		this.warnings = new ArrayList<>();
+		
 		String path = this.config.getAnnotationPath();
 		System.out.println("\nReading annotation file: "+path);
 		File f = new File(path);
+		
 		try {
-			if (!checkAccess(f.getAbsolutePath())) {
-				if (checkMandatoryColumns(f.getAbsolutePath())) {
-					setMaps(f.getAbsolutePath());
-					setLabelsList(f.getAbsolutePath());	
-					//only relevant for idat input
-					if(!config.useBetaInput() && !config.useBisulfiteInput()){
-						warning(f.getParentFile().getAbsolutePath()+"/");
-					}
-					else if(config.useBisulfiteInput() && !bisulfite_error){
-						CovLoader covLoader = new CovLoader(f.getAbsolutePath());
-						if(!covLoader.quickCheck()){
-							System.out.println(Util.errorLog(covLoader.getErrors()));
-							bisulfite_error = true;
-						}
-					}
-					checkVariables();
-				}else {
-					System.out.println("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position or " + Variables.BISULFITE_SAMPLE+" for bisulfite sequencing input.");
-				}
+			
+			this.fileProblem = checkAccess(f.getAbsolutePath());
+			
+			if (!this.fileProblem) {
+				this.rowMap = setRowMap(f.getAbsolutePath());
+				this.columnMap = setColumnMap(this.rowMap);
+				this.labelsList = setLabelsList(f.getAbsolutePath());	
 			}
+			
 		} catch (IOException e) {
 			System.out.println("Problems were found in loading " + f.getAbsolutePath());
 		}
+
 	}
 	
-	boolean fileProblem = false;
 	private boolean checkAccess(String file) {
 
-		fileProblem = false;
+		boolean fileProblem = false;
 
 		File f = new File(file);
 
 		if (!f.exists()) {
-			System.out.println("File doesn't exist");
+			errors.add("The annotation file doesn't exist");
 			fileProblem = true;
 		}else {
 
 			if (!f.canRead()) {
 				fileProblem = true;
-				System.out.println("The annotation file is not readable, check if this is a valid CSV file or if you have reading permissions");
+				errors.add("The annotation file is not readable, check if this is a valid CSV file or if you have reading permissions");
 
 			}
 
@@ -147,7 +152,7 @@ public class ConsoleInputController {
 				toksSize.add(toks.length);
 				if (toks.length <= 1) {
 					fileProblem = true;
-					System.out.println("The annotation file is not a valid comma-separated file");
+					errors.add("The annotation file is not a valid comma-separated file");
 					break;
 				}
 			}
@@ -161,7 +166,7 @@ public class ConsoleInputController {
 			for (int i = 1 ; i < toksSize.size(); i++) {
 				if (toksSize.get(i-1) != toksSize.get(i)) {
 					fileProblem = true;
-					System.out.println("The annotation file is not a valid comma-separated file");
+					errors.add("The annotation file is not a valid comma-separated file");
 					break;
 				}
 			}
@@ -170,79 +175,70 @@ public class ConsoleInputController {
 		return fileProblem;
 	}
 	
-	boolean missingMandatoryColumns;
-	private boolean checkMandatoryColumns(String path) throws IOException {
+	private boolean checkMandatoryColumns(Set<String> columnNames, HashSet<String> mandatory){
 		
-		missingMandatoryColumns = false;
+		boolean missingMandatoryColumns = false;
 		int count = 0;
-		boolean bisulfite = false;
+		int n_mandatory_columns = mandatory.size();
 
-		reader = new CSVReader(new FileReader(path));
+		for (String col :columnNames) {
 
-		for (String cols : reader.readNext()) {
-
-			if (cols.equals("Sentrix_ID") || cols.equals("Sentrix_Position")) { 
+			if (mandatory.remove(col)) { 
 				count++;
 			}
 
-			if (cols.equals("Group_ID")){
-				hasGroupID = true;
+			if (col.equals("Group_ID")){
+				this.hasGroupID = true;
 			}
 
-			if (cols.equals("Pair_ID")) {
-				hasPairID = true;
+			if (col.equals("Pair_ID")) {
+				this.hasPairID = true;
 			}
 
-			if (cols.equals("Gender_ID")) {
-				hasGenderID = true;
+			if (col.equals("Gender_ID")) {
+				this.hasGenderID = true;
 			}
 			
-			if (config.useBisulfiteInput() && cols.equals(Variables.BISULFITE_SAMPLE)){
-				bisulfite = true;
-			}
-		}
-		
-		if(config.useBisulfiteInput() && !bisulfite){
-			this.bisulfite_error = true;
-			System.out.println(Util.errorLog("Bisulfite input requires the colum \"" + Variables.BISULFITE_SAMPLE + "\" in the annotation file."));
 		}
 
-		missingMandatoryColumns = (count<2) && !bisulfite;	
-		return (count==2) ^ bisulfite;
+		missingMandatoryColumns = (count != n_mandatory_columns);	
+		return missingMandatoryColumns;
 	}
 	
-	private void setMaps(String path) {
-
-		columnMap = new HashMap<String, String[]>();
-		rowMap = new HashMap<Integer, String[]>();
+	
+	public HashMap<Integer, String[]> setRowMap(String path) throws IOException{
+		HashMap<Integer, String[]> rowMap = new HashMap<Integer, String[]>();
 
 		int i = 0;
-		try {
-			reader = new CSVReader(new FileReader(path));
-			String nextLine[] = null;
+		reader = new CSVReader(new FileReader(path));
+		String nextLine[] = null;
 
-			while ((nextLine = reader.readNext()) != null ) {
-				rowMap.put(i++, nextLine);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		while ((nextLine = reader.readNext()) != null ) {
+			rowMap.put(i++, nextLine);
 		}
 
+		return rowMap;
+	}
+	
+	public HashMap<String, String[]> setColumnMap( HashMap<Integer, String[]> rowMap){
+		HashMap<String, String[]> columnMap = new HashMap<String, String[]>();
+		
 		String keys[] = rowMap.get(0);
 
 		for (int j = 0; j < keys.length; j++) {
 			String []column = new String[rowMap.size() - 1];
-			for (i = 1; i < rowMap.size(); i++) {
+			for (int i = 1; i < rowMap.size(); i++) {
 				column[i-1] = rowMap.get(i)[j];
 			}
 			columnMap.put(keys[j], column);
 		}
+		
+		return columnMap;
 	}
 	
-	public void setLabelsList(String path) throws IOException {
+	public ArrayList<String> setLabelsList(String path) throws IOException {
 
-		labelsList = new ArrayList<String>();
+		ArrayList<String> labelsList = new ArrayList<String>();
 
 		CSVReader reader = new CSVReader(new FileReader(path));
 
@@ -258,10 +254,11 @@ public class ConsoleInputController {
 		}
 
 		reader.close();
+		return labelsList;
 	}
 	
+	
 	boolean missingFiles;
-	boolean emptyData;
 	boolean duplication;
 
 	private void warning(String basedir) {
@@ -361,29 +358,102 @@ public class ConsoleInputController {
 		missing_variable = !this.labelsList.contains(variable);
 		missing_confounding_variable = false;
 		if(missing_variable){
-			System.out.println("The variable of interest ("+variable+") can't be found in the annotation file");
+			this.errors.add("The variable of interest ("+variable+") can't be found in the annotation file");
 		}
 		if(this.config.getModel().equals("Regression")){
 			for(String var: confounding_variables){
 				if(!this.labelsList.contains(var)){
 					missing_confounding_variable = true;
-					System.out.println("The confounding variable " + var +" can't be found in the annotation file");
+					this.errors.add("The confounding variable " + var +" can't be found in the annotation file");
 				}
 			}
 		}
 	}
 	
 	public void pushContinue() {
-
-		if (fileProblem || duplication || missingFiles || missingMandatoryColumns  || missing_variable || missing_confounding_variable || bisulfite_error) {
-			System.out.println("Please, fix your sample annotation file");
-			System.exit(0);
-		}
-		if (this.config.isTTest() && !Util.checkBinary(columnMap.get(config.getVariable()))) {
-			System.out.println("Your selected variable of interest must be binary for a T-test");
-			System.exit(0);
+		
+		
+		String path = this.config.getAnnotationPath();
+		File f = new File(path);
+		this.errors = new ArrayList<>();
+		this.warnings = new ArrayList<>();
+		
+		//sets missing_variable and missing_confounding_variable
+		checkVariables();
+		
+		boolean missingMandatoryColumns = false;
+		boolean bisulfite_error = false;
+		HashSet<String> mandatory_columns = new HashSet<>();
+		
+		if(config.useIdatInput()){	
+			//sets also has hasPairID, hasGenderID and hasGroupID
+			mandatory_columns.add(Variables.SENTRIX_ID);
+			mandatory_columns.add(Variables.SENTRIX_POS);
+			missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+			
+			if(!missingMandatoryColumns){
+				//sets missingFiles, duplication
+				warning(f.getParentFile().getAbsolutePath()+"/");
+			}
+			else{
+				errors.add("Missing mandatory columns for idat input: " + Util.setToString(mandatory_columns));
+			}
 		}
 		
+		else if (config.useBisulfiteInput()){
+			
+			mandatory_columns.add(Variables.BISULFITE_SAMPLE);
+			missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+			
+			if(!missingMandatoryColumns){
+				
+				CovLoader covLoader = new CovLoader(f.getAbsolutePath());
+				if(!covLoader.quickCheck()){
+					System.out.println(Util.errorLog(covLoader.getErrors()));
+					bisulfite_error = true;
+				}
+				
+			}
+			else{
+				errors.add("Missing mandatory columns for bisulfite input: "+Util.setToString(mandatory_columns));
+			}
+		}
+		
+		else if (config.useBetaInput()){
+
+			if(config.getArrayType().equals(Variables.INFINIUM) || config.getArrayType().equals(Variables.EPIC)){
+				//sets also has hasPairID, hasGenderID and hasGroupID
+				mandatory_columns.add(Variables.SENTRIX_ID);
+				mandatory_columns.add(Variables.SENTRIX_POS);
+				missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+				if(missingMandatoryColumns){
+					errors.add("Missing mandatory columns in the annotation file: "+Util.setToString(mandatory_columns));
+				}
+			}
+			else{
+				mandatory_columns.add(Variables.BISULFITE_SAMPLE);
+				missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+				if(missingMandatoryColumns){
+					errors.add("Missing mandatory columns in the annotation file: "+Util.setToString(mandatory_columns));
+				}
+			}
+		}
+		
+		
+		if(this.errors.size()!=0){
+			System.out.println(Util.errorLog(errors));
+			System.exit(1);
+		}
+
+		if (fileProblem || duplication || missingFiles || missingMandatoryColumns  || missing_variable || missing_confounding_variable || bisulfite_error) {
+			System.out.println(Util.errorLog("Please, fix your sample annotation file"));
+			System.exit(1);
+		}
+		if (this.config.isTTest() && !Util.checkBinary(columnMap.get(config.getVariable()))) {
+			System.out.println(Util.errorLog("Your selected variable of interest must be binary for a T-test"));
+			System.exit(1);
+		}
+
 		
 		//checks for paired data type
 		if(config.isPaired()){
@@ -537,7 +607,12 @@ public class ConsoleInputController {
 		ReadBetaMatrix betaReader = new ReadBetaMatrix(config.getBetaPath());
 		
 		try{
-			betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());
+			if(config.getArrayType().equals(Variables.INFINIUM) || config.getArrayType().equals(Variables.EPIC)){
+				betaReader.initBetaMatrix(this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), config.getArrayType());	
+			}
+			else{
+				betaReader.initBetaMatrix(this.columnMap.get(Variables.BISULFITE_SAMPLE), config.getArrayType());
+			}
 		}catch(OutOfMemoryError e){
 			System.out.println(Messages.OUT_OF_MERMORY);
 			System.exit(1);
@@ -559,7 +634,8 @@ public class ConsoleInputController {
 				mainController.setEpic(true);
 			}
 			else{
-				System.out.println("Error in startBetaPreprocessing()");
+				mainController.setInfinium(false);
+				mainController.setEpic(false);
 			}
 		}
 		if(betaReader.hasWarnings()){

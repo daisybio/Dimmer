@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
 
@@ -197,6 +198,22 @@ public class Util {
 			min_max[1] = max;
 		}
 		return min_max;
+	}
+	
+	public static String setToString(Set<String> set){
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for(String e: set){
+			if(first){
+				builder.append(e);
+				first = false;
+			}
+			else{
+				builder.append(", ");
+				builder.append(e);
+			}
+		}
+		return builder.toString();
 	}
 	
 

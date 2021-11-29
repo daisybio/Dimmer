@@ -9,7 +9,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -246,35 +248,34 @@ public class InputController {
 		}
 	}
 
-	boolean missingMandatoryColumns;
-	private boolean checkMandatoryColumns(String path) throws IOException {
-
-		missingMandatoryColumns = false;
+	private boolean checkMandatoryColumns(Set<String> columnNames, HashSet<String> mandatory){
+		
+		boolean missingMandatoryColumns = false;
 		int count = 0;
+		int n_mandatory_columns = mandatory.size();
 
-		reader = new CSVReader(new FileReader(path));
+		for (String col :columnNames) {
 
-		for (String cols : reader.readNext()) {
-
-			if (cols.equals("Sentrix_ID") || cols.equals("Sentrix_Position")) { 
+			if (mandatory.remove(col)) { 
 				count++;
 			}
 
-			if (cols.equals("Group_ID")){
-				hasGroupID = true;
+			if (col.equals("Group_ID")){
+				this.hasGroupID = true;
 			}
 
-			if (cols.equals("Pair_ID")) {
-				hasPairID = true;
+			if (col.equals("Pair_ID")) {
+				this.hasPairID = true;
 			}
 
-			if (cols.equals("Gender_ID")) {
-				hasGenderID = true;
+			if (col.equals("Gender_ID")) {
+				this.hasGenderID = true;
 			}
+			
 		}
 
-		missingMandatoryColumns = count<2;	
-		return count==2;
+		missingMandatoryColumns = (count != n_mandatory_columns);	
+		return missingMandatoryColumns;
 	}
 
 	public String getCoefficient() {
@@ -380,12 +381,8 @@ public class InputController {
 			labels.setText(f.getAbsolutePath());
 			try {
 				if (!checkAccess(f.getAbsolutePath())) {
-					if (checkMandatoryColumns(f.getAbsolutePath())) {
-						setMaps(f.getAbsolutePath());
-						setLabelsList(f.getAbsolutePath());	
-					}else {
-						FXPopOutMsg.showWarning("A problem was found in the header. Check the presence of mandatory fields Sentrix_ID and Sentrix_Position");
-					}
+					setMaps(f.getAbsolutePath());
+					setLabelsList(f.getAbsolutePath());	
 				}
 			} catch (IOException e) {
 				FXPopOutMsg.showWarning("Problems were found in loading " + f.getAbsolutePath());
@@ -720,13 +717,54 @@ public class InputController {
 	}
 
 	@FXML public void pushContinue(ActionEvent actionEvent) {
+		
+		boolean missingMandatoryColumns = false;
+		HashSet<String> mandatory_columns = new HashSet<>();
+		
+		if(this.inputType.getValue().equals(Variables.BETA) && this.selectedType == null){
+			FXPopOutMsg.showWarning("Please select an array type");
+			return;
+		}
+		
 		if (labels.getText() == null || labels.getText().isEmpty()) {
 			FXPopOutMsg.showWarning("No file to load... ");
 
 		}else {
+			File f = new File(labels.getText());
 			//only relevant if idat
 			if(this.inputType.getValue().equals(Variables.IDAT)){
-				warning(new File(labels.getText()).getParentFile().getAbsolutePath()+"/");
+				mandatory_columns.add(Variables.SENTRIX_ID);
+				mandatory_columns.add(Variables.SENTRIX_POS);
+				missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+				
+				if(!missingMandatoryColumns){
+					//sets missingFiles, duplication
+					warning(f.getParentFile().getAbsolutePath()+"/");
+				}
+				else{
+					FXPopOutMsg.showWarning("Missing mandatory columns for idat input: " + Util.setToString(mandatory_columns));
+				}
+				
+			} else if(this.inputType.getValue().equals(Variables.BETA)){
+				if(this.selectedType.equals(Variables.INFINIUM) || this.selectedType.equals(Variables.EPIC)){
+					//sets also has hasPairID, hasGenderID and hasGroupID
+					mandatory_columns.add(Variables.SENTRIX_ID);
+					mandatory_columns.add(Variables.SENTRIX_POS);
+					missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+					if(missingMandatoryColumns){
+						FXPopOutMsg.showWarning("Missing mandatory columns in the annotation file: "+Util.setToString(mandatory_columns));
+					}
+				}
+				else{
+					mandatory_columns.add(Variables.BISULFITE_SAMPLE);
+					missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
+					if(missingMandatoryColumns){
+						FXPopOutMsg.showWarning("Missing mandatory columns in the annotation file: "+Util.setToString(mandatory_columns));
+					}
+				}
+			}
+			else{
+				System.out.println("Error in pushContinue() in InputController");
 			}
 			if (fileProblem || duplication || missingFiles || missingMandatoryColumns) {
 				FXPopOutMsg.showWarning("Please, fix your sample annotation file before starting the pre-processing");
@@ -858,7 +896,8 @@ public class InputController {
 			FXPopOutMsg.showWarning("Please select an array type");
 		}
 		else{
-			if(betaPath.getText()!=null){
+			if(betaPath.getText() != null && !betaPath.getText().isEmpty()){
+				System.out.println("beta" + betaPath.getText());
 				
 				ProgressForm pf = new ProgressForm();
 				
@@ -871,12 +910,19 @@ public class InputController {
 					mainController.setEpic(true);
 				}
 				else{
-					System.out.println("Error in startBetaPreprocessing()");
+					mainController.setInfinium(false);
+					mainController.setEpic(false);
 				}
 				
 				ReadBetaMatrix betaReader = new ReadBetaMatrix(betaPath.getText());
+				BetaExecutor betaExecutor;
+				if(this.selectedType.equals(Variables.INFINIUM) || this.selectedType.equals(Variables.EPIC)){
+					betaExecutor = new BetaExecutor(betaReader, this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), this.selectedType);
+				}
+				else{
+					betaExecutor = new BetaExecutor(betaReader, this.columnMap.get(Variables.BISULFITE_SAMPLE), this.selectedType);
+				}
 				
-				BetaExecutor betaExecutor = new BetaExecutor(betaReader, this.columnMap.get(Variables.SENTRIX_ID), this.columnMap.get(Variables.SENTRIX_POS), this.selectedType);
 				BetaMonitor betaMonitor = new BetaMonitor(betaReader, mainController, pf);
 
 				Thread loaderThread = new Thread(betaExecutor);

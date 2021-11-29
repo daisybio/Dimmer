@@ -28,7 +28,7 @@ public class Variables {
 	//array types
 	public static final String EPIC = "epic";
 	public static final String INFINIUM = "infinium";
-	public static final String NO_ARRAY = "no_array";
+	public static final String CUSTOM = "custom";
 	
 	//input types
 	public static final String IDAT = "idat";

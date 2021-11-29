@@ -76,6 +76,9 @@ public class HistogramPvalueDistribution {
             false);
         XYPlot plot = (XYPlot) chart.getPlot();
         NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+        if(domainMin == 0 && domainMax == 0){
+        	domainMax = 1;
+        }
         domain.setRange(domainMin, domainMax);
         plot.setDomainPannable(true);
         plot.setRangePannable(true);

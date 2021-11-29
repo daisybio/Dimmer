@@ -461,7 +461,7 @@ public class Config {
 	
 	private void check_array_type(){
 		String parameter = "array_type";
-		String[] choices = {"infinium","epic","1","2"};
+		String[] choices = {Variables.INFINIUM,Variables.EPIC,Variables.CUSTOM,"1","2","3"};
 		String value = check_choices(parameter,choices);
 		this.array_type = value;
 	}
@@ -803,10 +803,9 @@ public class Config {
 		
 		String value = null;
 		String parameter = "beta_path";
-		// path needs to be a readable file
-		if(this.parameters.get(parameter)!=null && !this.parameters.get(parameter).equals("")){
-			value = check_path(parameter,false,true,false,false);
-		}
+
+		value = check_path(parameter,false,true,false,false);
+		
 		this.parameters.remove(parameter);
 		this.beta_path = value;
 	}

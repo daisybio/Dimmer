@@ -38,15 +38,15 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 		
 		this.columnMap = columnMap;
 		this.input_type = input_type;
+		this.array_type = array_type;
 	}
 	
 	public void write(){
 		
-		this.setMaxSteps(2);
+		this.setMaxSteps(beta.length);
 		setMsg("Saving beta-matrix in " + this.path);
 		System.out.println("Saving beta-matrix in " + this.path);
-		int p = 1;
-		setProgress(p++);
+		double progress = 0;
 		
 		if(this.header == null){
 			this.header = createHeader();
@@ -73,6 +73,9 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 				}
 				
 				bw.write("\n");
+				if(i % 10000 == 0){
+					this.setProgress(i);
+				}
 				
 			}
 			bw.close();
@@ -81,15 +84,12 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 			e.printStackTrace();
 		}
 		
-		setProgress(p++);
 		this.setDone(true);
 	}
 	
 	private String[] createHeader(){
 		
 		String[] header = null;
-		
-		//header for array input
 		
 		if(this.input_type.equals(Variables.IDAT) || Variables.EPIC.equals(array_type) || Variables.INFINIUM.equals(array_type)){
 			String[] sentrix_id = columnMap.get(Variables.SENTRIX_ID);
@@ -104,7 +104,7 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 		
 		//header for bisulfite or custom input
 		
-		else if(this.input_type.equals(Variables.BISULFITE) || Variables.NO_ARRAY.equals(array_type)){
+		else if(this.input_type.equals(Variables.BISULFITE) || Variables.CUSTOM.equals(array_type)){
 			String[] samples = columnMap.get(Variables.BISULFITE_SAMPLE);
 			header = new String[samples.length];
 			

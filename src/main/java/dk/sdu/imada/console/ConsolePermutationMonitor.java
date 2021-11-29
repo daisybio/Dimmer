@@ -413,7 +413,7 @@ public class ConsolePermutationMonitor implements Runnable{
 			float min = min_max[0];
 			float max = min_max[1];
 			
-			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylatin difference", "Frequency", 100, java.awt.Color.BLUE, min, max, min, max);
+			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylation difference", "Count", 100, java.awt.Color.BLUE, min, max, min, max);
 			exportChart( his.getChart().createBufferedImage(1800, 1200), dir + "mean_diff_methylation_hist.png");
 		}
 		

@@ -96,9 +96,10 @@
 	                        <Label layoutX="10.0" layoutY="76.0" styleClass="FontHeader" text="Array type" />
 	                      	<ChoiceBox fx:id="arrayType" layoutX="10.0" layoutY="96"  onAction="#selectArrayType">
 			    				<items>
-			        			<FXCollections fx:factory="observableArrayList">
+			        			<FXCollections fx:factory="observableArrayList" >
 			            			<String fx:value="infinium" />
 			            			<String fx:value="epic" />
+			          				<String fx:value="custom" />
 			        			</FXCollections>
 			   					</items>
 							</ChoiceBox>

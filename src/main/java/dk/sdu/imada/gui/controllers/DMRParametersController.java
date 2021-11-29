@@ -313,7 +313,7 @@ public class DMRParametersController {
 			float min = min_max[0];
 			float max = min_max[1];
 			
-			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylatin difference", "Frequency", 100, java.awt.Color.BLUE, min, max, min, max);
+			HistogramPvalueDistribution his = new HistogramPvalueDistribution("Methylation difference distribution", MatrixUtil.toDouble(diff), "Methylation difference", "Count", 100, java.awt.Color.BLUE, min, max, min, max);
 			JFreeChart chart = his.getChart();
 			canvasController.setCpgDiffChart(chart);
 			Image mni = SwingFXUtils.toFXImage(chart.createBufferedImage(600, 400), null);
