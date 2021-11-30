@@ -897,7 +897,6 @@ public class InputController {
 		}
 		else{
 			if(betaPath.getText() != null && !betaPath.getText().isEmpty()){
-				System.out.println("beta" + betaPath.getText());
 				
 				ProgressForm pf = new ProgressForm();
 				

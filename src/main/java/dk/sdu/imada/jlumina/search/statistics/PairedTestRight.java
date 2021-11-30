@@ -15,6 +15,7 @@ public class PairedTestRight extends AbstractTTestEstimator {
 	 */
 	public PairedTestRight(boolean twoSided, int splitPoint) {
 		super(twoSided, splitPoint);
+		this.paired = true;
 	}
 
 	/* (non-Javadoc)
@@ -24,6 +25,10 @@ public class PairedTestRight extends AbstractTTestEstimator {
 	 */
 	@Override
 	public float compute(double[] sample1, double[] sample2) {
+		
+		if(sample1.length < 2){
+			return 1f;
+		}
 
 
 		float m = (float)StatUtils.meanDifference((sample1), (sample2));

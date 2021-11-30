@@ -15,6 +15,7 @@ public class PairedTest extends AbstractTTestEstimator {
 	 */
 	public PairedTest(boolean twoSided, int splitPoint) {
 		super(twoSided, splitPoint);
+		this.paired = true;
 	}
 
 	/* (non-Javadoc)
@@ -26,6 +27,11 @@ public class PairedTest extends AbstractTTestEstimator {
 	public float compute(double[] sample1, double[] sample2) {
 		
 		double aux = 0.f;
+		
+		//
+		if(sample1.length < 2){
+			return 1f;
+		}
 		
 //		//separating the pairs
 //		for (int i = 2; i < sample1.length; i+=2) {

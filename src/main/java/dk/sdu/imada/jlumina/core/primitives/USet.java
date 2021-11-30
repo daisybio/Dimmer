@@ -32,6 +32,8 @@ public class USet extends MethylationData {
 		data = new HashMap<String, float[]>();
 		
 		for (CpG cpg : manifest.getCpgList()) {
+			
+
 
 			if (cpg.getInifniumType().equals("II")) { 
 				float[] values = rgSet.getRedSet().get(cpg.getAddressA());
@@ -39,7 +41,7 @@ public class USet extends MethylationData {
 				if(values == null){
 					System.out.println("Missing CpG address for: " + cpg.getCpgName());
 				}
-				else {
+				else {					
 					data.put(cpg.getCpgName(), values);
 
 				}

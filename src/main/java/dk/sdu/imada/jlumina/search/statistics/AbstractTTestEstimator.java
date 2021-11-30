@@ -18,6 +18,7 @@ public abstract class AbstractTTestEstimator extends StatisticalEstimator {
 	int splitPoint;
 	double[] sample1;
 	double[] sample2;
+	boolean paired = false;
 	
 	/**
 	 * Constructor this constructor set the division of the p-value in case one-sided. One has to check the 
@@ -68,16 +69,49 @@ public abstract class AbstractTTestEstimator extends StatisticalEstimator {
 	
 	@Override
 	public void setSignificance(double[] y) {
-		//double [] sample1 = Arrays.copyOfRange(y, 0, splitPoint);
-		//double [] sample2 = Arrays.copyOfRange(y, splitPoint, y.length);
-		//sample1 = StatisticsUtil.filterNaN(sample1);
-		//sample2 = StatisticsUtil.filterNaN(sample2);
 		setSamples(y);
 		setPvalue(compute(this.sample1, this.sample2));		
 	}
 	
+	/**
+	 * removes nans and splits the values for the groups
+	 * @param y t
+	 */
 	public void setSamples(double[] y){
+		if(this.paired){
+			setSamplesPaired(y);
+		}
+		else{
+			setSamplesUnPaired(y);
+		}
 		
+	}
+	
+	public void setSamplesPaired(double[] y){
+		int counter = 0;
+		int half = y.length/2;
+		
+		for(int i = 0; i < half; i++){
+			if(Double.isNaN(y[i]) || Double.isNaN(y[i+half])){
+				counter++;
+			}
+		}
+		
+		
+		this.sample1 = new double[half-counter];
+		this.sample2 = new double[half-counter];
+		
+		int index = 0;
+		for(int i = 0; i < half; i++){
+			if(!(Double.isNaN(y[i]) || Double.isNaN(y[i+half]))){
+				sample1[index] = y[i];
+				sample2[index] = y[i+half];
+				index++;
+			}
+		}
+	}
+	
+	public void setSamplesUnPaired(double[] y){
 		int counter1 = 0;
 		int counter2 = 0;
 		
