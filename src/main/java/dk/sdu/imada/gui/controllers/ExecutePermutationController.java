@@ -236,42 +236,6 @@ public class ExecutePermutationController {
 		this.summary.setText(value);
 	}
 
-	private TreeMap<String, int[]> getGroupMapping() {
-
-		TreeMap<String, int[]> groups = new TreeMap<>();
-		TreeMap<String, ArrayList<Integer>> groupsAux = new TreeMap<>();
-
-		TreeSet<String> ids = new TreeSet<>();
-		for (String s : mainController.inputController.getColumnMap().get(Variables.GROUP_ID)) {
-			ids.add(s);
-		}
-
-		for (String s : ids) {
-			groupsAux.put(s, new ArrayList<Integer>());
-		}
-
-		int rows = 0;
-		for (String s :  mainController.inputController.getColumnMap().get(Variables.GROUP_ID)) {
-			groupsAux.get(s).add(rows++);
-		}
-
-		int gn = 1;
-		for (String key : groupsAux.keySet()) {
-			if(!mainController.modelController.isRegression()){
-				System.out.println("Group "+(gn++)+": "+key);
-			}
-			ArrayList<Integer> v = groupsAux.get(key);
-			int newArray [] = new int[v.size()];
-			int index = 0;
-			for (int i : v) {
-				newArray[index++] = i;
-			}
-			groups.put(key, newArray);
-		}
-
-		return groups;
-	}
-
 
 	private float[][] loadPhenotype() {
 

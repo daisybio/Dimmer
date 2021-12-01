@@ -105,7 +105,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="The plot shows the distribution of the calculated empirical p-values (using the permutation tests). In a perfect world, the values would be equally distributed. The empirical p-value of a CpG refers to the frequency of having achieved p-values lower than the original p-value when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="The plot shows the distribution of the calculated empirical p-values (using the permutation tests). The empirical p-value of a CpG refers to the frequency of having achieved p-values lower than the original p-value when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -128,7 +128,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="This plot depicts the correlation of the calculated p-values to their empirical p-values. Most of the dots are supposed to be on the main diagonal. However, there will be cases where CpGs with bad (i.e. high) p-values may become significant in their empirical p-value (i.e. it���s unlikely to achieve better p-values in randomly permuted data) and vice versa (initially good p-values become insignificant because they achieve good p-values in randomly permuted data as well)." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their empirical p-values. Most of the dots are supposed to be on the main diagonal. However, there will be cases where CpGs with bad (i.e. high) p-values may become significant in their empirical p-value (i.e. it's unlikely to achieve better p-values in randomly permuted data) and vice versa (initially good p-values become insignificant because they achieve good p-values in randomly permuted data as well)." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -183,7 +183,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="The plot shows the distribution of the calculated max. FDR corrected p-values. In a perfect example, the values would be equally distributed. The max. FDR corrected p-value of a CpG refers to the frequency of having achieved p-values lower than the original p-value (across all CpGs) when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="The plot shows the distribution of the calculated FDR corrected p-values using the Benjamini-Hochberg procedure." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -206,7 +206,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="This plot depicts the correlation of the calculated p-values to their max. FDR corrected p-values. There will be many cases where CpGs with good original p-values become insignificant because they achieve good corrected p-values in randomly permuted data as well." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their FDR corrected p-values. There will be many cases where CpGs with good original p-values become insignificant." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -228,7 +228,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved max. FDR corrected p-values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved FDR corrected p-values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -260,7 +260,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="The plot shows the distribution of the calculated family-wise error rate (FWER) corrected p-values. In a perfect example, the values would be equally distributed. The FWER corrected p-value of a CpG refers to the frequency of having achieved p-values lower than any of the original p-values (across all CpGs) when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="The plot shows the distribution of the calculated family-wise error rate (FWER) corrected p-values. The FWER corrected p-value of a CpG refers to the frequency of having achieved p-values lower than any of the original p-values (across all CpGs) when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -283,7 +283,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="This plot depicts the correlation of the calculated p-values to their max. FDR corrected p-values. There will be many cases where CpGs with good original p-values become insignificant because they achieve good corrected p-values in randomly permuted data as well." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their FWER corrected p-values. There will be many cases where CpGs with good original p-values become insignificant." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -338,7 +338,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="The plot shows the distribution of the calculated step-down minP corrected p-values. In a perfect example, the values would be equally distributed. We implemented the step-down minP procedure for multiple testing correction suggested in P. H. Westfall and S. S. Young (1993). Resampling-based multiple testing: Examples and methods for p-value adjustment. John Wiley and Sons." textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="The plot shows the distribution of the calculated step-down minP corrected p-values. We implemented the step-down minP procedure for multiple testing correction suggested in P. H. Westfall and S. S. Young (1993). Resampling-based multiple testing: Examples and methods for p-value adjustment. John Wiley and Sons." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>

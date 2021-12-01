@@ -583,7 +583,7 @@ public class MainController implements Initializable {
 				ttest+="different variance on both the control and the case group. ";
 			}
 
-			ttest+="The p-values, empirical p-values, false discovery rate (FDR), family-wise error rate (FWER), and step-down minP values for the CpGs' significance will be based on " 
+			ttest+="The p-values, empirical p-values, family-wise error rate (FWER), and step-down minP values for the CpGs' significance will be based on " 
 					+ permutationParametersController.getNumPermutations() + " permutations. ";
 
 			ttest+="The label/variable of interest is " + inputController.getCoefficient() + "."
@@ -615,7 +615,7 @@ public class MainController implements Initializable {
 			}else {
 				regression+=". ";
 			}
-			regression+="The p-values, empirical p-values, false discovery rate (FDR), family-wise error rate (FWER), "
+			regression+="The p-values, empirical p-values, family-wise error rate (FWER), "
 					+ "and step-down minP values for the CpGs' significance will be based on " + permutationParametersController.getNumPermutations() + " permutations" +
 					". This may take a long while. Go get a coffee or two, this might take a while.";
 

@@ -94,7 +94,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
                                                    <children>
-                                                      <Label text="" textAlignment="JUSTIFY" wrapText="true" />
+                                                      <Label text="This figure displays the distribution of DMR p-values. For their calculation one score distribution for each DMR size (in number of CpGs) is created, by drawing random regions from the data, keeping distance constraints in mind. The scores are based on the sum of the logarithmic p-values of a DMRs' CPGs. Comparing an actual DMR to the score distribution yields its p-value." textAlignment="JUSTIFY" wrapText="true" />
                                                    </children>
                                                 </HBox>
                                              </children>
