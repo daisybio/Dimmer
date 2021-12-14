@@ -732,7 +732,7 @@ public class InputController {
 		}else {
 			File f = new File(labels.getText());
 			//only relevant if idat
-			if(this.inputType.getValue().equals(Variables.IDAT)){
+			if(this.inputType.getValue().equals(Variables.IDAT) && !fileProblem){
 				mandatory_columns.add(Variables.SENTRIX_ID);
 				mandatory_columns.add(Variables.SENTRIX_POS);
 				missingMandatoryColumns = checkMandatoryColumns(this.columnMap.keySet(), mandatory_columns);
@@ -745,7 +745,7 @@ public class InputController {
 					FXPopOutMsg.showWarning("Missing mandatory columns for idat input: " + Util.setToString(mandatory_columns));
 				}
 				
-			} else if(this.inputType.getValue().equals(Variables.BETA)){
+			} else if(this.inputType.getValue().equals(Variables.BETA) && !fileProblem){
 				if(this.selectedType.equals(Variables.INFINIUM) || this.selectedType.equals(Variables.EPIC)){
 					//sets also has hasPairID, hasGenderID and hasGroupID
 					mandatory_columns.add(Variables.SENTRIX_ID);
@@ -763,9 +763,7 @@ public class InputController {
 					}
 				}
 			}
-			else{
-				System.out.println("Error in pushContinue() in InputController");
-			}
+
 			if (fileProblem || duplication || missingFiles || missingMandatoryColumns) {
 				FXPopOutMsg.showWarning("Please, fix your sample annotation file before starting the pre-processing");
 			}else {		

@@ -36,7 +36,6 @@ public class QueueThread <T extends Runnable> extends Thread{
 				System.out.println("Thread " + id + " starts " + task);
 				task.run();
 				System.out.println("Thread " + id + " ends " + task);
-				System.out.println(Util.memoryLog());
 				synchronized(loaded){
 					if(loaded.isOverflow()){ 	//end thread if an overflow occurred somewhere
 						return;

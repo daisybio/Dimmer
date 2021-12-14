@@ -1,6 +1,7 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
 import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.linear.SingularMatrixException;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 
 
@@ -61,32 +62,38 @@ public class RegressionEstimator extends StatisticalEstimator {
 		}
 		
 		mlr.newSampleData(y_mlr, x_mlr);
+		try{
+			float [] parameters = toFloat(mlr.estimateRegressionParameters());
 
-		float [] parameters = toFloat(mlr.estimateRegressionParameters());
+			float [] standardErrror = toFloat(mlr.estimateRegressionParametersStandardErrors());
 
-		float [] standardErrror = toFloat(mlr.estimateRegressionParametersStandardErrors());
+			float[] pvalues = new float[parameters.length];
 
-		float[] pvalues = new float[parameters.length];
+			float degreesOfFreedom = x_mlr.length - parameters.length;
 
-		float degreesOfFreedom = x_mlr.length - parameters.length;
+			TDistribution tDistribution = new TDistribution(degreesOfFreedom);
 
-		TDistribution tDistribution = new TDistribution(degreesOfFreedom);
+			for (int i = 0; i < parameters.length; i++) {
 
-		for (int i = 0; i < parameters.length; i++) {
+				float tvalue = Math.abs(parameters[i]/standardErrror[i]);
 
-			float tvalue = Math.abs(parameters[i]/standardErrror[i]);
+				pvalues[i] = (float) (2.0 * tDistribution.cumulativeProbability(-tvalue));
+			}
 
-			pvalues[i] = (float) (2.0 * tDistribution.cumulativeProbability(-tvalue));
+			this.pvalues = pvalues;
+
+			this.coefficients = parameters;
+			this.pvalue = pvalues[target];
+			
+			if (Double.isNaN(this.pvalue)) {
+				this.pvalue = 1.f;
+			}
 		}
-
-		this.pvalues = pvalues;
-
-		this.coefficients = parameters;
-		this.pvalue = pvalues[target];
-		
-		if (Double.isNaN(this.pvalue)) {
+		catch(SingularMatrixException e){
 			this.pvalue = 1.f;
 		}
+
+
 	}
 }
 
