@@ -27,7 +27,7 @@ public class Variables {
 	
 	//array types
 	public static final String EPIC = "epic";
-	public static final String INFINIUM = "infinium";
+	public static final String INFINIUM = "450k";
 	public static final String CUSTOM = "custom";
 	
 	//input types

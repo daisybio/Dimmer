@@ -229,7 +229,7 @@ public class ReadBetaMatrix extends DataProgress{
 		ReadManifest manifest;
 
 		if (chipType.equals(Variables.INFINIUM)) { 
-			System.out.println("Using infinium data type");
+			System.out.println("Using 450k data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.INFINIUM_MANIFEST;
@@ -325,7 +325,7 @@ public class ReadBetaMatrix extends DataProgress{
 	 * 
 	 * @param sentrixIds
 	 * @param sentrixPositions
-	 * @param chipType -> infinium, epic
+	 * @param chipType -> 450k, epic
 	 */
 	public void initBetaMatrix(String[] sentrixIds, String[] sentrixPositions, String chipType) throws OutOfMemoryError{
 		

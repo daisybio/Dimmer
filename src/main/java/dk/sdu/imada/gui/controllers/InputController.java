@@ -1000,7 +1000,7 @@ public class InputController {
 		String mfProbes = null;
 		if (mainController.isInfinium()) { 
 
-			System.out.println("Using infinium data type");
+			System.out.println("Using 450k data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
 			mfProbes = Variables.RES_CONTROL;
 

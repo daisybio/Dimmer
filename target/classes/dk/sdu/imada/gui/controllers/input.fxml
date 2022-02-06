@@ -97,7 +97,7 @@
 	                      	<ChoiceBox fx:id="arrayType" layoutX="10.0" layoutY="96"  onAction="#selectArrayType">
 			    				<items>
 			        			<FXCollections fx:factory="observableArrayList" >
-			            			<String fx:value="infinium" />
+			            			<String fx:value="450k" />
 			            			<String fx:value="epic" />
 			          				<String fx:value="custom" />
 			        			</FXCollections>

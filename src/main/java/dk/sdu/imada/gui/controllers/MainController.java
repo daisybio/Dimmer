@@ -303,7 +303,7 @@ public class MainController implements Initializable {
 		String mf = null;
 		if (isInfinium()) { 
 
-			System.out.println("Using infinium data type");
+			System.out.println("Using 450k data type");
 			mf = "resources/manifest_summary.csv";
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
