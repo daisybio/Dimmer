@@ -41,6 +41,7 @@ public class DMRParametersController {
 	@FXML ImageView imageView;
 	
 	@FXML Pane paneDiff;
+	@FXML Pane paneMinDiff;
 	@FXML ImageView imageViewDiff;
 	
 	@FXML Button backButton;
@@ -320,6 +321,7 @@ public class DMRParametersController {
 			imageViewDiff.setImage(mni);
 		}else{
 			this.paneDiff.setVisible(false);
+			this.paneMinDiff.setVisible(false);
 		}
 	}
 

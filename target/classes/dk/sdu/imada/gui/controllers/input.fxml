@@ -17,7 +17,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.rowIndex="20">
                <children>
                   <Button mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
-                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="pre-process data" />
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="process data" />
 
                </children>
             </HBox>

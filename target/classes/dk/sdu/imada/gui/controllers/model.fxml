@@ -66,7 +66,7 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="120.0" maxWidth="690.0" styleClass="FontHeader" text="Choose regression if you have a continues, numeric outcome variable (e.g. age, weight)." wrapText="true" />
+                  <Label layoutX="10.0" layoutY="120.0" maxWidth="690.0" styleClass="FontHeader" text="Choose regression if you have a continuous, numeric outcome variable (e.g. age, weight)." wrapText="true" />
                   <RadioButton fx:id="ttest" layoutX="10.0" layoutY="260.0" mnemonicParsing="false" onAction="#selectEvent" text="T-test">
                      <toggleGroup>
                         <ToggleGroup fx:id="group" />

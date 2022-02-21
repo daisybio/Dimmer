@@ -120,11 +120,11 @@ public class DMRSearchSaver {
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, p-value\n");
 				for (DMRDescription d : mainController.getDmrDescriptions()) {
-					bw.write(d.getChromosome() + ", ");
-					bw.write(d.getBeginPosition() + ", ");
-					bw.write(d.getEndPosition() + ", ");
-					bw.write(d.getBeginCPG()+ ", ");
-					bw.write(d.getEndCPG() + ", ");
+					bw.write(d.getChromosome() + ",");
+					bw.write(d.getBeginPosition() + ",");
+					bw.write(d.getEndPosition() + ",");
+					bw.write(d.getBeginCPG()+ ",");
+					bw.write(d.getEndCPG() + ",");
 					bw.write(d.getIsland().score +", " );
 					bw.write(d.getIsland().getPValue()+"\n");
 				}

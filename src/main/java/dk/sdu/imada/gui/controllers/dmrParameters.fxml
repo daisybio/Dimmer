@@ -56,14 +56,18 @@
                   <Button layoutX="60.0" layoutY="240.0" mnemonicParsing="false" onAction="#plotDistribution" text="zoom" />
                   <Label layoutX="34.0" layoutY="78.0" styleClass="FontHeader" text="CpG distance distribution:" />
                   
-                  <Pane fx:id="paneDiff" layoutX="450.0"  layoutY="78.0" prefHeight="200.0" prefWidth="250.0" visible="true">
+                  <Pane fx:id="paneDiff" layoutX="450.0"  layoutY="78.0"  visible="true">
 	                  <ImageView fx:id="imageViewDiff" fitHeight="133.0" fitWidth="225.0" layoutX="0.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
 	                  <Button layoutX="107.0" layoutY="162.0" mnemonicParsing="false" onAction="#pushSaveHistogramDiff" text="save" />
 	                  <Button layoutX="50.0" layoutY="162.0" mnemonicParsing="false" onAction="#plotDistributionDiff" text="zoom" />
 	                  <Label layoutX="4.0" layoutY="0.0" styleClass="FontHeader" text="Methylation difference distribution:" />
 	                  
-	                  <TextField fx:id="minDiff" layoutX="0.0" layoutY="461.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
-                  	  <Label layoutX="-220.0" layoutY="466.0" text="Minimum mean methylation difference " />
+                  </Pane>
+                  
+                  <Pane fx:id="paneMinDiff" layoutX="230.0"  layoutY="539.0"  visible="true">
+	                  
+	                  <TextField fx:id="minDiff" layoutX="220.0" layoutY="0.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
+                  	  <Label layoutX="0.0" layoutY="5.0" text="Minimum mean methylation difference " />
                   </Pane>
                   
                   <RadioButton fx:id="empPvalueRadioButton" layoutX="5.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectEmpirical" selected="true" text="Emp. p-values">
@@ -75,7 +79,7 @@
                   <RadioButton disable="true" layoutX="414.0" layoutY="520.0" mnemonicParsing="false" text="FDR. p-values" toggleGroup="$group" visible="false" />
                   <HBox layoutY="286.0" maxWidth="-Infinity" prefHeight="140.0" prefWidth="200.0" styleClass="hboxParagraph">
                      <children>
-                        <Label text="The DMR finding algorithm scans for regions that are enriched with significantly differentially methylated CpGs. It reports all DMRs where within a windows of specified size (window sizein nr. of CpGs) all CpGs are significantly differentially methylated but at most a given number of exceptions. If you set window size = 5 and exceptions = 2, DiMmer will report all instances where within 5 CpGs at least 3 (=5-2) are significantly differentially methylated. In order to determine the statistical significance of the DMRs, the given number of permutations is performed. Afterwards, the frequency of finding a DMR of at least the same size using the same parameters in any randomized permutation data is calculated and given as FDR. A number of randomly drawn regions will be used to create a score distribution. This distribution allows calculating p-values for the individual DMRs. In doubt, leave the standard parameters." textAlignment="JUSTIFY" wrapText="true" />
+                        <Label text="The DMR finding algorithm scans for regions that are enriched with significantly differentially methylated CpGs. It reports all DMRs where within a windows of specified size (window size in nr. of CpGs) all CpGs are significantly differentially methylated but at most a given number of exceptions. If you set window size = 5 and exceptions = 2, DiMmer will report all instances where within 5 CpGs at least 3 (=5-2) are significantly differentially methylated. In order to determine the statistical significance of the DMRs, the given number of permutations is performed. Afterwards, the frequency of finding a DMR of at least the same size using the same parameters in any randomized permutation data is calculated and given as FDR. A number of randomly drawn regions will be used to create a score distribution. This distribution allows calculating p-values for the individual DMRs. In doubt, leave the standard parameters." textAlignment="JUSTIFY" wrapText="true" />
                      </children>
                   </HBox>
                   <HBox layoutY="498.0" maxWidth="-Infinity" prefHeight="35.0" prefWidth="200.0" styleClass="hboxParagraph">

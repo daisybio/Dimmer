@@ -602,12 +602,12 @@ public class DMRResultController {
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, p-value\n");
 				for (DMRDescription d : mainController.getDmrDescriptions()) {
-					bw.write(d.getChromosome() + ", ");
-					bw.write(d.getBeginPosition() + ", ");
-					bw.write(d.getEndPosition() + ", ");
-					bw.write(d.getBeginCPG()+ ", ");
-					bw.write(d.getEndCPG() + ", ");
-					bw.write(d.getIsland().score + ", ");
+					bw.write(d.getChromosome() + ",");
+					bw.write(d.getBeginPosition() + ",");
+					bw.write(d.getEndPosition() + ",");
+					bw.write(d.getBeginCPG()+ ",");
+					bw.write(d.getEndCPG() + ",");
+					bw.write(d.getIsland().score + ",");
 					bw.write(d.getIsland().getPValue() + "\n");
 				}
 
@@ -669,13 +669,13 @@ public class DMRResultController {
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
 
-				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score #CpG, Num.Islands, Average.Islands, p-value, log.ratio\n");
+				bw.write("Chr, Begin, End, begin.CpG, end.CpG, score, #CpG, Num.DMRs, Average.DMRs, p-value, log.ratio, Link\n");
 
 				ObservableList<FXDMRFullSummary> list = tableViewFullSummary.getItems();
 
 				for (FXDMRFullSummary l : list) {
-					bw.write( l.getHyperlink() + ","
-							+ l.getChromosome() + ","
+					bw.write( 
+							 l.getChromosome() + ","
 							+ l.getBeginPosition() + ","
 							+ l.getEndPosition() + ","
 							+ l.getBeginCPG() + ","
@@ -685,7 +685,8 @@ public class DMRResultController {
 							+ l.getNumberOfIslands() + ","
 							+ l.getAverageOfIslands() + ","
 							+ l.getPvalue() + ","
-							+l.getLogRatio() + "\n");
+							+l.getLogRatio() + ","
+							+l.getURL() + "\n");
 				}
 
 				bw.close();

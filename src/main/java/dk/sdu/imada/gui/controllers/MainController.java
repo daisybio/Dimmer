@@ -598,7 +598,7 @@ public class MainController implements Initializable {
 			//The p-value ..... Take a coffee
 
 			regression+="You have selected to use a regression model on your data to test the significance of your CpGs. "
-					+ "The regression will seek to explain the label/variable"+ inputController.getCoefficient();
+					+ "The regression will seek to explain the label/variable "+ inputController.getCoefficient();
 
 
 			if (inputController.getSelectedLabels().size() > 1) {
@@ -617,7 +617,7 @@ public class MainController implements Initializable {
 			}
 			regression+="The p-values, empirical p-values, family-wise error rate (FWER), "
 					+ "and step-down minP values for the CpGs' significance will be based on " + permutationParametersController.getNumPermutations() + " permutations" +
-					". This may take a long while. Go get a coffee or two, this might take a while.";
+					". Go get a coffee or two, this might take a while.";
 
 			outputMsg=regression;
 		}
@@ -930,6 +930,7 @@ public class MainController implements Initializable {
 			dmrParametersController.imageViewDiff.setImage(mini2);
 		}else{
 			dmrParametersController.paneDiff.setVisible(false);
+			dmrParametersController.paneMinDiff.setVisible(false);
 		}
 
 	}
