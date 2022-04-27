@@ -63,17 +63,31 @@ public class CovLoader extends DataProgress{
 		if(!this.check()){ //stops if there are errors
 			return;
 		}
+		System.gc();
+		System.out.println(Util.memoryLog());
+		
 		System.out.println("Merging and filtering...");
 		mergeData(missingValues); //retains only positions that are featured in all samples, creates manifest file and creates methylated/unmethylated matrices
+		System.gc();
+		System.out.println(Util.memoryLog());
+		
+		
 		System.out.println("Creating beta-matrix...");
 		initBeta();
 		System.out.println("Created beta matrix with " + this.manifest.getCpgList().length + " CpGs\n");
+		
+		System.gc();
+		System.out.println(Util.memoryLog());
+		
 		System.out.println("Filtering low variance CpG sites...");
 		LowVarianceFilter filter = new LowVarianceFilter(this.manifest,this.beta, minVariance);
 		filter.filter();
 		this.manifest = filter.getManifest();
 		this.beta = filter.getBeta();
 		System.out.println("Succesfully loaded " + this.manifest.getCpgList().length + " CpGs\n");
+		
+		System.gc();
+		System.out.println(Util.memoryLog());
 	}
 	
 	/**
