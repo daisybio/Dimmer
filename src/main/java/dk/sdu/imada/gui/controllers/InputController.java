@@ -1002,21 +1002,21 @@ public class InputController {
 
 			System.out.println("Using 450k data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
-			mfProbes = Variables.RES_CONTROL;
+			mfProbes = Variables.RES_CONTROL_450K;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.INFINIUM_MANIFEST;
-				mfProbes = Variables.CONTROL;	
+				mfProbes = Variables.CONTROL_450K;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
 			mf = Variables.RES_EPIC_MANIFEST;
-			mfProbes = Variables.RES_CONTROL;
+			mfProbes = Variables.RES_CONTROL_EPIC;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.EPIC_MANIFEST;
-				mfProbes = Variables.CONTROL;
+				mfProbes = Variables.CONTROL_EPIC;
 			}
 		}
 
@@ -1029,6 +1029,9 @@ public class InputController {
 		this.qualityControl = new QualityControlImpl(rgSet, manifest, readControlProbe);
 
 		normalizations = new QuantileNormalization(); 
+		
+		performBackgroundCorrection = backgroundCorrection.isSelected();
+		performProbeFiltering = probeFiltering.isSelected();
 
 		if (mainController.isInfinium()) {
 			if (mainController.useCellComposition()) {
@@ -1037,13 +1040,11 @@ public class InputController {
 			}else {
 				cellCompositionCorrection = null;
 			}
-			performBackgroundCorrection = backgroundCorrection.isSelected();
-			performProbeFiltering = probeFiltering.isSelected();
 		}else {
-			System.out.println("Cell composition estimation, background correction and probe filtering are not avaliable for epic data");
+			if (mainController.useCellComposition()) {
+				System.out.println("Cell composition estimation is not avaliable for epic data");			
+			}
 			cellCompositionCorrection = null;	
-			performBackgroundCorrection = false;
-			performProbeFiltering = false;
 		}
 	}
 }

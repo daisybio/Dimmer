@@ -237,7 +237,7 @@ public class ReadIDAT {
 
 					if (minByteOffset != SNPsReadByteOffset) {
 						System.err.println("Problem found. exiting... ");
-						System.exit(-1);
+						System.exit(1);
 					}
 
 					reset(minByteOffset);
@@ -367,7 +367,7 @@ public class ReadIDAT {
 
 					if (minByteOffset != SNPsReadByteOffset) {
 						System.err.println("Problem found. exiting... ");
-						System.exit(-1);
+						System.exit(1);
 					}
 
 					reset(minByteOffset);

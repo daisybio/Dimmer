@@ -27,7 +27,7 @@ public class ConsoleInputMonitor implements Runnable {
 					if(rawDataLoader.isOveflow()) {
 						System.out.println("A memory exception was detected. Use the java command line with -Xms2024M -Xmx3024M. "	+ 
 								"If the problem persists try to increase the cited values... good luck");
-						System.exit(0);
+						System.exit(1);
 					}
 
 				}catch(InterruptedException e) {
@@ -63,7 +63,7 @@ public class ConsoleInputMonitor implements Runnable {
 		}catch(OutOfMemoryError e) {
 			System.out.println("A memory exception was detected. Use the java command line with -Xms2024M -Xmx3024M. "	+ 
 					"If the problem persists try to increase the cited values... good luck");
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 

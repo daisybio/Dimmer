@@ -40,7 +40,7 @@ public class ConfigReader {
 		} 
 		catch (IOException e) {
 			System.out.println("The configuration file " + path +" does not exist or has no reading permission!");
-			System.exit(0);
+			System.exit(1);
 		}
 		//overwrites config file settings with console arguments (if given)
 		addConsoleParameters(args,parameters);

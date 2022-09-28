@@ -11,10 +11,13 @@ public class Variables {
 	public static final String INFINIUM_MANIFEST = "manifest_summary.csv";
 	public static final String RES_INFINIUM_MANIFEST = "resources/manifest_summary.csv";
 	
-	//Control probe
-	public static final String CONTROL = "illumminaControl.csv";
-	public static final String RES_CONTROL = "resources/illumminaControl.csv";
 	
+	//Control probes
+	public static final String CONTROL_450K = "control_450k.csv";
+	public static final String RES_CONTROL_450K = "resources/control_450k.csv";
+	
+	public static final String CONTROL_EPIC = "control_EPIC.csv";
+	public static final String RES_CONTROL_EPIC = "resources/control_EPIC.csv";
 	
 	//Sample annotation columns
 	public static final String SENTRIX_ID = "Sentrix_ID";

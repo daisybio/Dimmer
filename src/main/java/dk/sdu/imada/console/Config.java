@@ -174,7 +174,7 @@ public class Config {
 		System.out.println(ignored_report()+"\n");
 		if(!check){
 			System.out.println(error_report());
-			System.exit(0);
+			System.exit(1);
 		}
 		else{
 			System.out.println("Configuration file is ok...");

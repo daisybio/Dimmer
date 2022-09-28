@@ -462,12 +462,12 @@ public class ConsoleInputController {
 				if(pairIDCheck.hasPairID()){
 					System.out.println(pairIDCheck.errorLog());
 					System.out.println("Please fix the Pair_ID");
-					System.exit(0);
+					System.exit(1);
 				}
 				else{
 					System.out.println(pairIDCheck.errorLog());
 					System.out.println("The annotation file requires a column \"Pair_ID\" for the paired data type, please add it or choose the unpaired data type.");
-					System.exit(0);
+					System.exit(1);
 				}
 			}
 		}
@@ -475,11 +475,11 @@ public class ConsoleInputController {
 		if (this.config.getModel().equals("Regression")) {
 			if (!checkNumeric()) {
 				System.out.println("Your selected coefficients must have numerical values only.");
-				System.exit(0);
+				System.exit(1);
 			}
 			if(!checkNumeric(columnMap.get(config.getVariable()))){
 				System.out.println("Your selected variable of interest must be numerical for regression");
-				System.exit(0);
+				System.exit(1);
 			}
 		}
 		startPreprocessing();
@@ -580,7 +580,7 @@ public class ConsoleInputController {
 		
 		if(!covLoader.check()){
 			System.out.println(covLoader.errorLog());
-			System.exit(0);
+			System.exit(1);
 		}
 		else{
 			mainController.setBeta(covLoader.getBeta());
@@ -620,7 +620,7 @@ public class ConsoleInputController {
 		
 		if(!betaReader.check()){
 			System.out.println(betaReader.errorLog());
-			System.exit(0);
+			System.exit(1);
 		}
 		else{
 			mainController.setBeta(betaReader.getBeta());
@@ -694,23 +694,24 @@ public class ConsoleInputController {
 
 			System.out.println("Using 450k data type");
 			mf = Variables.RES_INFINIUM_MANIFEST;
-			mfProbes = Variables.RES_CONTROL;
+			mfProbes = Variables.RES_CONTROL_450K;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.INFINIUM_MANIFEST;
-				mfProbes = Variables.CONTROL;	
+				mfProbes = Variables.CONTROL_450K;	
 			}
 
 		}else {
 			System.out.println("Using epic data type");
 			mf = Variables.RES_EPIC_MANIFEST;
-			mfProbes = Variables.RES_CONTROL;
+			mfProbes = Variables.RES_CONTROL_EPIC;
 
 			if (getClass().getClassLoader().getResourceAsStream(mf)==null) {
 				mf = Variables.EPIC_MANIFEST;
-				mfProbes = Variables.CONTROL;
+				mfProbes = Variables.CONTROL_EPIC;
 			}
 		}
+		
 
 		this.manifest = new ReadManifest(mf);
 		this.readControlProbe = new ReadControlProbe(mfProbes);
@@ -721,6 +722,9 @@ public class ConsoleInputController {
 		this.qualityControl = new QualityControlImpl(rgSet, manifest, readControlProbe);
 
 		normalizations = new QuantileNormalization(); 
+		
+		performBackgroundCorrection = config.getBackgroundCorrection();
+		performProbeFiltering = config.getProbeFiltering();
 		
 
 		if (mainController.isInfinium()) {
@@ -741,14 +745,12 @@ public class ConsoleInputController {
 				cellCompositionCorrection = null;
 				ccFileCheck = null;
 			}
-			performBackgroundCorrection = config.getBackgroundCorrection();
-			performProbeFiltering = config.getProbeFiltering();
 		}else {
-			System.out.println("Cell composition estimation, background correction and probe filtering are not avaliable for epic data");
+			if (this.config.getCellComposition()) {
+				System.out.println("Cell composition estimation is not avaliable for epic data");
+			}
 			cellCompositionCorrection = null;	
 			ccFileCheck = null;
-			performBackgroundCorrection = false;
-			performProbeFiltering = false;
 		}
 	}
 

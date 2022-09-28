@@ -112,7 +112,7 @@ public class ConsoleReadDimmerProject {
 			setData();
 		}
 		else{
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class ConsoleReadDimmerProject {
 		mainController.setFdrPvalues(this.fdr);
 		mainController.setMethylationDifference(this.diff);
 		if(!this.mainController.loadManifest(data)){
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 	
