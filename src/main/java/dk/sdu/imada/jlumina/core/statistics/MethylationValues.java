@@ -1,6 +1,8 @@
 package dk.sdu.imada.jlumina.core.statistics;
 import java.lang.Math;
 
+import org.apache.commons.math3.stat.StatUtils;
+
 public class MethylationValues {
 	
 	/**
@@ -42,10 +44,11 @@ public class MethylationValues {
 		
 		return beta;
 	}
-	
+
 	
 	public static void main(String[] args) {
-		float[][] test = {{0f,0.0001f,0.1f,0.5f},{1f,0.9999f,0.9f,0.5f}};
+		
+		float[][] test = {{0f,0.0001f,0.1f,0.5f},{1f,0.9999f,0.9f,Float.NaN}};
 		betaToM(test);
 		
 		for(int i = 0; i < test.length; i++) {
@@ -54,7 +57,14 @@ public class MethylationValues {
 			}
 			System.out.println();
 		}
+		
+		double[][] test2 = {{0,0.0001,0.1,0.5},{1,0.9999,0.9,Double.NaN}};
+		
+		System.out.println(StatUtils.mean(test2[0]));
+		System.out.println(StatUtils.mean(test2[1]));
 	}
+	
+	
 
 }
 

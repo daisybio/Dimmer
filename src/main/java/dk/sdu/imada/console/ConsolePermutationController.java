@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
+import dk.sdu.imada.jlumina.core.statistics.MethylationValues;
 import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 import dk.sdu.imada.jlumina.search.statistics.RegressionEstimator;
@@ -121,6 +122,46 @@ public class ConsolePermutationController {
 
 		mainController.setOriginalPvalues(pvalue);
 		mainController.setMethylationDifference(methylationDiff);
+		
+		
+		boolean use_m_values = true;
+		
+		// in case of m-values -> compute p-values again with m-values but don't change methylationDiff
+		if(use_m_values) {
+			
+			// transform beta to M-values
+			System.out.println("Transforming beta to M-values");
+			beta = MethylationValues.betaToM(beta);
+			this.mainController.setBeta(beta);
+			methylationDiff = new float[beta.length];
+			
+			cpGSignificance = new CpGStatistics(beta, 0, beta.length);
+			estimators = new StatisticalEstimator[numThreads];
+
+			if (config.isTTest()) {
+
+				StudentTTest test = new StudentTTest(config.isTwoSided(), splitPoint, config.isLeftSided(), config.isRightSided() , config.isPaired(), config.getAssumeEqualVariance());
+				System.out.println(test.status());
+				se = test.getTTestEstimator();
+				pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
+
+				for (int i = 0; i < numThreads; i++) {
+					estimators[i] = new StudentTTest(config.isTwoSided(), splitPoint, config.isLeftSided(), config.isRightSided() , config.isPaired(), config.getAssumeEqualVariance()).getTTestEstimator();
+				}
+
+			}else {
+
+				System.out.println("Performing linear regression for original p-value estimation...");
+				se = new RegressionEstimator(phenotype, resultIndex);
+				pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
+
+				for (int i = 0; i < numThreads; i++) {
+					estimators[i] = new RegressionEstimator(phenotype.clone(), resultIndex);
+				}
+			}
+
+			mainController.setOriginalPvalues(pvalue);
+		}
 
 		// ... Permutation of the CpGs
 
