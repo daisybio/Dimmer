@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER_LEFT" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.DMRParametersController">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">
+         <children>
+            <Label styleClass="FontHeader1" text="7 . Set DMR parameters" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.columnSpan="2147483647" GridPane.rowIndex="20">
+               <children>
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="continue" />
+               </children></HBox>
+            <Pane prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
+               <children>
+                  <HBox layoutY="10.0" maxWidth="-Infinity" prefHeight="60.0" prefWidth="200.0" styleClass="hboxParagraph">
+                     <children>
+                        <Label text="Here, you need to set the parameters to find differentially methylated regions (DMRs). First, we need to account for the distances of CpGs across the chip. Two consecutive CpG's will not count as consecutive if they are more than a specified max. CpG distance apart. In doubt, keep the standard of 1,000." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="230.0" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0">
+                     <children>
+                        <Label text="This left figure depicts the distribution of the distances between two neighboring CpGs. It can help to define a good distance cut-off for the region detection." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+                  
+                  <TextField fx:id="p0Cutoff" layoutX="110.0" layoutY="539.0" maxWidth="-Infinity" prefWidth="80.0" text="0.05" />
+                  <Label layoutX="10.0" layoutY="544.0" text="P-value Cutoff " />
+                  
+
+                  
+                  <TextField fx:id="cpgDistance" layoutX="350.0" layoutY="240.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
+                  <Label layoutX="230.0" layoutY="245.0" text="Max. CpG distance " />
+                  
+                  <TextField fx:id="numPermutations" layoutX="10.0" layoutY="450.0" maxWidth="-Infinity" prefWidth="80.0" text="1000" />
+                  <Label layoutX="10.0" layoutY="430.0" text="Permutations " />
+                  
+                  <TextField fx:id="windowSize" layoutX="230.0" layoutY="450.0" maxWidth="-Infinity" prefWidth="80.0" text="5" />
+                  <Label layoutX="230.0" layoutY="430.0" text="Window size " />
+                  
+                  <Label layoutX="120.0" layoutY="430.0" text="Exceptions " />
+                  <TextField fx:id="numException" layoutX="120.0" layoutY="450.0" maxWidth="-Infinity" prefWidth="80.0" text="2" />
+                  
+                  <TextField fx:id="nRandomRegions" layoutX="340.0" layoutY="450.0" maxWidth="-Infinity" prefWidth="80.0" text="100000" />
+                  <Label layoutX="340.0" layoutY="430.0" text="Random regions " />
+                  
+                  <ImageView fx:id="imageView" fitHeight="133.0" fitWidth="225.0" layoutX="10.0" layoutY="98.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button layoutX="117.0" layoutY="240.0" mnemonicParsing="false" onAction="#pushSaveHistogram" text="save" />
+                  <Button layoutX="60.0" layoutY="240.0" mnemonicParsing="false" onAction="#plotDistribution" text="zoom" />
+                  <Label layoutX="34.0" layoutY="78.0" styleClass="FontHeader" text="CpG distance distribution:" />
+                  
+                  <Pane fx:id="paneDiff" layoutX="450.0"  layoutY="78.0"  visible="true">
+	                  <ImageView fx:id="imageViewDiff" fitHeight="133.0" fitWidth="225.0" layoutX="0.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+	                  <Button layoutX="107.0" layoutY="162.0" mnemonicParsing="false" onAction="#pushSaveHistogramDiff" text="save" />
+	                  <Button layoutX="50.0" layoutY="162.0" mnemonicParsing="false" onAction="#plotDistributionDiff" text="zoom" />
+	                  <Label layoutX="4.0" layoutY="0.0" styleClass="FontHeader" text="Methylation difference distribution:" />
+	                  
+                  </Pane>
+                  
+                  <Pane fx:id="paneMinDiff" layoutX="230.0"  layoutY="539.0"  visible="true">
+	                  
+	                  <TextField fx:id="minDiff" layoutX="220.0" layoutY="0.0" maxWidth="-Infinity" prefWidth="80.0" text="0.0" />
+                  	  <Label layoutX="0.0" layoutY="5.0" text="Minimum mean methylation difference " />
+                  </Pane>
+                  
+                  <RadioButton fx:id="empPvalueRadioButton" layoutX="5.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectEmpirical" selected="true" text="Emp. p-values">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="group" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="fwerPvalueRadioButton" layoutX="145.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectFwer" text="FWER" toggleGroup="$group" />
+                  <RadioButton disable="true" layoutX="414.0" layoutY="520.0" mnemonicParsing="false" text="FDR. p-values" toggleGroup="$group" visible="false" />
+                  <HBox layoutY="286.0" maxWidth="-Infinity" prefHeight="140.0" prefWidth="200.0" styleClass="hboxParagraph">
+                     <children>
+                        <Label text="The DMR finding algorithm scans for regions that are enriched with significantly differentially methylated CpGs. It reports all DMRs where within a windows of specified size (window size in nr. of CpGs) all CpGs are significantly differentially methylated but at most a given number of exceptions. If you set window size = 5 and exceptions = 2, DiMmer will report all instances where within 5 CpGs at least 3 (=5-2) are significantly differentially methylated. In order to determine the statistical significance of the DMRs, the given number of permutations is performed. Afterwards, the frequency of finding a DMR of at least the same size using the same parameters in any randomized permutation data is calculated and given as FDR. A number of randomly drawn regions will be used to create a score distribution. This distribution allows calculating p-values for the individual DMRs. In doubt, leave the standard parameters." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox layoutY="498.0" maxWidth="-Infinity" prefHeight="35.0" prefWidth="200.0" styleClass="hboxParagraph">
+                     <children>
+                        <Label text="Here, a CpG will count as significant if the below selected p-value is smaller than the below given cutoff and a minimum methylation difference is met (only for T-test). In doubt, chose emp. p-values with 0.05 as cutoff." textAlignment="JUSTIFY" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <RadioButton fx:id="origPvalueRadioButton" layoutX="495.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectOrig" text="Orig. p-values" toggleGroup="$group" />
+                  <RadioButton fx:id="sdcPvalueRadioButton" layoutX="329.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectSdc" text="Step-down minP" toggleGroup="$group" />
+                  <RadioButton fx:id="maxFdrPvalueRadioButton" layoutX="236.0" layoutY="573.0" mnemonicParsing="false" onAction="#selectMaxFdr" text="FDR" toggleGroup="$group" />
+               </children>
+            </Pane>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+         </rowConstraints>
+         <StackPane.margin>
+            <Insets left="30.0" />
+         </StackPane.margin>
+      </GridPane>
+   </children>
+</StackPane>

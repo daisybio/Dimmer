@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.sdu.imada.gui.controllers.PermutationResultController">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0">	
+         <children>
+            <Label styleClass="FontHeader1" text="6 . Check your permutation results" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" styleClass="hboxInput" GridPane.columnSpan="2147483647" GridPane.rowIndex="20">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#pushBack" styleClass="ButtonPanel" text="back" />
+                  <Button mnemonicParsing="false" onAction="#pushContinue" styleClass="ButtonPanel" text="continue" />
+                  <Button mnemonicParsing="false" onAction="#saveAll" styleClass="ButtonPanel" text="save plots" />
+                  <Button mnemonicParsing="false" onAction="#saveBeta" styleClass="ButtonPanel" text="save beta-matrix" />
+               </children>
+            </HBox>
+            <Pane prefHeight="600.0" prefWidth="700.0" GridPane.rowIndex="4">
+               <children>
+                  <TabPane layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <Tab text="Orig. p-values">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="scrollVboxOrig" prefHeight="557.0" prefWidth="699.0" styleClass="vboxPlots">
+                                       <children>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="origHist" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="P-value distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showOrigHistogramPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveOrigHistogram" text="save" />
+                                                      <CheckBox fx:id="useLogOrig" mnemonicParsing="false" text="-log10" visible="false" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="The plot shows the distribution of the calculated original p-values by the selected model." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane fx:id="paneOrig" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="origVulcano" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Orig. p-value volcano plot" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showOrigVulcanoPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveOrigVulcanoPlot" text="save" />
+                                                      <TextField fx:id="vulcanoOrigField" prefWidth="48.0" text="0.05" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved p-values values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </children></VBox>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Emp. p-values">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="scrollVboxEmp" prefHeight="557.0" prefWidth="699.0" styleClass="vboxPlots">
+                                       <children>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="empiricalHist" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Emp. p-value distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showEmpiricalHistogram" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveEmpiricalHistogram" text="save" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="The plot shows the distribution of the calculated empirical p-values (using the permutation tests). The empirical p-value of a CpG refers to the frequency of having achieved p-values lower than the original p-value when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="empiricalScatter" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="p-values vs. emp. p-values" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showEmpiricalScatterPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveEmpiricalScatterPlot" text="save" />
+                                                      <CheckBox fx:id="useLog10" mnemonicParsing="false" onAction="#empiricalThumbnail" text="-log10" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their empirical p-values. Most of the dots are supposed to be on the main diagonal. However, there will be cases where CpGs with bad (i.e. high) p-values may become significant in their empirical p-value (i.e. it's unlikely to achieve better p-values in randomly permuted data) and vice versa (initially good p-values become insignificant because they achieve good p-values in randomly permuted data as well)." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane fx:id="paneEmp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="empiricalVulcano" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Emp. p-value volcano plot" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showEmpiricalVulcanoPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveEmpiricalVulcanoPlot" text="save" />
+                                                      <TextField fx:id="vulcanoEmpField" prefWidth="48.0" text="0.05" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved emp. p-values are plotted on the y-axis. CpGs colored in red are below the indicated emp. p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                        <Tab text="FDR. p-value">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="scrollVboxMax" prefHeight="557.0" prefWidth="699.0" styleClass="vboxPlots">
+                                       <children>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="fdrHist" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Max FDR p-value distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFdrHistogramPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFdrHistogram" text="save" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="The plot shows the distribution of the calculated FDR corrected p-values using the Benjamini-Hochberg procedure." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="fdrScatter" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="p-value vs. max FDR p-value " textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFdrScatterPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFdrScatterPlot" text="save" />
+                                                      <CheckBox fx:id="useLog10fdr" mnemonicParsing="false" onAction="#fdrThumbnail" text="-log10" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their FDR corrected p-values. There will be many cases where CpGs with good original p-values become insignificant." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane fx:id="peaneMax" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="fdrVulcano" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Max. FDR p-value volcano plot" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFdrVulcanoPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFdrVulcanoPlot" text="save" />
+                                                      <TextField fx:id="vulcanoFdrField" prefWidth="48.0" text="0.05" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved FDR corrected p-values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </content></Tab>
+                        <Tab text="FWER p-values">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="scrollVboxFwer" prefHeight="557.0" prefWidth="699.0" styleClass="vboxPlots">
+                                       <children>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="fwerHist" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="FWER p-value distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFwerHistogramPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFwerHistogram" text="save" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="The plot shows the distribution of the calculated family-wise error rate (FWER) corrected p-values. The FWER corrected p-value of a CpG refers to the frequency of having achieved p-values lower than any of the original p-values (across all CpGs) when running the selected statistical test on the permuted data." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="fwerScatter" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="p-value vs. FWER p-value " textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFwerScatterPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFwerScatterPlot" text="save" />
+                                                      <CheckBox fx:id="useLog10glob" mnemonicParsing="false" onAction="#fwerThumbnail" text="-log10" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their FWER corrected p-values. There will be many cases where CpGs with good original p-values become insignificant." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane fx:id="paneFwer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="fwerVulcano" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="FWER p-value volcano plot" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showFwerVulcanoPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveFwerVulcanoPlot" text="save" />
+                                                      <TextField fx:id="vulcanoFwerField" maxWidth="48.0" text="0.05" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved FWER corrected p-values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Step-down minP values">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="scrollVboxFdr" prefHeight="557.0" prefWidth="699.0" styleClass="vboxPlots">
+                                       <children>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="sdmHist" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text=" Step-down minP values distribution" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showSdcHistogramPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveSdcHistogram" text="save" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="The plot shows the distribution of the calculated step-down minP corrected p-values. We implemented the step-down minP procedure for multiple testing correction suggested in P. H. Westfall and S. S. Young (1993). Resampling-based multiple testing: Examples and methods for p-value adjustment. John Wiley and Sons." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="278.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0" />
+                                                <ImageView fx:id="sdmScatter" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="p-value vs. step-down minP p-value " textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="111.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showSdcScatterPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveSdcScatterPlot" text="save" />
+                                                      <CheckBox fx:id="useLog10sdm" mnemonicParsing="false" onAction="#minpThumbnail" text="-log10" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="This plot depicts the correlation of the calculated p-values to their step-down minP corrected p-values. There will be many cases where CpGs with good original p-values become insignificant because they achieve good corrected p-values in randomly permuted data as well." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                          <Pane fx:id="paneFdr" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="700.0">
+                                             <children>
+                                                <ImageView fx:id="sdmVulcano" fitHeight="133.0" fitWidth="255.0" layoutX="10.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label layoutX="10.0" layoutY="20.0" styleClass="FontHeader" text="Step-down minP p-value volcano plot" textAlignment="JUSTIFY" wrapText="true" />
+                                                <HBox layoutX="25.0" layoutY="180.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="194.0" styleClass="hboxInput">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#showSdcVulcanoPlot" text="zoom">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" onAction="#saveSdcVulcanoPlot" text="save" />
+                                                      <TextField fx:id="vulcanoMinPField" maxWidth="48.0" text="0.05" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="240.0" layoutY="40.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="115.0" prefWidth="400.0">
+                                                   <children>
+                                                      <Label text="In the volcano plot, each CpG corresponds to one dot. The x-axis values correspond to the average hyper (right) or hypo (left) methylation of the CpGs. The achieved step-down minP corrected p-values are plotted on the y-axis. CpGs colored in red are below the indicated p-value cutoff (standard: 0.05); CpGs colored in blue are above." textAlignment="JUSTIFY" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+            </Pane>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+         </rowConstraints>
+         <StackPane.margin>
+            <Insets left="30.0" />
+         </StackPane.margin>
+      </GridPane>
+   </children>
+</StackPane>
