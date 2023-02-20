@@ -1,5 +1,10 @@
 *.log
-/target/
+
+.Rhistory
+data/
+mixed_model.Rout
+mixed_model.Rproj
+
 
 .apt_generated
 .classpath
