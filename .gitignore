@@ -1,6 +1,5 @@
 *.log
 /target/
-.*
 
 .apt_generated
 .classpath
