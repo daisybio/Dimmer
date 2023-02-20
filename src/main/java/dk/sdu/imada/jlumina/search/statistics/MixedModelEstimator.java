@@ -24,14 +24,11 @@ import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 import dk.sdu.imada.jlumina.search.util.NonPairedShuffle;
 import dk.sdu.imada.jlumina.search.util.PairedShuffle;
 
-
+/*
+ * Performs the mixed Model, y is the array with methylation levels for each patient
+ * and x is a matrix of labels (patients X labels).
+ */
 public class MixedModelEstimator extends StatisticalEstimator{
-
-	/* (non-Javadoc)
-	 * @see dk.sdu.imada.statistics.StatisticalEstimator#compute(float[], float[][])
-	 * Perform the linear regression, y is the array with methylation levels for each patient
-	 * and x is a matrix of labels (patients X labels)
-	 */
 	float pvalues[];
 	float coefficients[];
 	double x[][];
@@ -42,7 +39,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	String outputPath;
 	String mixedModelCode;
 	String formula;
-	int runCounter;
+	int threadNumber;
 	
 	List<String[]> dataLines = new ArrayList<>();
 	
@@ -54,22 +51,37 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		return x;
 	}
 	
-	public MixedModelEstimator(float x[][], int target, int runCounter, Config config) {
+	/*
+	 * Creates an Instance of the MixedModelEstimator.
+	 * @param dataLines is used to save all information for the mixed Model in one Table.
+	 * @param ThreadNumber is used to manage saving and reading information on different threads.
+	 * @param x matrix of labels (patients X labels)
+	 * @param target 
+	 * @param config a Configuration file, with the properties for the mixed Model
+	 * @param inputPath Path to the folder, which should contain the csv file for the mixed Model
+	 * @param outputPath Path to the output folder, which contains the results of the mixed Model
+	 * @param formula is used in the mixed Model.
+	 */
+	public MixedModelEstimator(float x[][], int target, int threadNumber, Config config) {
 		this.x = toDouble(x);
 		this.target = target;
 		this.config = config;
 		
 		Properties prob = loadConfig();
 		String [] splitInput = prob.getProperty("MixedModelInput").split(".csv");
-		this.inputPath = splitInput[0] + runCounter + ".csv";
+		this.inputPath = splitInput[0] + threadNumber + ".csv";
 		String splitOutput [] = prob.getProperty("MixedModelOutput").split(".csv");
-		this.outputPath = splitOutput[0] + runCounter + ".csv";
+		this.outputPath = splitOutput[0] + threadNumber + ".csv";
 		
 		this.mixedModelCode = prob.getProperty("MixedModelCode");
 		this.formula = prob.getProperty("Formula");
 		
 	}
 	
+	/*
+	 * Saves matrix of labels, x, and y in the arrayList with their columnname.
+	 * @param methylation levels
+	 */
 	private void prepareData(double[] y) {
 		dataLines.clear();
 		String [] var = new String[config.getConfoundingVariables().size()+2];
@@ -102,6 +114,10 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		System.exit(0);*/
 	}
 	
+	/*
+	 * remove Files for the next iteration
+	 * Stops if the File couldn't get deleted
+	 */
 	public void removeFiles() {
 		try {
 			File file = new File(inputPath);
@@ -135,6 +151,10 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		}
 	}
 	
+	/*
+	 * Reads the parameters and standarderror of the mixed Model and computes based on them the pvalues
+	 * @param y  methylation levels
+	 */
 	@Override
 	public void setSignificance(double[] y) {
 		prepareData(y);
@@ -196,12 +216,22 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		}
 	}
 	
+	/*
+	 * Convert data to csv File seperated by ","
+	 * @param dataLines
+	 */
 	public String convertToCSV(String[] data) {
 	    return Stream.of(data)
 	      .map(this::escapeSpecialCharacters)
 	      .collect(Collectors.joining(","));
 	}
 	
+	/*
+	 * Possibility to escape Data.
+	 * Firstly used for testing now, no real purpose.
+	 * @parameter dataLines
+	 * @return escaped Data
+	 */
 	public String escapeSpecialCharacters(String data) {
 	    String escapedData = data.replaceAll("\\R", " ");
 	    if (data.contains("\"") || data.contains(",")) {
@@ -211,9 +241,9 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	    return escapedData;
 	}
 	
-	/* This Method extends the PhenoMatrix with the result vector at the first position.
-	 * Writes the resulting Matrix in a csv File for further use.
-	 * @param y the result vector for the pheno matrix
+	/* 
+	 * Writes for each row in DataLines a row in a csv File for further use.
+	 * @param y methylation levels
 	 */
 	public void givenDataArray_whenConvertToCSV_thenOutputCreated(double [] y) {
 	    File csvOutputFile = new File(inputPath);
@@ -236,10 +266,10 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	    }
 	}
 	
-	/*Rscript C:/Users/msant/Desktop/Uni/Bachelorarbeit/dimmer/Dimmer-2.1/src/main/java/dk/sdu/imada/mixed_model
-/mixed_model.R C:/Users/msant/Desktop/Uni/Bachelorarbeit/dimmer/Dimmer-2.1/CSV_FILE_NAME.csv C:/Users/msant/
-Desktop/Uni/Bachelorarbeit/dimmer/Dimmer-2.1/src/main/java/dk/sdu/imada/mixed_model/results.csv "Reaction ~ 
-Days + (Days|Subject)"*/
+	/*
+	 * Starts the Rscript and prints possible outputs from the script.
+	 * In case of an Error its stopps and writes a error-message. 
+	 */
 	public void runRCode() {
 		try {
 			//System.out.println(mixedModelCode+"\n"+inputPath+"\n"+outputPath+"\n"+formula);
@@ -256,9 +286,17 @@ Days + (Days|Subject)"*/
 			case 0:
 				//System.out.println("Mixed Model finished");
 				break;
+			case 2:
+				System.out.println("Not enough Arguments for the Rscript");
+				System.exit(-1);
+			case 3:
+				System.out.println("Your input File does not Exists");
+				System.exit(-1);
+			case 4:
+				System.out.println("Not a valid formula");
+				System.exit(-1);
 			default:
-				System.out.println(exitCode);
-				System.out.println("WHY?");
+				System.out.println("Something in the mixed Model went wrong. ExitCode: " + exitCode);
 				System.exit(-1);
 			}
 		} catch (IOException e) {
@@ -270,6 +308,10 @@ Days + (Days|Subject)"*/
 		}
 	}
 	
+	/*
+	 * Reads the config file
+	 * @return prop properties of the config file
+	 */
 	public Properties loadConfig() {
 		Properties prop = new Properties();
 		try {
@@ -283,6 +325,10 @@ Days + (Days|Subject)"*/
 		return prop;
 	}
 	
+	/*
+	 * Used for testing, not used anymore.
+	 * TODO delete
+	 */
 	private void testEstimator() {
 		Random r = new Random();
 		float[][] x = {};
@@ -298,7 +344,10 @@ Days + (Days|Subject)"*/
 		//mm.runRCode();
 	}
 
-	
+	/*
+	 * Used for testing, not used anymore.
+	 * TODO delete
+	 */
 	public static void main (String args []) {
 		Random r = new Random();
 		float[][] x = {};
