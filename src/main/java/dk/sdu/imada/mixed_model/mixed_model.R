@@ -1,9 +1,11 @@
+#Reads data and performs a mixed Model on them.
+#@param inputPath Path to the data file.
+#@param formu formula, on which the mixed Model calculates.
+#@return m mixed Model
 mixed_model <- function (inputPath, formu) {
   	library(lme4)
   	methylData <- read.csv(inputPath, header=TRUE)
 	
- 	#config <- config::get()
- 	#m <- lmer(config$formula, data=data)
 	#print(formu)
 	#print(methylData)
  	m <- lmer(as.formula(formu), data=methylData)
@@ -14,8 +16,11 @@ mixed_model <- function (inputPath, formu) {
 	return(m)
 }
 
+#Saves necessary information of the mixed Model
+#@param model mixed Model
+#@param outputPath Path of folder, in which the data should be saved.
 save_model_information <- function(model, outputPath) {
-	res = model@resp$mu
+	#res = model@resp$mu
 	#res <- as.list(res)
 	para = model@beta
 	#res <- append(res, para)
@@ -23,13 +28,6 @@ save_model_information <- function(model, outputPath) {
 	test <- append(para, stdErr)
 
 	#print (test)
-	
-	#if (file.exists(outputPath)) {
-	#	frame <- read.csv(outputPath)
-	#	frame <- cbind(frame, res)
-	#} else {
-	#	frame <- data.frame(res)
-	#}
 	#names(frame)[ncol(frame)] <-region	
 	#print(frame)
 	#print(res)
@@ -38,12 +36,20 @@ save_model_information <- function(model, outputPath) {
 	#print("Model saved Data")
 }
 
+#Used for testing
+#TODO delete
 test <- function() {
 	args[1] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME.csv"
 	args[2] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results.csv"
 	args[3] = "Reaction ~ Days + (Days|Subject)"
 }
 
+#Checks if the arguments are complete and correct
+#If not quits with the error-code
+#2, if there aren,t enough parameters.
+#3, if the input file does not exists.
+#4, if the formula is not valid.
+#@return args the arguments
 checkArgs <- function() {
 	args = commandArgs(trailingOnly=TRUE)
 	
@@ -57,11 +63,13 @@ checkArgs <- function() {
 		quit(status=3)
 	} else if (!checkFormula(args[3])) {
 		#stop("Not a valid formular", call.=FALSE)
-		quit(status=3)
+		quit(status=4)
 	}
 	return (args)
 }
 
+#Used for testing
+#TODO delete
 modelTest <- function(formu) {
 	library(lme4)
 	data(sleepstudy, package='lme4')
@@ -71,6 +79,9 @@ modelTest <- function(formu) {
 	return (m)
 }
 
+#Check if the formula is valid
+#@return TRUE if it is valid
+#@reutrn FALSE if an error occured, which means that the formula is not valid
 checkFormula <- function(formu) {
 	tryCatch(
 			{
@@ -102,10 +113,3 @@ save_model_information(mixed_model(inputPath, formu), outputPath)
 #save_model_information(sleepMod)
 #m <- mixed_model()
 
-#print(colnames(sleepstudy))
-
-#untar(tarfile = "C:/Users/msant/Desktop/Uni/Bachelorarbeit/Dimmer-2.1/src/main/java/dk/sdu/imada/mixed_model/GSE86831_RAW.tar", exdir = "C:/Users/msant/Desktop/Uni/Bachelorarbeit/Dimmer-2.1/src/main/java/dk/sdu/imada/mixed_model/data/")
-#mydata <- gzfile(description = "C:/Users/msant/Desktop/Uni/Bachelorarbeit/Dimmer-2.1/src/main/java/dk/sdu/imada/mixed_model/data/GPL21145_MethylationEPIC_15073387_v-1-0.csv.gz", open = '',encoding = getOption("encoding"),
-#       compression = 6)
-#mydata <- readLines(mydata)
-#print(mydata)
