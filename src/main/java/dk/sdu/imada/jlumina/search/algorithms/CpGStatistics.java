@@ -101,8 +101,9 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			for (int j : indexes) {
 				y[k++] = beta[i][j];
 			}
-
+			System.out.println("Mixed Model mit y der Länge " + y.length + " und beta Länge " + beta.length + "gestartet zum " + i + " mal");
 			statisticalEstimator.setSignificance(y);
+			System.out.println("Pvalue: " + statisticalEstimator.getPvalue());
 			if(diff!=null){
 				diff[i] = statisticalEstimator.getDiff();
 			}

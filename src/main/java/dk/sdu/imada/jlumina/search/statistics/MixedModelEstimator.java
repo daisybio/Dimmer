@@ -67,8 +67,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.target = target;
 		this.config = config;
 
-		this.inputPath = config.getOutputDirectory() + "mm_tmp_in.csv";
-		this.outputPath = config.getOutputDirectory() + "mm_tmp_out.csv";
+		this.inputPath = config.getOutputDirectory() + "mm_tmp_in_" + threadNumber + ".csv";
+		this.outputPath = config.getOutputDirectory() + "mm_tmp_out_" + threadNumber + ".csv";
 		
 		this.mixedModelCode = config.get("MixedModelCode");
 		this.formula = ("beta_value ~ " + config.get("Formula")).replaceAll("\\s+","");
