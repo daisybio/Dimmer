@@ -6,15 +6,19 @@ mixed_model <- function (inputPath, formu) {
   	library(lme4)
   	methylData <- read.csv(inputPath, header=TRUE)
 	
-	#print(formu)
-	#print(methylData)
- 	m <- lmer(as.formula(formu), data=methylData)
- 	#print(typeof(m))
- 	#return (predict(m, re.form=NA))
-	#summary(m)
-	#print("Model finished calculating")
+ 	m <- lme4::lmer(as.formula(formu), data=methylData)
+
+	# the following part can be used to calculate p-values with the LMM:
+	# source: https://ase.tufts.edu/bugs/guide/assets/mixed_model_guide.html
+
+	# library(car)
+	# a <- car::Anova(m)
+	# pvalue <- a$`Pr(>Chisq)`
+	# return(pvalue)
+
 	return(m)
 }
+
 
 #Saves necessary information of the mixed Model
 #@param model mixed Model
@@ -33,7 +37,6 @@ save_model_information <- function(model, outputPath) {
 	#print(res)
 	library(Matrix)
 	write.table(matrix(test, nrow=1), outputPath, sep=", ", row.names=FALSE, col.names=FALSE)
-	#print("Model saved Data")
 }
 
 #Used for testing
@@ -52,7 +55,6 @@ test <- function() {
 #@return args the arguments
 checkArgs <- function() {
 	args = commandArgs(trailingOnly=TRUE)
-	
 	if (length(args) < 3) {
 		#save_model_information(mixed_model())
 		#stop("Arguments are missing. First Argument has to be the path of the input File, 
@@ -62,7 +64,7 @@ checkArgs <- function() {
 		#stop("Your input File does not Exists", call.=FALSE)
 		quit(status=3)
 	} else if (!checkFormula(args[3])) {
-		#stop("Not a valid formular", call.=FALSE)
+	    #stop("Not a valid formular", call.=FALSE)
 		quit(status=4)
 	}
 	return (args)

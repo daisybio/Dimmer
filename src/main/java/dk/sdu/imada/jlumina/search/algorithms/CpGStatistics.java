@@ -93,7 +93,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 		float originalPvalues[] = new float[beta.length];
 
-		double[] y = new double[indexes.length];
+		double[] y = new double[indexes.length]; // this stores the beta values for the current CpG
 
 		for (int i = 0; i < beta.length; i++) {
 
