@@ -66,15 +66,12 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.x = toDouble(x);
 		this.target = target;
 		this.config = config;
+
+		this.inputPath = config.getOutputDirectory() + "mm_tmp_in.csv";
+		this.outputPath = config.getOutputDirectory() + "mm_tmp_out.csv";
 		
-		Properties prob = loadConfig();
-		String [] splitInput = prob.getProperty("MixedModelInput").split(".csv");
-		this.inputPath = splitInput[0] + threadNumber + ".csv";
-		String splitOutput [] = prob.getProperty("MixedModelOutput").split(".csv");
-		this.outputPath = splitOutput[0] + threadNumber + ".csv";
-		
-		this.mixedModelCode = prob.getProperty("MixedModelCode");
-		this.formula = prob.getProperty("Formula");
+		this.mixedModelCode = config.get("MixedModelCode");
+		this.formula = ("beta_value ~ " + config.get("Formula")).replaceAll("\\s+","");
 		
 	}
 	
@@ -91,7 +88,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 			var[j] = v[j].replace("[", "").replace("]", "");
 		}
 		var[var.length-2] = config.getVariable();
-		var[var.length-1] = "pvalue";
+		var[var.length-1] = "beta_value";
 		
 		dataLines.add(var);
 		
@@ -152,7 +149,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	}
 	
 	/*
-	 * Reads the parameters and standarderror of the mixed Model and computes based on them the pvalues
+	 * Reads the parameters and standarderror of the mixed Model and computes them based on the beta values
 	 * @param y  methylation levels
 	 */
 	@Override
@@ -268,13 +265,13 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	
 	/*
 	 * Starts the Rscript and prints possible outputs from the script.
-	 * In case of an Error its stopps and writes a error-message. 
+	 * In case of an Error its stops and writes an error-message.
 	 */
 	public void runRCode() {
 		try {
 			//System.out.println(mixedModelCode+"\n"+inputPath+"\n"+outputPath+"\n"+formula);
 			Process p = Runtime.getRuntime().exec(
-					"Rscript " + mixedModelCode + " " + inputPath + " " + outputPath + " " + formula);
+					"Rscript " + mixedModelCode + " " + inputPath + " " + outputPath + " "+formula);
 			
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
