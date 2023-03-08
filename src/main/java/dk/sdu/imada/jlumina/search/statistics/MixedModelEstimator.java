@@ -164,7 +164,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		try { //
 			CSVReader csvReader = new CSVReader(new FileReader(outputPath));
 			String [] line = csvReader.readNext();
-			
+			/**
 			parameters = new float [line.length/2];
 			standardErrror = new float [line.length/2];
 			//standardErrror [standardErrror.length] = Float.parseFloat(line[line.length-1]);
@@ -175,7 +175,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 					 standardErrror [i] = Float.parseFloat(line[line.length-i-1]);
 				}
 				line = csvReader.readNext();
-			}
+			}**/
+			this.pvalue = Float.parseFloat(line[0]);
 			csvReader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File \"" + outputPath + "\" not Found");
@@ -184,6 +185,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		}
 		
 		removeFiles(); 
+		/**
 		try {
 
 			float[] pvalues = new float[parameters.length];
@@ -203,12 +205,9 @@ public class MixedModelEstimator extends StatisticalEstimator{
 			this.pvalues = pvalues;
 	
 			this.coefficients = parameters;
-			this.pvalue = pvalues[target];
+			this.pvalue = pvalues[target];**/
 			
-			if (Double.isNaN(this.pvalue)) {
-				this.pvalue = 1.f;
-			}
-		} catch(SingularMatrixException e){
+		if (Double.isNaN(this.pvalue)) {
 			this.pvalue = 1.f;
 		}
 	}
