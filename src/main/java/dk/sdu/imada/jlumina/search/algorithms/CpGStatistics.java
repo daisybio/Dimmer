@@ -55,6 +55,8 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 		double[] y = new double[beta[0].length];
 		
+		int last_progress = -1;
+		
 		for (int np = 0; np < numberPermutations; np++) {
 
 			randomizer.shuffle();
@@ -68,6 +70,12 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 				}
 				statisticalEstimator.setSignificance(y);
 				pvalues[i] = statisticalEstimator.getPvalue();
+				
+				double progress = i/beta.length*100;
+				if (last_progress< (int) progress) {
+					System.out.println("Computing Significance for Permutation " + np + "from " + numberPermutations + " at " + progress + "% finished");
+					last_progress = (int) progress;
+				}
 			}
 
 			countEmpirical(pvalues);
@@ -94,6 +102,8 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		float originalPvalues[] = new float[beta.length];
 
 		double[] y = new double[indexes.length]; // this stores the beta values for the current CpG
+		
+		int last_progress = -1;
 
 		for (int i = 0; i < beta.length; i++) {
 
@@ -101,9 +111,13 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			for (int j : indexes) {
 				y[k++] = beta[i][j];
 			}
-			System.out.println("Mixed Model mit y der Länge " + y.length + " und beta Länge " + beta.length + "gestartet zum " + i + " mal");
 			statisticalEstimator.setSignificance(y);
-			System.out.println("Pvalue: " + statisticalEstimator.getPvalue());
+			
+			double progress = i/beta.length*100;
+			if (last_progress< (int) progress) {
+				System.out.println("Computing Significance at " + progress + "% finished");
+				last_progress = (int) progress;
+			}
 			if(diff!=null){
 				diff[i] = statisticalEstimator.getDiff();
 			}
