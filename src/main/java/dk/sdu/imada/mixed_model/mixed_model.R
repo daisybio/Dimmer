@@ -9,34 +9,34 @@ mixed_model <- function (inputPath, formu) {
  	m <- lme4::lmer(as.formula(formu), data=methylData)
 
 	# the following part can be used to calculate p-values with the LMM:
-	# source: https://ase.tufts.edu/bugs/guide/assets/mixed_model_guide.html
+	# source: https://ase.tufts.edu/bugs/guide/assets/mixed_model_guide.html	
+	library(car)
+	a <- car::Anova(m)
+	pvalue <- a$`Pr(>Chisq)`#Wald chi-square
+	return(pvalue)
 
-	# library(car)
-	# a <- car::Anova(m)
-	# pvalue <- a$`Pr(>Chisq)`
-	# return(pvalue)
-
-	return(m)
+	#return(m)
 }
 
 
 #Saves necessary information of the mixed Model
 #@param model mixed Model
 #@param outputPath Path of folder, in which the data should be saved.
-save_model_information <- function(model, outputPath) {
+save_model_information <- function(pvalue, outputPath) {
 	#res = model@resp$mu
 	#res <- as.list(res)
-	para = model@beta
+	#para = model@beta #used
 	#res <- append(res, para)
-	stdErr = summary(model)$coef[, 2, drop = FALSE]
-	test <- append(para, stdErr)
+	#stdErr = summary(model)$coef[, 2, drop = FALSE]#used
+	#test <- append(para, stdErr)#used
 
 	#print (test)
 	#names(frame)[ncol(frame)] <-region	
 	#print(frame)
 	#print(res)
-	library(Matrix)
-	write.table(matrix(test, nrow=1), outputPath, sep=", ", row.names=FALSE, col.names=FALSE)
+	#library(Matrix) #used
+	#write.table(matrix(test, nrow=1), outputPath, sep=", ", row.names=FALSE, col.names=FALSE)#used
+	write.table(pvalue, file=outputPath, row.names=FALSE, col.names=FALSE)
 }
 
 #Used for testing
@@ -78,7 +78,13 @@ modelTest <- function(formu) {
 	
 	m <- lmer(as.formula(formu), data=sleepstudy)
 	#summary(m)
-	return (m)
+	
+	library(car)
+	a <- car::Anova(m)
+	pvalue <- a$`Pr(>Chisq)`#Wald chi-square
+	print(pvalue)
+	return(pvalue)
+	#return (m)
 }
 
 #Check if the formula is valid
@@ -97,15 +103,17 @@ checkFormula <- function(formu) {
 	)
 }
 
-#test()
 args <- checkArgs()
 inputPath <- args[1]
 outputPath <- args[2]
 formu <- args[3]
-#mixed_model("C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME0.csv","pvalue ~ status")
-#save_model_information(mixed_model("C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME0.csv","pvalue ~ status + (1|Person_ID)"),"C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results0.csv")
+
+options(error=function() traceback(2))
+
+#save_model_information(mixed_model("C:/Users/msant/Downloads/dimmer_testfiles/dimmer_testfiles/extended_regression_mm/mm_tmp_in_0.csv","beta_value ~ status + (1|Person_ID)"),"C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results0.csv")
 #save_model_information(modelTest(inputPath, formu), outputPath)
 save_model_information(mixed_model(inputPath, formu), outputPath)
+#save_model_information(modelTest("Reaction ~ Days + (1|Subject)"), "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME0.csv")
 
 
 #v <- sleepMod@resp
