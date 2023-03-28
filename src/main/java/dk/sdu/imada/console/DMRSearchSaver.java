@@ -108,6 +108,9 @@ public class DMRSearchSaver {
 	}
 	 
 	public void saveTables(String dir){
+
+		new File(dir).mkdirs();
+			
 		try {
 			File file = new File(dir+ "DMRs.csv");
 			if (file != null) {
