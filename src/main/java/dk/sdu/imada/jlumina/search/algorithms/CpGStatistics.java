@@ -1,5 +1,8 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
+import java.time.format.DateTimeFormatter;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -71,10 +74,10 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 				statisticalEstimator.setSignificance(y);
 				pvalues[i] = statisticalEstimator.getPvalue();
 				
-				double progress = i/beta.length*100;
-				if (last_progress< (int) progress) {
-					System.out.println("Computing Significance for Permutation " + np + "from " + numberPermutations + " at " + progress + "% finished");
-					last_progress = (int) progress;
+				int progress = i/beta.length*100;
+				if (last_progress< progress) {
+					System.out.println("Computing Significance for Permutation " + np + " from " + numberPermutations + " at " + progress + "%," + i + " from " + beta.length + " finished");
+					last_progress = progress;
 				}
 			}
 
@@ -106,6 +109,14 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		int last_progress = -1;
 
 		for (int i = 0; i < beta.length; i++) {
+			
+			/*if (i==100) {
+				for (int j = 0; j<i; j++) {
+					System.out.println(originalPvalues[j]);
+				}
+				System.out.println(originalPvalues.length);
+				System.exit(0);
+			}*/
 
 			int k = 0;
 			for (int j : indexes) {
@@ -113,9 +124,18 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			}
 			statisticalEstimator.setSignificance(y);
 			
-			double progress = i/beta.length*100;
+			double progress = (double) i/beta.length*100;
+			LocalTime now = LocalTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+			
 			if (last_progress< (int) progress) {
-				System.out.println("Computing Significance at " + progress + "% finished");
+				String output = now.format(dtf) + ": Computing Significance at " + (int) progress + "%, " + i + " from " + beta.length + " finished";
+				if (i != 0) {
+					for (int j = 0; j<output.length(); j++) {
+						System.out.print("\b");
+					}
+				}
+				System.out.println(output);
 				last_progress = (int) progress;
 			}
 			if(diff!=null){
