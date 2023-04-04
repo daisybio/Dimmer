@@ -1,5 +1,7 @@
 package dk.sdu.imada.console;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -128,7 +130,10 @@ public class ConsolePermutationController {
 			//System.out.println("Everything is working");
 			//System.exit(-1);
 			
-			System.out.println("Running mixed model for original p-value estimation...");
+			LocalTime now = LocalTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+			
+			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
 			se = new MixedModelEstimator(phenotype, resultIndex, 0, config);
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
