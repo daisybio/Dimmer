@@ -295,6 +295,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				System.out.println("Something in the mixed Model went wrong. ExitCode: " + exitCode);
 				System.exit(-1);
 			}
+			//p.destroy();
 		} catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
@@ -302,6 +303,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
         } catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	/*
