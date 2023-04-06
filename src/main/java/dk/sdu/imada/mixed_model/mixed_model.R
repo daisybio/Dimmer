@@ -2,10 +2,8 @@
 #@param inputPath Path to the data file.
 #@param formu formula, on which the mixed Model calculates.
 #@return m mixed Model
-mixed_model <- function (inputPath, formu) {
-  	library(lme4)
-  	methylData <- read.csv(inputPath, header=TRUE)
-	
+mixed_model <- function (methylData, formu) {
+  	library(lme4)	
  	m <- lme4::lmer(as.formula(formu), data=methylData)
 
 	# the following part can be used to calculate p-values with the LMM:
@@ -18,6 +16,29 @@ mixed_model <- function (inputPath, formu) {
 	#return(m)
 }
 
+prepareData <- function(inputFile, formu, betaFile, indexFile) {
+	betaData <- read.csv(betaFile, header=FALSE)
+	indexData <- read.csv(indexFile, header=FALSE)
+	methylData <- read.csv(inputFile, header = TRUE)
+	
+	y <- c()
+	pvalue <- c()
+	for (i in 1:nrow(betaData)) {
+		for(j in indexData) {
+			y <- append(y, betaData[i, j])
+		}
+		y <- data.frame(y)
+		colnames(y) <- "beta_values"
+		data <- data.frame(methylData, y)
+		pvalue <- append(pvalue, mixed_model(data, formu))
+	}
+	return(pvalue)
+}
+
+runModel <- function(inputFile, formu, betaFile, indexFile, outputPath) {
+	pvalue <- prepareData(inputFile, formu, betaFile, indexFile)
+	save_model_information(pvalue, outputPath)
+}
 
 #Saves necessary information of the mixed Model
 #@param model mixed Model
@@ -36,15 +57,32 @@ save_model_information <- function(pvalue, outputPath) {
 	#print(res)
 	#library(Matrix) #used
 	#write.table(matrix(test, nrow=1), outputPath, sep=", ", row.names=FALSE, col.names=FALSE)#used
-	write.table(pvalue, file=outputPath, row.names=FALSE, col.names=FALSE)
+	write.table(pvalue, file=outputPath, row.names=FALSE, col.names=FALSE, sep=",")
 }
 
 #Used for testing
 #TODO delete
 test <- function() {
-	args[1] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME.csv"
-	args[2] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results.csv"
-	args[3] = "Reaction ~ Days + (Days|Subject)"
+	#args[1] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME.csv"
+	#args[2] = "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results.csv"
+	#args[3] = "Reaction ~ Days + (Days|Subject)"
+	
+	betaData <- matrix(1:9, nrow=3, ncol=3)
+	indexData <- c(1,2,3)
+	
+	
+	print(betaData)
+	for (i in 1:nrow(betaData)) {
+		res <- c()
+		for(j in indexData) {
+			res <-append(res, betaData[i, j])
+		}
+		res <- data.frame(res)
+		colnames(res) <- "beta_value"
+		data <- data.frame(betaData, res)
+		print(data)
+	}
+	save_model_information(indexData, "/home/scibiome/Documents/test.csv")
 }
 
 #Checks if the arguments are complete and correct
@@ -55,7 +93,7 @@ test <- function() {
 #@return args the arguments
 checkArgs <- function() {
 	args = commandArgs(trailingOnly=TRUE)
-	if (length(args) < 3) {
+	if (length(args) < 5) {
 		#save_model_information(mixed_model())
 		#stop("Arguments are missing. First Argument has to be the path of the input File, 
 		#	second the Path of the output File and third the formula for the model", call.=FALSE)
@@ -66,6 +104,10 @@ checkArgs <- function() {
 	} else if (!checkFormula(args[3])) {
 	    #stop("Not a valid formular", call.=FALSE)
 		quit(status=4)
+	} else if (!file.exists(args[4])) {
+		quit(status=5)
+	} else if (!file.exists(args[5])) {
+		quit(status=6)
 	}
 	return (args)
 }
@@ -103,16 +145,20 @@ checkFormula <- function(formu) {
 	)
 }
 
-args <- checkArgs()
-inputPath <- args[1]
-outputPath <- args[2]
-formu <- args[3]
+test()
 
-options(error=function() traceback(2))
+#args <- checkArgs()
+#inputPath <- args[1]
+#outputPath <- args[2]
+#formu <- args[3]
+#betaFile <- args[4]
+#indexFile <- args[5]
+
+#options(error=function() traceback(2))
 
 #save_model_information(mixed_model("C:/Users/msant/Downloads/dimmer_testfiles/dimmer_testfiles/extended_regression_mm/mm_tmp_in_0.csv","beta_value ~ status + (1|Person_ID)"),"C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results0.csv")
 #save_model_information(modelTest(inputPath, formu), outputPath)
-save_model_information(mixed_model(inputPath, formu), outputPath)
+#save_model_information(mixed_model(inputPath, formu, betaFile, indexFile), outputPath)
 #save_model_information(modelTest("Reaction ~ Days + (1|Subject)"), "C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/CSV_FILE_NAME0.csv")
 
 
