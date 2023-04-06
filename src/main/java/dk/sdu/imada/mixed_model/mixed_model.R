@@ -145,16 +145,18 @@ checkFormula <- function(formu) {
 	)
 }
 
-test()
+#test()
 
-#args <- checkArgs()
-#inputPath <- args[1]
-#outputPath <- args[2]
-#formu <- args[3]
-#betaFile <- args[4]
-#indexFile <- args[5]
+args <- checkArgs()
+inputPath <- args[1]
+outputPath <- args[2]
+formu <- args[3]
+betaFile <- args[4]
+indexFile <- args[5]
 
-#options(error=function() traceback(2))
+options(error=function() traceback(2))
+
+runModel(inputPath, formu, betaFile, indexFile, outputPath)
 
 #save_model_information(mixed_model("C:/Users/msant/Downloads/dimmer_testfiles/dimmer_testfiles/extended_regression_mm/mm_tmp_in_0.csv","beta_value ~ status + (1|Person_ID)"),"C:/Users/msant/Downloads/Dimmer/src/main/java/dk/sdu/imada/mixed_model/results0.csv")
 #save_model_information(modelTest(inputPath, formu), outputPath)
