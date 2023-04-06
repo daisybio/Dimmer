@@ -1,11 +1,15 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
 import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Random;
 
+import dk.sdu.imada.console.Config;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
@@ -23,6 +27,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	RandomizeLabels randomizer;
 
 	StatisticalEstimator statisticalEstimator;
+	Config config = null;
 
 	int empiricalCounter[];
 	int fwerCounter[];
@@ -107,41 +112,70 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		double[] y = new double[indexes.length]; // this stores the beta values for the current CpG
 		
 		int last_progress = -1;
-
-		for (int i = 0; i < beta.length; i++) {
-			
-			/*if (i==100) {
-				for (int j = 0; j<i; j++) {
-					System.out.println(originalPvalues[j]);
-				}
-				System.out.println(originalPvalues.length);
-				System.exit(0);
-			}*/
-
-			int k = 0;
-			for (int j : indexes) {
-				y[k++] = beta[i][j];
-			}
-			statisticalEstimator.setSignificance(y);
-			
-			double progress = (double) i/beta.length*100;
-			LocalTime now = LocalTime.now();
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-			
-			if (last_progress< (int) progress) {
-				String output = now.format(dtf) + ": Computing Significance at " + (int) progress + "%, " + i + " from " + beta.length + " finished";
-				if (i != 0) {
-					for (int j = 0; j<output.length(); j++) {
-						System.out.print("\b");
+		
+		if (config != null) {
+			File betafile = new File(config.getOutputDirectory() + "/betaFile.csv");
+			File indexfile = new File(config.getOutputDirectory() + "/indexFile.csv");
+			//TODO write Index file
+			try {
+				FileWriter bfw = new FileWriter(betafile);
+				FileWriter ifw = new FileWriter(indexfile);
+				for (int i = 0; i < beta.length; i++ ) {
+					for (int j : indexes) {
+						bfw.append(String.valueOf(beta[i][j]) + ",");
+						ifw.append(String.valueOf(j) + ",");
 					}
+					bfw.append("\b\n");
+					ifw.append("\b");
 				}
-				System.out.println(output);
-				last_progress = (int) progress;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			if(diff!=null){
-				diff[i] = statisticalEstimator.getDiff();
+			statisticalEstimator.setSignificance(null);
+			
+			for (int i = 0; i < beta.length; i++) {
+				if(diff!=null){
+					diff[i] = statisticalEstimator.getDiff();
+				}
+				originalPvalues[i] = statisticalEstimator.getPvalue();
 			}
-			originalPvalues[i] = statisticalEstimator.getPvalue();
+		} else {
+
+			for (int i = 0; i < beta.length; i++) {
+				
+				/*if (i==100) {
+					for (int j = 0; j<i; j++) {
+						System.out.println(originalPvalues[j]);
+					}
+					System.out.println(originalPvalues.length);
+					System.exit(0);
+				}*/
+	
+				int k = 0;
+				for (int j : indexes) {
+					y[k++] = beta[i][j];
+				}
+				statisticalEstimator.setSignificance(y);
+				
+				double progress = (double) i/beta.length*100;
+				LocalTime now = LocalTime.now();
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+				
+				if (last_progress< (int) progress) {
+					String output = now.format(dtf) + ": Computing Significance at " + (int) progress + "%, " + i + " from " + beta.length + " finished";
+					if (i != 0) {
+						for (int j = 0; j<output.length(); j++) {
+							System.out.print("\b");
+						}
+					}
+					System.out.println(output);
+					last_progress = (int) progress;
+				}
+				if(diff!=null){
+					diff[i] = statisticalEstimator.getDiff();
+				}
+				originalPvalues[i] = statisticalEstimator.getPvalue();
+			}
 		}
 		
 		return originalPvalues;
@@ -226,6 +260,10 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 	public void setBottom(int bottom) {
 		this.bottom = bottom;
+	}
+	
+	public void setConfig(Config config) {
+		this.config = config;
 	}
 
 	public void setDiff(float[] diff) {
