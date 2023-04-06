@@ -75,30 +75,32 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		
 	}
 	
+	public MixedModelEstimator() {
+		
+	}
+	
 	/*
 	 * Saves matrix of labels, x, and y in the arrayList with their columnname.
 	 * @param methylation levels
 	 */
-	private void prepareData(double[] y) {
+	private void prepareData() {
 		dataLines.clear();
-		String [] var = new String[config.getConfoundingVariables().size()+2];
+		String [] var = new String[config.getConfoundingVariables().size()+1];
 		String [] v;
 		v = config.getConfoundingVariables().toString().split(", " );
 		for (int j = 0; j<v.length;j++) {
 			var[j] = v[j].replace("[", "").replace("]", "");
 		}
-		var[var.length-2] = config.getVariable();
-		var[var.length-1] = "beta_value";
+		var[var.length-1] = config.getVariable();
 		
 		dataLines.add(var);
 		
 		for (int i = 0; i<this.x.length; i++) {
 			String[] tmp = {};
-			tmp = new String [this.x[i].length + 1];
+			tmp = new String [this.x[i].length];
 			for (int j = 0; j<this.x[i].length;j++) {
 				tmp [j] = Double.toString(this.x[i][j]);
 			}
-			tmp[tmp.length-1] = Double.toString(y[i]);
 			this.dataLines.add(tmp);
 		}
 		
@@ -154,12 +156,9 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 */
 	@Override
 	public void setSignificance(double[] y) {
-		prepareData(y);
-		givenDataArray_whenConvertToCSV_thenOutputCreated(y);
+		prepareData();
+		givenDataArray_whenConvertToCSV_thenOutputCreated();
 		runRCode();
-		
-		float [] parameters = {};
-		float [] standardErrror = {};
 		
 		try { //
 			CSVReader csvReader = new CSVReader(new FileReader(outputPath));
@@ -176,7 +175,11 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				}
 				line = csvReader.readNext();
 			}**/
-			this.pvalue = Float.parseFloat(line[0]);
+			int k = 0;
+			while (line != null) {
+				this.pvalues[k++] = Float.parseFloat(line[0]);
+			}
+			this.pvalue = this.pvalues[target];
 			csvReader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File \"" + outputPath + "\" not Found");
@@ -241,7 +244,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * Writes for each row in DataLines a row in a csv File for further use.
 	 * @param y methylation levels
 	 */
-	public void givenDataArray_whenConvertToCSV_thenOutputCreated(double [] y) {
+	public void givenDataArray_whenConvertToCSV_thenOutputCreated() {
 	    File csvOutputFile = new File(inputPath);
 	    
 	    /*for (int i = 0; i < dataLines.size(); i++) {
@@ -270,7 +273,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		try {
 			//System.out.println(mixedModelCode+"\n"+inputPath+"\n"+outputPath+"\n"+formula);
 			Process p = Runtime.getRuntime().exec(
-					"Rscript " + mixedModelCode + " " + inputPath + " " + outputPath + " "+formula);
+					"Rscript " + mixedModelCode + " " + inputPath + " " + outputPath + " "+formula + " " + config.getOutputDirectory()+"/betaFile.csv" + " " + config.getOutputDirectory()+"/indexFile.csv");
 			
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
@@ -355,7 +358,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				x[i][j] = r.nextFloat();
 			}
 		}
-		//MixedModelEstimator mm = new MixedModelEstimator(x, 0, 0);
+		//MixedModelEstimator mm = new MixedModelEstimator();
 		//testEstimator();
 		//System.out.println(mm.outputPath);
 	}
