@@ -135,6 +135,7 @@ public class ConsolePermutationController {
 			
 			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
 			se = new MixedModelEstimator(phenotype, resultIndex, 0, config);
+			cpGSignificance.setConfig(config);
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			int runCounter = 1;
