@@ -3,12 +3,12 @@
 #@param formu formula, on which the mixed Model calculates.
 #@return m mixed Model
 mixed_model <- function (methylData, formu) {
-  	library(lme4)	
+  	require(lme4)	
  	m <- lme4::lmer(as.formula(formu), data=methylData)
 
 	# the following part can be used to calculate p-values with the LMM:
 	# source: https://ase.tufts.edu/bugs/guide/assets/mixed_model_guide.html	
-	library(car)
+	require(car)
 	a <- car::Anova(m)
 	pvalue <- a$`Pr(>Chisq)`#Wald chi-square
 	return(pvalue)
@@ -16,27 +16,33 @@ mixed_model <- function (methylData, formu) {
 	#return(m)
 }
 
-prepareData <- function(inputFile, formu, betaFile, indexFile) {
-	betaData <- read.csv(betaFile, header=FALSE)
-	indexData <- read.csv(indexFile, header=FALSE)
+prepareData <- function(inputFile, formu, betaFile, indexFile, ncores=1) {
+	betaData <- read.csv(betaFile, header = FALSE)
+	indexData <- read.csv(indexFile, header = FALSE)
 	methylData <- read.csv(inputFile, header = TRUE)
 	
 	y <- c()
 	pvalue <- c()
-	for (i in 1:nrow(betaData)) {
+	require(parallel)
+	pvalue <- mclapply(1:nrow(betaData), function(i){
+		y <- c()
 		for(j in indexData) {
 			y <- append(y, betaData[i, j])
 		}
 		y <- data.frame(y)
 		colnames(y) <- "beta_values"
 		data <- data.frame(methylData, y)
-		pvalue <- append(pvalue, mixed_model(data, formu))
-	}
+		mixed_model(data, formu)
+	}, mc.cores=ncores)
+
 	return(pvalue)
 }
 
 runModel <- function(inputFile, formu, betaFile, indexFile, outputPath) {
 	pvalue <- prepareData(inputFile, formu, betaFile, indexFile)
+	pvalue_fdr_adjusted <- p.adjust(pvalue, 'fdr') 	# adjust p-values by false discovery rate
+	pvalue_bh_adjusted <- p.adjust(pvalue, 'BH')	# adjust p-values with Benjamini-Hochberg method
+	#TODO: add adjusted pvalues to output
 	save_model_information(pvalue, outputPath)
 }
 
