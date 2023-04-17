@@ -74,8 +74,8 @@ public class HomoscedasticTest extends AbstractTTestEstimator {
 	public static void main(String[] args){
 		HomoscedasticTest test  = new HomoscedasticTest(true,5);
 		double[] y = new double[]{0.1,0.2,0.6,Double.NaN,Double.NaN,Double.NaN,0.3,0.4,0.5,0.6};
-		test.setSignificance(y);
+		test.setSignificance(y, null);
 		PairedTest test_paired  = new PairedTest(true,5);
-		test_paired.setSignificance(y);
+		test_paired.setSignificance(y, null);
 	}
 }

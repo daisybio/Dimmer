@@ -394,7 +394,7 @@ public class ConsolePermutationMonitor implements Runnable{
 
 		
 		//vulcano
-		if (!mainController.getConfig().isRegression()) {
+		if (mainController.getConfig().isTTest()) {
 			exportChart(vulcanoPlot(empiricalPvalues, mainController.getMethylationDifference(),
 					"Methylation difference Vs. Emp. p-values", "Methylation difference", "Emp. p-values (-log10)").createBufferedImage(1800, 1200), dir+"emp_vulcano_plot.png");
 			exportChart(vulcanoPlot(fdrPvalues, mainController.getMethylationDifference(),

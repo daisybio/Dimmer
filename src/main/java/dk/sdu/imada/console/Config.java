@@ -529,6 +529,9 @@ public class Config {
 	 * Like the check_regression method
 	 */
 	private void check_mixedModel(){
+		//TODO: check that all parameters in formula are present in annotation file
+		//there is no need for the mm_confounding_variables parameter
+
 		String parameter = "mm_confounding_variables";
 		HashSet<String> value = null;
 		String entry = this.parameters.remove(parameter);
@@ -565,7 +568,7 @@ public class Config {
 			}
 			System.out.println(builder.toString());
 		}
-		
+
 		this.confounding_variables = value;
 	}
 	

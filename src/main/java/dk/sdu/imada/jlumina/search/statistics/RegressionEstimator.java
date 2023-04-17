@@ -33,7 +33,7 @@ public class RegressionEstimator extends StatisticalEstimator {
 	}
 	
 	@Override
-	public void setSignificance(double[] y) {
+	public void setSignificance(double[] y, int[] indexes) {
 		
 		int counter = 0;
 		double[] y_mlr = y;

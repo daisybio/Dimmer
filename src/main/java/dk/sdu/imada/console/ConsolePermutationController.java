@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
+import dk.sdu.imada.jlumina.core.primitives.CpG;
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
 import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
@@ -127,20 +129,28 @@ public class ConsolePermutationController {
 				estimators[i] = new RegressionEstimator(phenotype.clone(), resultIndex);
 			}
 		} else if (config.isMixedModel()) {
-			//System.out.println("Everything is working");
-			//System.exit(-1);
-			
+
 			LocalTime now = LocalTime.now();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 			
 			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
 			se = new MixedModelEstimator(phenotype, resultIndex, 0, config);
+			se.setPvalues(new float[beta.length]);
 			cpGSignificance.setConfig(config);
+			// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
+			String path = mainController.getConfig().getOutputDirectory();
+			CpG[] cpgs = mainController.getManifest().getCpgList();
+			String input_type = mainController.getConfig().getInputType();
+			String array_type = mainController.getConfig().getArrayType();
+			WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
+			betaWriter.write();
+
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			int runCounter = 1;
 			for (int i = 0; i < numThreads; i++) {
 				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, config);
+				estimators[i].setPvalues(new float[beta.length]);
 				runCounter++;
 			}
 		}
@@ -166,6 +176,7 @@ public class ConsolePermutationController {
 			}
 
 			permutations[i] = new CpGStatistics(beta, pvalue, estimators[i], rand, permuDist[i]);
+			permutations[i].setConfig(config);
 			pThreads[i] = new Thread(permutations[i]);
 		}
 		

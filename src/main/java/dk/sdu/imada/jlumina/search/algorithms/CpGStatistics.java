@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 import dk.sdu.imada.console.Config;
+import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
@@ -69,20 +71,27 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 			randomizer.shuffle();
 
-			int [] indexes = randomizer.getShuffledArray();
+			int[] indexes = randomizer.getShuffledArray();
 
-			for (int i = 0; i < beta.length; i++) {
-				int k = 0;
-				for (int j : indexes) {
-					y[k++] = beta[i][j];
-				}
-				statisticalEstimator.setSignificance(y);
-				pvalues[i] = statisticalEstimator.getPvalue();
-				
-				int progress = i/beta.length*100;
-				if (last_progress< progress) {
-					System.out.println("Computing Significance for Permutation " + np + " from " + numberPermutations + " at " + progress + "%," + i + " from " + beta.length + " finished");
-					last_progress = progress;
+			if(config.getModel().equals("mixedModel")){
+				// since we run the mixed model R script only once, there is no need to go through the for loop over
+				// the whole beta matrix in this case
+				statisticalEstimator.setSignificance(y, indexes);
+				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+			}else{
+				for (int i = 0; i < beta.length; i++) {
+					int k = 0;
+					for (int j : indexes) {
+						y[k++] = beta[i][j];
+					}
+					statisticalEstimator.setSignificance(y, indexes);
+					pvalues[i] = statisticalEstimator.getPvalue();
+
+					int progress = i/beta.length*100;
+					if (last_progress< progress) {
+						System.out.println("Computing Significance for Permutation " + np + " from " + numberPermutations + " at " + progress + "%," + i + " from " + beta.length + " finished");
+						last_progress = progress;
+					}
 				}
 			}
 
@@ -99,7 +108,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param statisticalEstimator
 	 * @param indexes
 	 * @param diff place holder for methylation diff
@@ -107,77 +116,33 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	 */
 	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int indexes[], float diff[])  {
 
-		float originalPvalues[] = new float[beta.length];
+		float[] originalPvalues;
 
-		double[] y = new double[indexes.length]; // this stores the beta values for the current CpG
-		
-		int last_progress = -1;
-		
-		if (config != null) {
-			File betafile = new File(config.getOutputDirectory() + "/betaFile.csv");
-			File indexfile = new File(config.getOutputDirectory() + "/indexFile.csv");
-			//TODO write Index file
-			try {
-				FileWriter bfw = new FileWriter(betafile);
-				FileWriter ifw = new FileWriter(indexfile);
-				for (int i = 0; i < beta.length; i++ ) {
-					for (int j : indexes) {
-						bfw.append(String.valueOf(beta[i][j]) + ",");
-						ifw.append(String.valueOf(j) + ",");
-					}
-					bfw.append("\b\n");
-					ifw.append("\b");
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			statisticalEstimator.setSignificance(null);
-			
-			for (int i = 0; i < beta.length; i++) {
-				if(diff!=null){
-					diff[i] = statisticalEstimator.getDiff();
-				}
-				originalPvalues[i] = statisticalEstimator.getPvalue();
-			}
-		} else {
+		double[] y = new double[indexes.length];
 
+		if(config.getModel().equals("mixedModel")){
+			// since we run the mixed model R script only once, there is no need to go through the for loop over
+			// the whole beta matrix in this case
+			statisticalEstimator.setSignificance(y, indexes);
+			originalPvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+		}else{
+			originalPvalues =  new float[beta.length];
 			for (int i = 0; i < beta.length; i++) {
-				
-				/*if (i==100) {
-					for (int j = 0; j<i; j++) {
-						System.out.println(originalPvalues[j]);
-					}
-					System.out.println(originalPvalues.length);
-					System.exit(0);
-				}*/
-	
+
 				int k = 0;
 				for (int j : indexes) {
 					y[k++] = beta[i][j];
 				}
-				statisticalEstimator.setSignificance(y);
-				
-				double progress = (double) i/beta.length*100;
-				LocalTime now = LocalTime.now();
-				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-				
-				if (last_progress< (int) progress) {
-					String output = now.format(dtf) + ": Computing Significance at " + (int) progress + "%, " + i + " from " + beta.length + " finished";
-					if (i != 0) {
-						for (int j = 0; j<output.length(); j++) {
-							System.out.print("\b");
-						}
-					}
-					System.out.println(output);
-					last_progress = (int) progress;
-				}
+
+				statisticalEstimator.setSignificance(y, indexes);
 				if(diff!=null){
 					diff[i] = statisticalEstimator.getDiff();
 				}
 				originalPvalues[i] = statisticalEstimator.getPvalue();
 			}
 		}
-		
+
+		System.out.println("Finished original p-value calculation.");
 		return originalPvalues;
 	}
 

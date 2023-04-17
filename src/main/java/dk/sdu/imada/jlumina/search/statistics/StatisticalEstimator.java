@@ -11,6 +11,7 @@ public abstract class StatisticalEstimator {
 	
 	float meanDifference;
 	float pvalue;
+	float pvalues[];
 
 	public void setPvalue(float pvalue) {
 		this.pvalue = pvalue;
@@ -22,6 +23,14 @@ public abstract class StatisticalEstimator {
 	
 	public float getPvalue() {
 		return pvalue;
+	}
+
+	public float[] getPvalues() {
+		return pvalues;
+	}
+
+	public void setPvalues(float[] pvalues) {
+		this.pvalues = pvalues;
 	}
 	
 	public float getDiff() {
@@ -80,6 +89,6 @@ public abstract class StatisticalEstimator {
 		return m;
 	}
 	
-	public abstract void setSignificance(double[]y);
-	
+	public abstract void setSignificance(double[]y, int[] indexes);
+
 }
