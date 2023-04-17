@@ -23,8 +23,7 @@ runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formu
     sample_order <- data.table::fread(sample_order_file)[[1]]+1
     beta_matrix <- data.table::fread(beta_matrix_file)[,-1]
 
-    # re-order beta matrix and annotation file
-    beta_matrix <- beta_matrix[,..sample_order]         # column wise re-ordering
+    # re-order annotation data frame
     annotation_data <- annotation_data[sample_order,]   # row wise re-ordering
 
     # parallel execution of linear mixed model for every CpG in beta matrix
