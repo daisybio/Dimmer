@@ -360,7 +360,7 @@ public class ConsoleInputController {
 		if(missing_variable){
 			this.errors.add("The variable of interest ("+variable+") can't be found in the annotation file");
 		}
-		if(this.config.getModel().equals("Regression") || this.config.getModel().equals("mixedModel")){
+		if(this.config.getModel().equals("Regression")){
 			for(String var: confounding_variables){
 				if(!this.labelsList.contains(var)){
 					missing_confounding_variable = true;

@@ -1,7 +1,7 @@
 require(lme4)
 require(car)
 require(data.table)
-require(parallel)
+require(BiocParallel)
 
 
 # Main function of script: read files, re-order samples (in case their indices were shuffled during permutation)
@@ -14,8 +14,10 @@ require(parallel)
 # @param formula formula for mixed model; name of dependent variable (before ~) has to be 'beta_value'; other variables have to
 #   be present in the annotation file
 # @param annotation_file path to Dimmer annotation file
+# @param variance_cutoff CpGs with a variance below this value are not considered for a mixed model and skipped; a p-value of 0.99 
+#   will be returned
 # @param ncores number of cores that are used for parallel mixed model calculation
-runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formula, annotation_file, ncores) {
+runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formula, annotation_file, variance_cutoff, ncores) {
 
     # read data
     formula <- as.formula(formula)
@@ -26,20 +28,23 @@ runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formu
     # re-order annotation data frame
     annotation_data <- annotation_data[sample_order,]   # row wise re-ordering
 
+    # setting up multi-core setup
+    BPPARAM <- BiocParallel::MulticoreParam(workers = as.numeric(ncores), progressbar = T)
+    
     # parallel execution of linear mixed model for every CpG in beta matrix
-    pvalues <- unlist(parallel::mclapply(1:nrow(beta_matrix), function(i){
-        beta_cpg <- as.matrix(beta_matrix[i])[1,]
-        if(var(beta_cpg, na.rm = T) > .05){
+    pvalues <- unlist(BiocParallel::bplapply(1:nrow(beta_matrix), function(i){
+        beta_cpg <- as.numeric(beta_matrix[i])
+        if(var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)){
             mapping_tmp <- annotation_data
-            mapping_tmp$beta_value <- t(beta_cpg)
+            mapping_tmp$beta_value <- beta_cpg
 
-            model <- lme4::lmer(formula, data=mapping_tmp)
-            a <- car::Anova(model)
+            model <- suppressMessages(lme4::lmer(formula, data=mapping_tmp))
+            a <- suppressMessages(car::Anova(model))
             return(a$`Pr(>Chisq)`)
         }else{
             return(0.99)
         }
-    }, mc.cores = ncores))
+    }, BPPARAM = BPPARAM))
 
     save_model_information(pvalues, mm_pvalues_file)
 }
@@ -62,7 +67,7 @@ save_model_information <- function(pvalues, outputPath) {
 #@return args the arguments
 checkArgs <- function() {
 	args = commandArgs(trailingOnly=TRUE)
-	if (length(args) != 6) {
+	if (length(args) != 7) {
 		quit(status=2)
 	} else if (!checkFormula(args[4])) {
 		quit(status=3)
@@ -97,7 +102,8 @@ sample_order_file <- args[2]
 mm_pvalues_file <- args[3]
 formula <- args[4]
 annotation_file <- args[5]
-ncores <- args[6]
+variance_cutoff <- args[6]
+ncores <- args[7]
 
 options(error=function() traceback(2))
 
@@ -106,6 +112,7 @@ runModel(beta_matrix_file = beta_matrix_file,
          mm_pvalues_file = mm_pvalues_file,
          formula = formula,
          annotation_file = annotation_file,
+         variance_cutoff =  variance_cutoff,
          ncores = ncores)
 
 

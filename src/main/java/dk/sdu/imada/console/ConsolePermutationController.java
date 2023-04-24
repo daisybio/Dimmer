@@ -197,7 +197,7 @@ public class ConsolePermutationController {
 		String coefficient = config.getVariable();
 
 
-		if(config.getModel().equals("T-test")) {
+		if(config.getModel().equals("T-test") || config.getModel().equals("mixedModel")) {
 			float phenotype[][] = new float[map.get(coefficient).length][1];
 
 			int idx = 0;

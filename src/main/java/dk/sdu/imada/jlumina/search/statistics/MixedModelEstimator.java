@@ -1,11 +1,13 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
 
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.console.Config;
+import dk.sdu.imada.console.Variables;
 
 /*
  * Performs the mixed Model, y is the array with methylation levels for each patient
@@ -13,18 +15,17 @@ import dk.sdu.imada.console.Config;
  */
 public class MixedModelEstimator extends StatisticalEstimator{
 	public float[] pvalues;
-	float coefficients[];
-	double x[][];
+	int target;
+	double[][] x;
 	Config config;
 
 	String sample_index_file;
 	String mm_pvalues_file;
-	String mixedModelCode;
 	String formula;
 	String annotation_file;
 	String beta_matrix_file;
-	int threadNumber;
 	int numThreads;
+	float mm_variance_cutoff;
 
 	public void setX(float[][] x) {
 		this.x = toDouble(x);
@@ -40,26 +41,24 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	
 	/*
 	 * Creates an Instance of the MixedModelEstimator.
-	 * @param dataLines is used to save all information for the mixed Model in one Table.
 	 * @param ThreadNumber is used to manage saving and reading information on different threads.
 	 * @param x matrix of labels (samples X labels)
 	 * @param config a Configuration file, with the properties for the mixed Model
-	 * @param sample_index_file Path to the folder, which should contain the csv file for the mixed Model
-	 * @param mm_pvalues_file Path to the output folder, which contains the results of the mixed Model
-	 * @param formula is used in the mixed Model.
+	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
 	public MixedModelEstimator(float x[][], int target, int threadNumber, Config config) {
 		this.x = toDouble(x);
 		this.config = config;
+		this.target = target;
 
 		this.sample_index_file = config.getOutputDirectory() + "mm_tmp_in_" + threadNumber + ".csv";
 		this.mm_pvalues_file = config.getOutputDirectory() + "mm_pvalues" + threadNumber + ".csv";
-		
-		this.mixedModelCode = config.get("MixedModelCode");
-		this.formula = ("beta_value ~ " + config.get("Formula")).replaceAll("\\s+","");
+
+		this.formula = ("beta_value ~ " + config.get_mm_formula()).replaceAll("\\s+","");
 		this.annotation_file = config.getAnnotationPath();
 		this.beta_matrix_file = config.getOutputDirectory() + "beta_matrix.csv";
 		this.numThreads = config.getThreads();
+		this.mm_variance_cutoff = config.getMMVarianceCutoff();
 	}
 
 	/*
@@ -163,12 +162,13 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	public void runRCode() {
 		try {
 			Process p = Runtime.getRuntime().exec(
-					"Rscript " + mixedModelCode +
+					"Rscript " + Objects.requireNonNull(getClass().getResource(Variables.MIXED_MODEL_SCRIPT)).getFile() +
 							" " + beta_matrix_file +
 							" " + sample_index_file +
 							" " + mm_pvalues_file +
 							" " + formula +
 							" " + annotation_file +
+							" " + mm_variance_cutoff +
 					        " " + numThreads);
 			
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
