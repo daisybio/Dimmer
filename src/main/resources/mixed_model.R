@@ -28,12 +28,12 @@ runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formu
     # re-order annotation data frame
     annotation_data <- annotation_data[sample_order,]   # row wise re-ordering
 
-    # setting up multi-core setup
-    BPPARAM <- BiocParallel::MulticoreParam(workers = as.numeric(ncores), progressbar = T)
-    
     # parallel execution of linear mixed model for every CpG in beta matrix
-    pvalues <- unlist(BiocParallel::bplapply(1:nrow(beta_matrix), function(i){
+    pvalues <- unlist(parallel::mclapply(1:nrow(beta_matrix), function(i){
         beta_cpg <- as.numeric(beta_matrix[i])
+        if(i %% 10000 == 0){
+          cat(i)
+        }
         if(var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)){
             mapping_tmp <- annotation_data
             mapping_tmp$beta_value <- beta_cpg
@@ -44,7 +44,7 @@ runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formu
         }else{
             return(0.99)
         }
-    }, BPPARAM = BPPARAM))
+    }, mc.cores = as.numeric(ncores)))
 
     save_model_information(pvalues, mm_pvalues_file)
 }

@@ -41,7 +41,7 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 		this.array_type = array_type;
 	}
 	
-	public void write(){
+	public String write(){
 		
 		this.setMaxSteps(beta.length);
 		setMsg("Saving beta-matrix in " + this.path);
@@ -50,10 +50,11 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 		
 		if(this.header == null){
 			this.header = createHeader();
-		} 
-		
+		}
+
+		String beta_path = path + "beta_matrix.csv";
 		try{
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File (path +"beta_matrix.csv")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File (beta_path)));
 			
 			// write header
 			bw.write("CpG_ID");
@@ -85,6 +86,7 @@ public class WriteBetaMatrix extends DataProgress implements Runnable {
 		}
 		
 		this.setDone(true);
+		return(beta_path);
 	}
 	
 	private String[] createHeader(){

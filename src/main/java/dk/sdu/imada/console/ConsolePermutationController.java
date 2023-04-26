@@ -134,22 +134,32 @@ public class ConsolePermutationController {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 			
 			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
-			se = new MixedModelEstimator(phenotype, resultIndex, 0, config);
+
+			String beta_path;
+			if(config.getInputType() == "beta"){
+				beta_path = config.getBetaPath();
+			}else{
+				if(!config.getSaveBeta()){
+					System.out.println("Beta matrix has to be saved to file when using mixed model");
+				}
+				// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
+				String path = mainController.getConfig().getOutputDirectory();
+				CpG[] cpgs = mainController.getManifest().getCpgList();
+				String input_type = mainController.getConfig().getInputType();
+				String array_type = mainController.getConfig().getArrayType();
+				WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
+				beta_path = betaWriter.write();
+			}
+
+			se = new MixedModelEstimator(phenotype, resultIndex, 0, beta_path, config);
 			se.setPvalues(new float[beta.length]);
 			cpGSignificance.setConfig(config);
-			// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
-			String path = mainController.getConfig().getOutputDirectory();
-			CpG[] cpgs = mainController.getManifest().getCpgList();
-			String input_type = mainController.getConfig().getInputType();
-			String array_type = mainController.getConfig().getArrayType();
-			WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
-			betaWriter.write();
 
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			int runCounter = 1;
 			for (int i = 0; i < numThreads; i++) {
-				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, config);
+				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config);
 				estimators[i].setPvalues(new float[beta.length]);
 				runCounter++;
 			}

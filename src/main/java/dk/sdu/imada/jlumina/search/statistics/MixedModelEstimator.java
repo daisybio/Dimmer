@@ -23,7 +23,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	String mm_pvalues_file;
 	String formula;
 	String annotation_file;
-	String beta_matrix_file;
+	String beta_path;
 	int numThreads;
 	float mm_variance_cutoff;
 
@@ -46,23 +46,23 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadNumber, Config config) {
+	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
+		this.beta_path = beta_path;
 
 		this.sample_index_file = config.getOutputDirectory() + "mm_tmp_in_" + threadNumber + ".csv";
 		this.mm_pvalues_file = config.getOutputDirectory() + "mm_pvalues" + threadNumber + ".csv";
 
 		this.formula = ("beta_value ~ " + config.get_mm_formula()).replaceAll("\\s+","");
 		this.annotation_file = config.getAnnotationPath();
-		this.beta_matrix_file = config.getOutputDirectory() + "beta_matrix.csv";
 		this.numThreads = config.getThreads();
 		this.mm_variance_cutoff = config.getMMVarianceCutoff();
 	}
 
 	/*
-	 * Saves order of samples to temporary file
+	 * Saves order of samples to file
 	 * @param indexes order of samples
 	 */
 	private void prepareData(int[] indexes) throws IOException {
@@ -163,13 +163,13 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		try {
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + Objects.requireNonNull(getClass().getResource(Variables.MIXED_MODEL_SCRIPT)).getFile() +
-							" " + beta_matrix_file +
-							" " + sample_index_file +
-							" " + mm_pvalues_file +
-							" " + formula +
-							" " + annotation_file +
-							" " + mm_variance_cutoff +
-					        " " + numThreads);
+							" " + this.beta_path +
+							" " + this.sample_index_file +
+							" " + this.mm_pvalues_file +
+							" " + this.formula +
+							" " + this.annotation_file +
+							" " + this.mm_variance_cutoff +
+					        " " + this.numThreads);
 			
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
