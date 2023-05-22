@@ -13,6 +13,7 @@ import java.util.Random;
 import dk.sdu.imada.console.Config;
 import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
+import dk.sdu.imada.jlumina.search.statistics.TimeSeriesEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
 public class CpGStatistics extends PermutationProgress implements Runnable  {
@@ -78,6 +79,11 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 				// the whole beta matrix in this case
 				statisticalEstimator.setSignificance(y, indexes);
 				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+			}else if (config.isRM_ANOVA() || config.isFriedmanTest()){
+				// since we run the time series model R script only once, there is no need to go through the for loop
+				// over the whole beta matrix in this case
+				statisticalEstimator.setSignificance(y, indexes);
+				pvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
 			}else{
 				for (int i = 0; i < beta.length; i++) {
 					int k = 0;
@@ -125,6 +131,11 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			// the whole beta matrix in this case
 			statisticalEstimator.setSignificance(y, indexes);
 			originalPvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+		}else if(config.isFriedmanTest() || config.isRM_ANOVA()){ //TODO could maybe be combined with mixed mode?
+			// since we run the time series model R script only once, there is no need to go through the for loop over
+			// the whole beta matrix in this case
+			statisticalEstimator.setSignificance(y, indexes);
+			originalPvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
 		}else{
 			originalPvalues =  new float[beta.length];
 			for (int i = 0; i < beta.length; i++) {

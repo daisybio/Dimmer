@@ -368,7 +368,29 @@ public class ConsoleInputController {
 				}
 			}
 		}
-	}
+		// check if formula variables are present
+		// TODO check formula check works or comment out if not
+		else if(this.config.isFriedmanTest() || this.config.isRM_ANOVA() || this.config.isMixedModel()){
+			String formula = "";
+			if(this.config.isFriedmanTest()) { formula = this.config.get_ft_formula();}
+			else if (this.config.isRM_ANOVA()) { formula = this.config.get_rma_formula();}
+			else { formula = this.config.get_mm_formula();}
+			String[] formula_variables = formula.split("(\\s|\\~|\\:|\\+|\\*|\\-|\\/|\\(|\\)|\\|)");
+			for(String var: formula_variables) {
+				if (!this.labelsList.contains(var) && !(var.equals("Error")|| var.equals("") || var.matches("[0-9]*"))) {
+					missing_confounding_variable = true;
+					this.errors.add("The formula variable " + var + " can't be found in the annotation file");
+				}
+			}
+			if(missing_confounding_variable){
+				this.errors.add("Please fix your formula. Allowed operators, symbols and terms are: '~', '+', '*', ':'," +
+						" '-', '/', '(', ')', '|', 'Error', '\\s', numbers, and the annotation file variables");
+			}
+
+		}
+
+
+		}
 	
 	public void pushContinue() {
 		
