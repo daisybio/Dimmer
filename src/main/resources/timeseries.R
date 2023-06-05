@@ -51,6 +51,8 @@ runModel <-
     # re-order annotation data frame
     annotation_data <-
       annotation_data[sample_order, ]   # row wise re-ordering
+
+    cat(paste("\nThe variance_cutoff for the following calculations is",variance_cutoff,"\t"))
     
     if (method == "friedmanT") {
       # parallel execution of the friedman test for every CpG in beta matrix

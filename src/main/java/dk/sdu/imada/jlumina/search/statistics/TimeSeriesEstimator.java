@@ -47,7 +47,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
      * @param config a Configuration file, with the properties for the time series Model
      * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
      */
-    public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) {
+    public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) {
         this.x = toDouble(x);
         this.config = config;
         this.target = target;
@@ -63,6 +63,10 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         }else if(config.isFriedmanTest()){
             this.ts_variance_cutoff = config.getFTVarianceCutoff();
             this.formula = ("beta_value ~ " + config.get_ft_formula()).replaceAll("\\s+", "");
+        }
+        // Only use a variance cutoff for the permutations not for the original P-value calculation.
+        if(!permutation){
+            this.ts_variance_cutoff = (float)0.0;
         }
         this.annotation_file = config.getAnnotationPath();
         this.numThreads = config.getThreads();
