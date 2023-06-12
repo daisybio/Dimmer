@@ -1,16 +1,8 @@
 package dk.sdu.imada.console;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
 import dk.sdu.imada.jlumina.core.primitives.CpG;
 import dk.sdu.imada.jlumina.core.primitives.Grouping;
-import dk.sdu.imada.jlumina.core.util.PairIDCheck;
 import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
 import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
 import dk.sdu.imada.jlumina.search.statistics.RegressionEstimator;
@@ -19,6 +11,13 @@ import dk.sdu.imada.jlumina.search.statistics.StudentTTest;
 import dk.sdu.imada.jlumina.search.util.NonPairedShuffle;
 import dk.sdu.imada.jlumina.search.util.PairedShuffle;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
+
+import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 
 public class ConsolePermutationController {
@@ -48,10 +47,14 @@ public class ConsolePermutationController {
 	}
 
 	public void start(){
-		pushExecutePermutation();
+		try {
+			pushExecutePermutation();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public void pushExecutePermutation() {
+	public void pushExecutePermutation() throws IOException {
 
 		int numberOfPermutations = config.getNPermutationsCpG();
 		int numThreads = config.getThreads();
@@ -74,7 +77,7 @@ public class ConsolePermutationController {
 		HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
 		Grouping gr;
 		
-		//pre loading of variables
+		//preloading of variables
 		if(config.isRegression()){
 			gr = new Grouping(columnMap.get(config.getVariable()));
 			phenotype = loadPhenotype();

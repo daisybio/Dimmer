@@ -1,13 +1,11 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
-import java.io.*;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
-
-import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.console.Config;
 import dk.sdu.imada.console.Variables;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.nio.file.StandardCopyOption;
 
 /*
  * Performs the mixed Model, y is the array with methylation levels for each patient
@@ -26,6 +24,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	String beta_path;
 	int numThreads;
 	float mm_variance_cutoff;
+	String rscript;
 
 	public void setX(float[][] x) {
 		this.x = toDouble(x);
@@ -46,7 +45,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) {
+	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) throws IOException {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
@@ -59,6 +58,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.annotation_file = config.getAnnotationPath();
 		this.numThreads = config.getThreads();
 		this.mm_variance_cutoff = config.getMMVarianceCutoff();
+
+		this.rscript = this.getRFile(Variables.MIXED_MODEL_SCRIPT);
 	}
 
 	/*
@@ -162,7 +163,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	public void runRCode() {
 		try {
 			Process p = Runtime.getRuntime().exec(
-					"Rscript " + Objects.requireNonNull(getClass().getResource(Variables.MIXED_MODEL_SCRIPT)).getFile() +
+					"Rscript " + this.rscript +
 							" " + this.beta_path +
 							" " + this.sample_index_file +
 							" " + this.mm_pvalues_file +
@@ -207,5 +208,22 @@ public class MixedModelEstimator extends StatisticalEstimator{
         } catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getRFile(String fileName) throws IOException {
+
+		InputStream stream = getClass().getResourceAsStream("/mixed_model.R");
+
+		File tempFile = File.createTempFile("dimmer_R",".R");
+		tempFile.deleteOnExit();
+
+		java.nio.file.Files.copy(
+				stream,
+				tempFile.toPath(),
+				StandardCopyOption.REPLACE_EXISTING);
+		IOUtils.closeQuietly(stream);
+
+		System.out.println(tempFile);
+		return(tempFile.toString());
 	}
 }

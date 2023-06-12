@@ -31,9 +31,7 @@ runModel <- function(beta_matrix_file, sample_order_file, mm_pvalues_file, formu
     # parallel execution of linear mixed model for every CpG in beta matrix
     pvalues <- unlist(parallel::mclapply(1:nrow(beta_matrix), function(i){
         beta_cpg <- as.numeric(beta_matrix[i])
-        if(i %% 10000 == 0){
-          cat(i)
-        }
+
         if(var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)){
             mapping_tmp <- annotation_data
             mapping_tmp$beta_value <- beta_cpg
