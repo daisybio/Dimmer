@@ -144,7 +144,7 @@ save_model_information <- function(pvalues, outputPath) {
 #@param timestamp variable name out of formula for the independent variable of the repeated measurements
 imputation <- function(mapping_tmp, timestamp) {
   mapping_tmp %>%
-    group_by(timestamp) %>%
+    group_by_at(timestamp) %>%
     mutate_at(
       .vars = vars(beta_value),
       .funs = function(x) {
