@@ -81,7 +81,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
 			}else if (config.isRM_ANOVA() || config.isFriedmanTest()){
 				// since we run the time series model R script only once, there is no need to go through the for loop
-				// over the whole beta matrix in this case
+				// over the whole beta matrix in this case (similar to mixedModel)
 				statisticalEstimator.setSignificance(y, indexes);
 				pvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
 			}else{
@@ -131,9 +131,9 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			// the whole beta matrix in this case
 			statisticalEstimator.setSignificance(y, indexes);
 			originalPvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
-		}else if(config.isFriedmanTest() || config.isRM_ANOVA()){ //TODO could maybe be combined with mixed mode?
+		}else if(config.isFriedmanTest() || config.isRM_ANOVA()){
 			// since we run the time series model R script only once, there is no need to go through the for loop over
-			// the whole beta matrix in this case
+			// the whole beta matrix in this case (similar to mixedModel)
 			statisticalEstimator.setSignificance(y, indexes);
 			originalPvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
 		}else{

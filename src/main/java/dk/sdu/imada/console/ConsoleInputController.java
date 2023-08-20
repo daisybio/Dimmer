@@ -368,8 +368,7 @@ public class ConsoleInputController {
 				}
 			}
 		}
-		// check if formula variables are present
-		// TODO check formula check works or comment out if not
+		// brute force check if formula variables are present and appropriate symbols are used
 		else if(this.config.isFriedmanTest() || this.config.isRM_ANOVA() || this.config.isMixedModel()){
 			String formula = "";
 			if(this.config.isFriedmanTest()) { formula = this.config.get_ft_formula();}
@@ -383,6 +382,8 @@ public class ConsoleInputController {
 				}
 			}
 			if(missing_confounding_variable){
+				// for transparency and easier error detection every allowed symbol is printed to the user in case of an
+				// error
 				this.errors.add("Please fix your formula. Allowed operators, symbols and terms are: '~', '+', '*', ':'," +
 						" '-', '/', '(', ')', '|', 'Error', '\\s', numbers, and the annotation file variables");
 			}

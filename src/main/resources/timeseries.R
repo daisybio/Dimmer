@@ -1,27 +1,28 @@
-### Friedman Test R Script description ####
-# Based on "Dimmer/src/main/resources/mixed_model.R" script by Alexander Dietrich
+### Time Series R Script description ####
+# Based on "Dimmer/src/main/resources/mixed_model.R" script
 
 # Main function of script: read files, re-order samples (in case their indices were shuffled during permutation)
-# and calculate Friedman Test for all CpGs in provided beta matrix
+# and calculate the given Time Series method (Friedman Test or repeated measures ANOVA) for all CpGs in provided beta matrix
 # @param beta_matrix_file file path to beta matrix; has to be written to file with the WriteBetaMatrix() function from Dimmer
 # @param sample_order_file file path to sample index order file; will be used to re-order the columns of beta matrix according
 #   to the shuffling that happens during permutations; if original p-values are calculated in Dimmer, this has no effect, since
 #   the samples were not shuffled
-# @param ts_pvalues_file output file where mixed model p-values will be stored
-# @param formula formula for mixed model; name of dependent variable (before ~) has to be 'beta_value'; other variables have to
-#   be present in the annotation file
+# @param ts_pvalues_file output file where time series p-values will be stored
+# @param formula formula for time series model; name of dependent variable (before ~) has to be 'beta_value'; other variables
+#   have to be present in the annotation file (this has been checked by Dimmer)
 # @param annotation_file path to Dimmer annotation file
-# @param variance_cutoff CpGs with a variance below this value are not considered for a mixed model and skipped; a p-value of 0.99
-#   will be returned
-# @param ncores number of cores that are used for parallel mixed model calculation
+# @param variance_cutoff CpGs with a variance below this value are not considered for a time series model and skipped;
+#   a p-value of 0.99 will be returned (this only happens for permutations, Dimmer sets variance_cutoff to 0.0 for
+#   original p-value calculations)
+# @param ncores number of cores that are used for parallel time series model calculation
+# @param method names the time series method/ model that is to be used
 
 
 ### Install packages, load libraries ####
 require(data.table)
-require(stats) # aov()
-require(BiocParallel) # parallel::mclapply()
 require(dplyr)
-#require(plyr) # as.factor()
+require(stats) # aov(), friedman.test()
+require(BiocParallel) # parallel::mclapply()
 
 ### Functions ####
 runModel <-
@@ -36,15 +37,14 @@ runModel <-
     # read data
     formula <- as.formula(formula)
     indep_vars = all.vars(formula[-2])
-    # for imputation
-    # TODO The imputation variable must come at first position
+    # for imputation get timestamp variable from the first position of the formula
     timestamp = indep_vars[1]
     annotation_data <- data.table::fread(annotation_file)
-    # convert all columns of independamt variables with as.factor() (necessary for all categorical columns fro rm anova) 
-    # function found on: https://stackoverflow.com/questions/16846380/apply-a-function-to-every-specified-column-in-a-data-table-and-update-by-referen
+    # convert all columns of independent variables with as.factor() (necessary for all categorical columns for rm anova)
+    # function found on:
+    # https://stackoverflow.com/questions/16846380/apply-a-function-to-every-specified-column-in-a-data-table-and-update-by-referen
     annotation_data[ , (indep_vars) := lapply(.SD, FUN=as.factor), .SDcols = indep_vars]
-    # | Alternative: user has to specify it in the formula
-    
+
     sample_order <- data.table::fread(sample_order_file)[[1]] + 1
     beta_matrix <- data.table::fread(beta_matrix_file)[, -1]
     
@@ -52,8 +52,11 @@ runModel <-
     annotation_data <-
       annotation_data[sample_order, ]   # row wise re-ordering
 
+    # print the used variance cutoff (used for testing if variance cutoff for original p-value calculation is indeed
+    # set to 0.0 by Dimmer; is retained for information and clarity)
     cat(paste("\nThe variance_cutoff for the following calculations is",variance_cutoff,"\t"))
-    
+
+    # distinguish which model has been selected and apply it
     if (method == "friedmanT") {
       # parallel execution of the friedman test for every CpG in beta matrix
       pvalues <-
@@ -63,7 +66,7 @@ runModel <-
                          counter_setNANCpGSign,
                          counter_setLowVarCpGSign) {
             beta_cpg <- as.numeric(beta_matrix[i])
-            # Test if Remainder of Row number divided by 10000 is 0 => Progress bar?
+            # Progress bar
             if (i %% 10000 == 0) {
               cat(i)
             }
@@ -71,11 +74,11 @@ runModel <-
             if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
               mapping_tmp <- annotation_data
               mapping_tmp$beta_value <- beta_cpg
-              # Imputation process only it NaN values present
+              # imputation process only if NaN values present
               if (sum(is.na(beta_cpg)) > 0) {
-                #TODO if imputation and could include cutoff for max missing values per timestamp
                 mapping_tmp <- imputation(mapping_tmp, timestamp)
-                # If no Imputation or Imputation not enough return 0.99
+                # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+                # values in the data -> return 0.99
                 if (sum(is.na(mapping_tmp$beta_value)) > 0) {
                   return(0.99)
                 }
@@ -97,7 +100,7 @@ runModel <-
                                                                 counter_setNANCpGSign,
                                                                 counter_setLowVarCpGSign) {
           beta_cpg <- as.numeric(beta_matrix[i])
-          # Test if Remainder of Row number divided by 10000 is 0 => Progress bar?
+          # Progress bar
           if (i %% 10000 == 0) {
             cat(i)
           }
@@ -105,18 +108,18 @@ runModel <-
           if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
             mapping_tmp <- annotation_data
             mapping_tmp$beta_value <- beta_cpg
-            # Imputation process only it NaN values present
+            # imputation process only it NaN values present
             if (sum(is.na(beta_cpg)) > 0) {
-              #TODO if imputation and could include cutoff for max missing values per timestamp
               mapping_tmp <- imputation(mapping_tmp, timestamp)
-              # If no Imputation or Imputation not enough return 0.99
+              # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+              # values in the data -> return 0.99
               if (sum(is.na(mapping_tmp$beta_value)) > 0) {
                 return(0.99)
               }
             }
             
             model <- suppressMessages(aov(formula, data = mapping_tmp))
-            return(summary(model)[[2]][[1]]$`Pr(>F)`[1]) # TODO: Check again for better/robuster extraction
+            return(summary(model)[[2]][[1]]$`Pr(>F)`[1])
             # else p-value of 0.99
           } else{
             return(0.99)
@@ -126,8 +129,8 @@ runModel <-
     save_model_information(pvalues, ts_pvalues_file)
   }
 
-#Saves necessary information of the mixed Model
-#@param pvalues list of pvalues from mixed model
+#Saves necessary information of the time series model
+#@param pvalues list of pvalues from time series model
 #@param outputPath Path of folder, in which the data should be saved.
 save_model_information <- function(pvalues, outputPath) {
   write.table(
@@ -139,9 +142,9 @@ save_model_information <- function(pvalues, outputPath) {
   )
 }
 
-#Imputation for beta_values of CpGs (with mean value) iff only one value per timestamp grouping is missing
+#imputation for beta_values of CpGs (with mean value) iff only one value per timestamp grouping is missing
 #@param mapping_tmp data table construct of beta values of one CpG and annotation
-#@param timestamp variable name out of formula for the independent variable of the repeated measurements
+#@param timestamp variable name out of formula used for grouping
 imputation <- function(mapping_tmp, timestamp) {
   mapping_tmp %>%
     group_by_at(timestamp) %>%
@@ -149,7 +152,7 @@ imputation <- function(mapping_tmp, timestamp) {
       .vars = vars(beta_value),
       .funs = function(x) {
         if (sum(is.na(x)) == 1) {
-          # Imputation of Nan only if it is the only per this timestamp
+          # imputation of Nan only if it is the only per this timestamp
           mean_x <- mean(x, na.rm = TRUE)
           x[is.na(x)] <- mean_x
         }
@@ -160,11 +163,12 @@ imputation <- function(mapping_tmp, timestamp) {
 
 #Checks if the arguments are complete and correct
 #If not quits with the error-code
-#2, if there aren't enough parameters.
+#2, if there aren't enough or too much parameters.
 #3, if the formula is not valid.
 #4, if the beta matrix file does not exist.
 #5, if the annotation file does not exist.
 #6, if the sample order file does not exist.
+#7, if the method is neither "friedmanT" or "rmANOVA"
 
 #@return args the arguments
 checkArgs <- function() {

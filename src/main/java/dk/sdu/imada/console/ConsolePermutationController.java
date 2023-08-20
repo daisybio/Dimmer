@@ -167,7 +167,8 @@ public class ConsolePermutationController {
 				LocalTime now = LocalTime.now();
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-				System.out.println(now.format(dtf) + ": Running Timeseries model (" + config.getModel() +
+				// print which time series model was selected and is applied for clarity
+				System.out.println(now.format(dtf) + ": Running Time series model (" + config.getModel() +
 						" as specified) for original p-value estimation...");
 
 				String beta_path;

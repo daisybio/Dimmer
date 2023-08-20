@@ -130,11 +130,11 @@ public class Config {
 							break;
 						case "rmANOVA":
 							check_rm_anova_variance();
-							check_rm_anova_formula();    	// TODO maybe combine with other check formulas?
+							check_rm_anova_formula();
 							break;
 						case "friedmanT":
 							check_friedman_test_variance();
-							check_friedman_test_formula();	// TODO maybe combine with other check formulas?
+							check_friedman_test_formula();
 							break;
 
 					}

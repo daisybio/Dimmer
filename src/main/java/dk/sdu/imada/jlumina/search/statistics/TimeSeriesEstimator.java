@@ -10,8 +10,9 @@ import dk.sdu.imada.console.Config;
 import dk.sdu.imada.console.Variables;
 
 /*
- * Performs the Timeseries Model (repeated measures ANOVA or Friedman Test as specified), y is the array with
- * methylation levels for each patient and x is a matrix of labels (patients X labels).
+ * Performs the Timeseries Model (repeated measures ANOVA or Friedman Test as specified) and is based on the code of the
+ * MixedModelEstimator class, y is the array with methylation levels for each patient and x is a matrix of labels
+ * (patients X labels).
  */
 public class TimeSeriesEstimator extends StatisticalEstimator{
     public float[] pvalues;
@@ -42,10 +43,13 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
 
     /*
      * Creates an Instance of the TimeSeriesEstimator.
-     * @param ThreadNumber is used to manage saving and reading information on different threads.
      * @param x matrix of labels (samples X labels)
-     * @param config a Configuration file, with the properties for the time series Model
      * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
+     * @param ThreadNumber is used to manage saving and reading information on different threads.
+     * @param beta_path file path to beta matrix is only passed on
+     * @param config a Configuration file, with the properties for the time series Model
+     * @param permutation boolean that determines if this TimeSeriesEstimator is used for permutations or for the
+     *      original p-value calculation. Determines if variance cutoff is used in calculations
      */
     public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) {
         this.x = toDouble(x);
