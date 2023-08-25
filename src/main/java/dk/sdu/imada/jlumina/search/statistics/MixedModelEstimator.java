@@ -179,10 +179,21 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * In case of an Error its stops and writes an error-message.
 	 */
 	public void runRCode() {
+		System.out.println("Rscript " + this.rscript +
+				" " + this.beta_path +
+				" " + this.target +
+				" " + this.sample_index_file +
+				" " + this.mm_pvalues_file +
+				" " + this.formula +
+				" " + this.annotation_file +
+				" " + this.mm_variance_cutoff +
+				" " + this.numThreads);
+
 		try {
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + this.rscript +
 							" " + this.beta_path +
+							" " + this.target +
 							" " + this.sample_index_file +
 							" " + this.mm_pvalues_file +
 							" " + this.formula +

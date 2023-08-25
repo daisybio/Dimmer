@@ -143,7 +143,7 @@ public class ConsolePermutationController {
 				beta_path = config.getBetaPath();
 			}else{
 				if(!config.getSaveBeta()){
-					System.out.println("Beta matrix has to be saved to file when using mixed model");
+					System.out.println("Beta matrix has to be saved to file when using mixed model, ignoring save_beta parameter ...");
 				}
 				// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
 				String path = mainController.getConfig().getOutputDirectory();
