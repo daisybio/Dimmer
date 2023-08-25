@@ -139,7 +139,7 @@ public class ConsolePermutationController {
 			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
 
 			String beta_path;
-			if(config.getInputType() == "beta"){
+			if(config.getInputType().equals("beta")){
 				beta_path = config.getBetaPath();
 			}else{
 				if(!config.getSaveBeta()){

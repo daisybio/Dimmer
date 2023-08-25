@@ -76,6 +76,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			if(config.getModel().equals("mixedModel")){
 				// since we run the mixed model R script only once, there is no need to go through the for loop over
 				// the whole beta matrix in this case
+				statisticalEstimator.setPermutationValue(np+1);
 				statisticalEstimator.setSignificance(y, indexes);
 				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
 			}else{

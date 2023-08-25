@@ -6,6 +6,8 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLOutput;
+import java.util.Random;
 
 /*
  * Performs the mixed Model, y is the array with methylation levels for each patient
@@ -23,6 +25,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	String annotation_file;
 	String beta_path;
 	int numThreads;
+	int permutationValue;
+	int threadValue;
 	float mm_variance_cutoff;
 	String rscript;
 
@@ -37,22 +41,35 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	public void setPvalues(float[] pvalues) {
 		this.pvalues = pvalues;
 	}
+
+	/*
+	* This function is needed to give the temporary files of the Rscript unique names based on the
+	* thread and permutation they belong to.
+	* It should only be used for empirical pvalue calculation, not for the original pvalues.
+	* */
+	public void setPermutationValue(int permutation){
+		this.permutationValue = permutation;
+		this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+		this.mm_pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+	}
 	
 	/*
 	 * Creates an Instance of the MixedModelEstimator.
-	 * @param ThreadNumber is used to manage saving and reading information on different threads.
+	 * @param threadValue is used to manage saving and reading information on different threads.
+	 * @param permutationNumber is used to manage saving and reading information from different permutations
 	 * @param x matrix of labels (samples X labels)
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) throws IOException {
+	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config) throws IOException {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
 		this.beta_path = beta_path;
+		this.threadValue = threadValue;
 
-		this.sample_index_file = config.getOutputDirectory() + "mm_tmp_in_" + threadNumber + ".csv";
-		this.mm_pvalues_file = config.getOutputDirectory() + "mm_pvalues" + threadNumber + ".csv";
+		this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + ".csv";
+		this.mm_pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + ".csv";
 
 		this.formula = ("beta_value ~ " + config.get_mm_formula()).replaceAll("\\s+","");
 		this.annotation_file = config.getAnnotationPath();
@@ -63,16 +80,16 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	}
 
 	/*
-	 * Saves order of samples to file
+	 * Saves order of samples to file; also create temporary file that holds results of Rscript (pvalues)
 	 * @param indexes order of samples
 	 */
 	private void prepareData(int[] indexes) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(this.sample_index_file));
 
-		for (int i = 0; i < indexes.length; i++){
-			bw.write(Integer.toString(indexes[i]));
-			bw.newLine();
-		}
+        for (int index : indexes) {
+            bw.write(Integer.toString(index));
+            bw.newLine();
+        }
 		bw.flush();
 		bw.close();
 
@@ -89,11 +106,11 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				if(file.delete()) {
 					//System.out.println("InputFile got deleted");
 				} else {
-					System.out.println("Couldn't delete InputFile");
+					System.out.println("Couldn't delete temporary sample index file");
 					System.exit(1);
 				}
 			} else {
-				System.out.println("InputFile isn't File");
+				System.out.println("sample index file isn't File");
 				System.exit(1);
 			}
 
@@ -102,11 +119,11 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				if(file1.delete()) {
 					//System.out.println("OutputFile got deleted");
 				} else {
-					System.out.println("Couldn't delete OutputFile");
+					System.out.println("Couldn't delete temporary pvalue file");
 					System.exit(1);
 				}
 			}else {
-				System.out.println("OutputFile isn't File");
+				System.out.println("pvalue file isn't File");
 				System.exit(1);
 			}
 			
@@ -117,7 +134,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	
 	/*
 	 * Creates sample-index input file for Mixed Model R script and then calls this script
-	 * @param y beta-values of CpG
+	 * @param y beta-values of CpG; in case of the Mixed Model, this array is filled only with 0s, as the beta-values
+	 * will be extracted from the beta-matrix directly in the R script
 	 * @param indexes order of samples
 	 */
 	@Override
@@ -162,6 +180,15 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 */
 	public void runRCode() {
 		try {
+			System.out.println("Rscript " + this.rscript +
+					" " + this.beta_path +
+					" " + this.sample_index_file +
+					" " + this.mm_pvalues_file +
+					" " + this.formula +
+					" " + this.annotation_file +
+					" " + this.mm_variance_cutoff +
+					" " + this.numThreads);
+
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + this.rscript +
 							" " + this.beta_path +
@@ -223,7 +250,6 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				StandardCopyOption.REPLACE_EXISTING);
 		IOUtils.closeQuietly(stream);
 
-		System.out.println(tempFile);
 		return(tempFile.toString());
 	}
 }
