@@ -70,6 +70,7 @@ public class Config {
 	private boolean save_dmr_permu_plots;
 	private float mm_variance_cutoff;
 	private String mm_formula;
+	private boolean remove_temporary_files;
 	
 	
 	public Config(HashMap<String,String> parameters){
@@ -123,6 +124,7 @@ public class Config {
 						case "mixedModel":
 							check_mixed_model_variance();
 							check_mixed_model_formula();
+							check_remove_temporary_files();
 							break;
 					}
 				}
@@ -561,6 +563,11 @@ public class Config {
 	private void check_mixed_model_formula(){
 		String parameter = "mm_formula";
 		this.mm_formula = check_string(parameter);
+	}
+
+	private void check_remove_temporary_files(){
+		String parameter = "remove_temporary_files";
+		this.remove_temporary_files = Boolean.parseBoolean(check_boolean(parameter));
 	}
 	
 	private void check_variable(){
@@ -1182,4 +1189,7 @@ public class Config {
 		this.parameters.put(key, value);
 	}
 
+	public boolean getRemoveTemporaryFiles() {
+		return this.remove_temporary_files;
+	}
 }

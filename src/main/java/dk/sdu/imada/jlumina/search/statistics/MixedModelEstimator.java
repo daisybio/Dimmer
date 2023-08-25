@@ -29,6 +29,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	int threadValue;
 	float mm_variance_cutoff;
 	String rscript;
+	boolean removeTemporaryFiles;
 
 	public void setX(float[][] x) {
 		this.x = toDouble(x);
@@ -61,7 +62,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config) throws IOException {
+	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean removeTemporaryFiles) throws IOException {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
@@ -77,6 +78,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.mm_variance_cutoff = config.getMMVarianceCutoff();
 
 		this.rscript = this.getRFile(Variables.MIXED_MODEL_SCRIPT);
+		this.removeTemporaryFiles = removeTemporaryFiles;
 	}
 
 	/*
@@ -171,7 +173,11 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		}
 
 		// remove temporary files
-		removeFiles();
+		if(this.removeTemporaryFiles){
+			removeFiles();
+		}else{
+			System.out.println("Keeping temporary files");
+		}
 	}
 
 	/*
@@ -179,16 +185,6 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * In case of an Error its stops and writes an error-message.
 	 */
 	public void runRCode() {
-		System.out.println("Rscript " + this.rscript +
-				" " + this.beta_path +
-				" " + this.target +
-				" " + this.sample_index_file +
-				" " + this.mm_pvalues_file +
-				" " + this.formula +
-				" " + this.annotation_file +
-				" " + this.mm_variance_cutoff +
-				" " + this.numThreads);
-
 		try {
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + this.rscript +
