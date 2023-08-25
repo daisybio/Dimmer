@@ -180,15 +180,6 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 */
 	public void runRCode() {
 		try {
-			System.out.println("Rscript " + this.rscript +
-					" " + this.beta_path +
-					" " + this.sample_index_file +
-					" " + this.mm_pvalues_file +
-					" " + this.formula +
-					" " + this.annotation_file +
-					" " + this.mm_variance_cutoff +
-					" " + this.numThreads);
-
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + this.rscript +
 							" " + this.beta_path +
@@ -222,6 +213,9 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				System.exit(-1);
 			case 6:
 				System.out.println("The sample order file does not exist.");
+				System.exit(-1);
+			case 7:
+				System.out.println("Variance cutoff is not between 0 and 1.");
 				System.exit(-1);
 			default:
 			System.out.println("Something in the mixed model script went wrong. ExitCode: " + exitCode);
