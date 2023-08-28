@@ -1,8 +1,17 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
+import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
+import dk.sdu.imada.console.Config;
+import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
@@ -20,6 +29,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	RandomizeLabels randomizer;
 
 	StatisticalEstimator statisticalEstimator;
+	Config config = null;
 
 	int empiricalCounter[];
 	int fwerCounter[];
@@ -55,19 +65,35 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 		double[] y = new double[beta[0].length];
 		
+		int last_progress = -1;
+		
 		for (int np = 0; np < numberPermutations; np++) {
 
 			randomizer.shuffle();
 
-			int [] indexes = randomizer.getShuffledArray();
+			int[] indexes = randomizer.getShuffledArray();
 
-			for (int i = 0; i < beta.length; i++) {
-				int k = 0;
-				for (int j : indexes) {
-					y[k++] = beta[i][j];
+			if(config.getModel().equals("mixedModel")){
+				// since we run the mixed model R script only once, there is no need to go through the for loop over
+				// the whole beta matrix in this case
+				statisticalEstimator.setPermutationValue(np+1);
+				statisticalEstimator.setSignificance(y, indexes);
+				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+			}else{
+				for (int i = 0; i < beta.length; i++) {
+					int k = 0;
+					for (int j : indexes) {
+						y[k++] = beta[i][j];
+					}
+					statisticalEstimator.setSignificance(y, indexes);
+					pvalues[i] = statisticalEstimator.getPvalue();
+
+					int progress = i/beta.length*100;
+					if (last_progress< progress) {
+						System.out.println("Computing Significance for Permutation " + np + " from " + numberPermutations + " at " + progress + "%," + i + " from " + beta.length + " finished");
+						last_progress = progress;
+					}
 				}
-				statisticalEstimator.setSignificance(y);
-				pvalues[i] = statisticalEstimator.getPvalue();
 			}
 
 			countEmpirical(pvalues);
@@ -83,7 +109,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param statisticalEstimator
 	 * @param indexes
 	 * @param diff place holder for methylation diff
@@ -91,24 +117,33 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	 */
 	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int indexes[], float diff[])  {
 
-		float originalPvalues[] = new float[beta.length];
+		float[] originalPvalues;
 
 		double[] y = new double[indexes.length];
 
-		for (int i = 0; i < beta.length; i++) {
+		if(config.getModel().equals("mixedModel")){
+			// since we run the mixed model R script only once, there is no need to go through the for loop over
+			// the whole beta matrix in this case
+			statisticalEstimator.setSignificance(y, indexes);
+			originalPvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+		}else{
+			originalPvalues =  new float[beta.length];
+			for (int i = 0; i < beta.length; i++) {
 
-			int k = 0;
-			for (int j : indexes) {
-				y[k++] = beta[i][j];
-			}
+				int k = 0;
+				for (int j : indexes) {
+					y[k++] = beta[i][j];
+				}
 
-			statisticalEstimator.setSignificance(y);
-			if(diff!=null){
-				diff[i] = statisticalEstimator.getDiff();
+				statisticalEstimator.setSignificance(y, indexes);
+				if(diff!=null){
+					diff[i] = statisticalEstimator.getDiff();
+				}
+				originalPvalues[i] = statisticalEstimator.getPvalue();
 			}
-			originalPvalues[i] = statisticalEstimator.getPvalue();
 		}
-		
+
+		System.out.println("Finished original p-value calculation.");
 		return originalPvalues;
 	}
 
@@ -191,6 +226,10 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 	public void setBottom(int bottom) {
 		this.bottom = bottom;
+	}
+	
+	public void setConfig(Config config) {
+		this.config = config;
 	}
 
 	public void setDiff(float[] diff) {

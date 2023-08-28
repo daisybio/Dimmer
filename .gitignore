@@ -1,6 +1,13 @@
 *.log
 /target/
 
+.Rhistory
+data/
+mixed_model.Rout
+mixed_model.Rproj
+/.Rproj.user/
+
+
 .apt_generated
 .classpath
 .factorypath

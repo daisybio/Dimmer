@@ -89,7 +89,7 @@ public class DMRDescription {
 	String link;
 	
 	public void setLink() {
-		link = "https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&lastVirtModeType=default&lastVirtModeExtraState=&virtModeType=default&virtMode=0&nonVirtPosition=&position=";
+		link = "https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&lastVirtModeType=default&lastVirtModeExtraState=&virtModeType=default&virtMode=0&nonVirtPosition=&position=";
 		link+= "chr" + getChromosome() + "%3A" + getBeginPosition() + "-" + getEndPosition();
 	}
 	

@@ -38,4 +38,6 @@ public class Variables {
 	public static final String BETA = "beta";
 	public static final String BISULFITE = "bisulfite";
 
+	public static final String MIXED_MODEL_SCRIPT = "/mixed_model.R";
+
 }
