@@ -177,7 +177,7 @@ public class ConsolePermutationController {
 
 		RandomizeLabels rand;
 		CpGStatistics[] permutations = new CpGStatistics[numThreads];
-		Thread pThreads[] = new Thread[numThreads];	
+		Thread[] pThreads = new Thread[numThreads];
 		int[] permuDist = Util.distributePermutations(numThreads, numberOfPermutations);
 
 		for (int i = 0; i < numThreads; i++) {
