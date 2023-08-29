@@ -14,23 +14,21 @@ import org.apache.commons.io.IOUtils;
  * (patients X labels).
  */
 public class TimeSeriesEstimator extends StatisticalEstimator{
+    public float[] pvalues;
+    private final int target;
+    private final Config config;
+    private String formula;
+    private final String annotation_file;
+    private final String beta_path;
+    private final String method;
+    private final int numThreads;
     private final int threadValue;
     private final boolean removeTemporaryFiles;
-    public float[] pvalues;
-    int target;
-    double[][] x;
-    Config config;
-
-    String method;
-    String sample_index_file;
-    String ts_pvalues_file;
-    String formula;
-    String annotation_file;
-    String beta_path;
-    int numThreads;
-    float ts_variance_cutoff;
-    String rscript;
-    int permutationValue;
+    private String sample_index_file;
+    private String pvalues_file;
+    private float variance_cutoff;
+    private final String rscript;
+    private double[][] x;
 
     public void setX(float[][] x) {
         this.x = toDouble(x);
@@ -50,9 +48,8 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
      * It should only be used for empirical pvalue calculation, not for the original pvalues.
      * */
     public void setPermutationValue(int permutation){
-        this.permutationValue = permutation;
-        this.sample_index_file = config.getOutputDirectory() + "ts-tmp-in_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
-        this.ts_pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+        this.sample_index_file = config.getOutputDirectory() + "ts-tmp-in_thread" + this.threadValue + "_permutation" + permutation + ".csv";
+        this.pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + this.threadValue + "_permutation" + permutation + ".csv";
     }
 
     /*
@@ -65,7 +62,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
      * @param permutation boolean that determines if this TimeSeriesEstimator is used for permutations or for the
      *      original p-value calculation. Determines if variance cutoff is used in calculations
      */
-    public TimeSeriesEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean permutation, boolean removeTemporaryFiles) throws IOException {
+    public TimeSeriesEstimator(float[][] x, int target, int threadValue, String beta_path, Config config, boolean permutation, boolean removeTemporaryFiles) throws IOException {
         this.x = toDouble(x);
         this.config = config;
         this.target = target;
@@ -73,19 +70,19 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         this.threadValue = threadValue;
 
         this.sample_index_file = config.getOutputDirectory() + "ts-tmp-in_thread" + threadValue + ".csv";
-        this.ts_pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + threadValue + ".csv";
+        this.pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + threadValue + ".csv";
 
         this.method = config.getModel();
         if(config.isRM_ANOVA()) {
-            this.ts_variance_cutoff = config.geRMAVarianceCutoff();
+            this.variance_cutoff = config.geRMAVarianceCutoff();
             this.formula = ("beta_value ~ " + config.get_rma_formula()).replaceAll("\\s+", "");
         }else if(config.isFriedmanTest()){
-            this.ts_variance_cutoff = config.getFTVarianceCutoff();
+            this.variance_cutoff = config.getFTVarianceCutoff();
             this.formula = ("beta_value ~ " + config.get_ft_formula()).replaceAll("\\s+", "");
         }
         // Only use a variance cutoff for the permutations not for the original P-value calculation.
         if(!permutation){
-            this.ts_variance_cutoff = (float)0.0;
+            this.variance_cutoff = (float)0.0;
         }
         this.annotation_file = config.getAnnotationPath();
         this.numThreads = config.getThreads();
@@ -101,8 +98,8 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
     private void prepareData(int[] indexes) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(this.sample_index_file));
 
-        for (int i = 0; i < indexes.length; i++){
-            bw.write(Integer.toString(indexes[i]));
+        for (int index : indexes) {
+            bw.write(Integer.toString(index));
             bw.newLine();
         }
         bw.flush();
@@ -127,7 +124,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
                 System.exit(1);
             }
 
-            File file1 = new File(this.ts_pvalues_file);
+            File file1 = new File(this.pvalues_file);
             if (file1.isFile()) {
                 if (!file1.delete()) {
                     System.out.println("Couldn't delete temporary pvalue file");
@@ -161,7 +158,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
 
         // read output p values from time series model
         try {
-            BufferedReader br = new BufferedReader(new FileReader(ts_pvalues_file));
+            BufferedReader br = new BufferedReader(new FileReader(pvalues_file));
 
             int k = 0;
             String line;
@@ -175,7 +172,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
             }
             br.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File \"" + ts_pvalues_file + "\" not found.");
+            System.out.println("File \"" + pvalues_file + "\" not found.");
         } catch (IOException e) {
             System.out.println("Error " + e);
         }
@@ -198,11 +195,11 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
                     "Rscript " + this.rscript +
                             " " + this.beta_path +
                             " " + this.sample_index_file +
-                            " " + this.ts_pvalues_file +
+                            " " + this.pvalues_file +
                             " " + this.annotation_file +
                             " " + this.formula +
                             " " + this.target +
-                            " " + this.ts_variance_cutoff +
+                            " " + this.variance_cutoff +
                             " " + this.method +
                             " " + this.numThreads);
 

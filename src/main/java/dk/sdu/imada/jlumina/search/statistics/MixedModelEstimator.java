@@ -13,26 +13,24 @@ import java.nio.file.StandardCopyOption;
  */
 public class MixedModelEstimator extends StatisticalEstimator{
 	public float[] pvalues;
-	int target;
-	double[][] x;
-	Config config;
-
-	String sample_index_file;
-	String mm_pvalues_file;
-	String formula;
-	String annotation_file;
-	String beta_path;
-	int numThreads;
-	int permutationValue;
-	int threadValue;
-	float mm_variance_cutoff;
-	String rscript;
-	boolean removeTemporaryFiles;
+	private final int target;
+    private final Config config;
+    private final String formula;
+    private final String annotation_file;
+    private final String beta_path;
+    private final int numThreads;
+    private final int threadValue;
+    private final boolean removeTemporaryFiles;
+	private String sample_index_file;
+	private String pvalues_file;
+    private float variance_cutoff;
+	private final String rscript;
+    private double[][] x;
 
 	public void setX(float[][] x) {
 		this.x = toDouble(x);
 	}
-	
+
 	public double[][] getX() {
 		return x;
 	}
@@ -47,9 +45,8 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	* It should only be used for empirical pvalue calculation, not for the original pvalues.
 	* */
 	public void setPermutationValue(int permutation){
-		this.permutationValue = permutation;
-		this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
-		this.mm_pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+        this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + "_permutation" + permutation + ".csv";
+		this.pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + "_permutation" + permutation + ".csv";
 	}
 
 	/*
@@ -60,7 +57,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean removeTemporaryFiles, boolean permutation) throws IOException {
+	public MixedModelEstimator(float[][] x, int target, int threadValue, String beta_path, Config config, boolean removeTemporaryFiles, boolean permutation) throws IOException {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
@@ -68,18 +65,18 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.threadValue = threadValue;
 
 		this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + ".csv";
-		this.mm_pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + ".csv";
+		this.pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + ".csv";
 
 		this.formula = ("beta_value ~ " + config.get_mm_formula()).replaceAll("\\s+","");
 		this.annotation_file = config.getAnnotationPath();
 		this.numThreads = config.getThreads();
-		this.mm_variance_cutoff = config.getMMVarianceCutoff();
+		this.variance_cutoff = config.getMMVarianceCutoff();
 
 		this.rscript = this.getRFile(Variables.MODEL_SCRIPT);
 		this.removeTemporaryFiles = removeTemporaryFiles;
 
 		if(!permutation){
-			this.mm_variance_cutoff = (float)0.0;
+			this.variance_cutoff = (float)0.0;
 		}
 	}
 
@@ -98,7 +95,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		bw.close();
 
 	}
-	
+
 	/*
 	 * remove Files for the next iteration
 	 * Stops if the File couldn't get deleted
@@ -107,35 +104,31 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		try {
 			File file = new File(sample_index_file);
 			if (file.isFile()) {
-				if(file.delete()) {
-					//System.out.println("InputFile got deleted");
-				} else {
-					System.out.println("Couldn't delete temporary sample index file");
-					System.exit(1);
-				}
-			} else {
+                if (!file.delete()) {
+                    System.out.println("Couldn't delete temporary sample index file");
+                    System.exit(1);
+                }
+            } else {
 				System.out.println("sample index file isn't File");
 				System.exit(1);
 			}
 
-			File file1 = new File(mm_pvalues_file);
+			File file1 = new File(pvalues_file);
 			if (file1.isFile()) {
-				if(file1.delete()) {
-					//System.out.println("OutputFile got deleted");
-				} else {
-					System.out.println("Couldn't delete temporary pvalue file");
-					System.exit(1);
-				}
-			}else {
+                if (!file1.delete()) {
+                    System.out.println("Couldn't delete temporary pvalue file");
+                    System.exit(1);
+                }
+            }else {
 				System.out.println("pvalue file isn't File");
 				System.exit(1);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Creates sample-index input file for Mixed Model R script and then calls this script
 	 * @param y beta-values of CpG; in case of the Mixed Model, this array is filled only with 0s, as the beta-values
@@ -155,7 +148,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 
 		// read output p values from mixed model
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(mm_pvalues_file));
+			BufferedReader br = new BufferedReader(new FileReader(pvalues_file));
 
 			int k = 0;
 			String line;
@@ -169,7 +162,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("File \"" + mm_pvalues_file + "\" not found.");
+			System.out.println("File \"" + pvalues_file + "\" not found.");
 		} catch (IOException e) {
 			System.out.println("Error " + e);
 		}
@@ -192,19 +185,19 @@ public class MixedModelEstimator extends StatisticalEstimator{
 					"Rscript " + this.rscript +
 							" " + this.beta_path +
 							" " + this.sample_index_file +
-							" " + this.mm_pvalues_file +
+							" " + this.pvalues_file +
 							" " + this.annotation_file +
 							" " + this.formula +
 							" " + this.target +
-							" " + this.mm_variance_cutoff +
+							" " + this.variance_cutoff +
 							" " + this.getMethod() +
 					        " " + this.numThreads);
-			
+
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
 		    while ((line = is.readLine()) != null)
 		      System.out.println(line);
-		    
+
 			int exitCode = p.waitFor();
 			switch (exitCode) {
 			case 0:

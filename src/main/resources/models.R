@@ -34,8 +34,9 @@ runModel <-
     # read data
     formula <- as.formula(formula)
     annotation_data <- data.table::fread(annotation_file)
-    sample_order <- data.table::fread(sample_order_file)[[1]] + 1 #account for Javas 0-based indexing
-    beta_matrix <- data.table::fread(beta_matrix_file)[,-1]
+    sample_order <-
+      data.table::fread(sample_order_file)[[1]] + 1 #account for Javas 0-based indexing
+    beta_matrix <- data.table::fread(beta_matrix_file)[, -1]
     
     # print the used variance cutoff (used for testing if variance cutoff for original p-value calculation is indeed
     # set to 0.0 by Dimmer; is retained for information and clarity)
@@ -49,35 +50,165 @@ runModel <-
     
     # distinguish which model has been selected and apply it
     if (method == "friedmanT") {
-      pvalues <- execute_friedman(beta_matrix, annotation_data, formula, sample_order, variance_cutoff, ncores)
+      pvalues <-
+        execute_friedman(beta_matrix,
+                         annotation_data,
+                         formula,
+                         sample_order,
+                         variance_cutoff,
+                         ncores)
     } else if (method == "rmANOVA") {
-      pvalues <- execute_anova(beta_matrix, annotation_data, formula, sample_order, variance_cutoff, ncores)
+      pvalues <-
+        execute_anova(beta_matrix,
+                      annotation_data,
+                      formula,
+                      sample_order,
+                      variance_cutoff,
+                      ncores)
     } else if (method == "mixedModel") {
-      pvalues <- execute_mixedModel(beta_matrix, annotation_data, formula, variable_index, sample_order, variance_cutoff, ncores)
+      pvalues <-
+        execute_mixedModel(
+          beta_matrix,
+          annotation_data,
+          formula,
+          variable_index,
+          sample_order,
+          variance_cutoff,
+          ncores
+        )
     }
     
     save_model_information(pvalues, pvalues_file)
   }
 
-execute_friedman <- function(beta_matrix, annotation_data, formula, sample_order, variance_cutoff, ncores){
-  indep_vars = all.vars(formula[-2])
-  timestamp = indep_vars[1]
-  annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
-  
-  pvalues <- unlist(parallel::mclapply(1:nrow(beta_matrix), FUN = function(i) {
+execute_friedman <-
+  function(beta_matrix,
+           annotation_data,
+           formula,
+           sample_order,
+           variance_cutoff,
+           ncores) {
+    indep_vars = all.vars(formula[-2])
+    timestamp = indep_vars[1]
+    annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
+    
+    pvalues <-
+      unlist(parallel::mclapply(
+        1:nrow(beta_matrix),
+        FUN = function(i) {
+          beta_cpg <- as.numeric(beta_matrix[i])
+          # if variance of row bigger than cutoff calculate method
+          if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
+            mapping_tmp <- annotation_data
+            mapping_tmp$beta_value <- beta_cpg
+            
+            # order beta values based on the (potential) shuffeling of samples in Dimmer
+            # only has an effect if permutation pvalues are calculated
+            mapping_tmp[[beta_value]] <-
+              mapping_tmp[[beta_value]][sample_order]
+            
+            # imputation process only if NaN values present
+            if (sum(is.na(beta_cpg)) > 0) {
+              mapping_tmp <- imputation(mapping_tmp, timestamp)
+              # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+              # values in the data -> return 0.99
+              if (sum(is.na(mapping_tmp$beta_value)) > 0) {
+                return(0.99)
+              }
+            }
+            
+            model <-
+              suppressMessages(friedman.test(formula, data = mapping_tmp))
+            return(model$p.value)
+            # else p-value of 0.99
+          } else{
+            return(0.99)
+          }
+        },
+        mc.cores = as.numeric(ncores)
+      ))
+    
+    return(pvalues)
+  }
+
+execute_anova <-
+  function(beta_matrix,
+           annotation_data,
+           formula,
+           sample_order,
+           variance_cutoff,
+           ncores) {
+    indep_vars = all.vars(formula[-2])
+    timestamp = indep_vars[1]
+    annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
+    
+    pvalues <-
+      unlist(parallel::mclapply(
+        1:nrow(beta_matrix),
+        FUN = function(i) {
+          beta_cpg <- as.numeric(beta_matrix[i])
+          # if variance of row bigger than cutoff calculate method
+          if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
+            mapping_tmp <- annotation_data
+            mapping_tmp$beta_value <- beta_cpg
+            
+            # order beta values based on the (potential) shuffeling of samples in Dimmer
+            # only has an effect if permutation pvalues are calculated
+            mapping_tmp[[beta_value]] <-
+              mapping_tmp[[beta_value]][sample_order]
+            
+            # imputation process only if NaN values present
+            if (sum(is.na(beta_cpg)) > 0) {
+              mapping_tmp <- imputation(mapping_tmp, timestamp)
+              # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+              # values in the data -> return 0.99
+              if (sum(is.na(mapping_tmp$beta_value)) > 0) {
+                return(0.99)
+              }
+            }
+            
+            model <-
+              suppressMessages(friedman.test(formula, data = mapping_tmp))
+            return(model$p.value)
+            # else p-value of 0.99
+          } else{
+            return(0.99)
+          }
+        },
+        mc.cores = as.numeric(ncores)
+      ))
+    
+    return(pvalues)
+  }
+
+execute_mixedModel <-
+  function(beta_matrix,
+           annotation_data,
+           formula,
+           variable_index,
+           sample_order,
+           variance_cutoff,
+           ncores) {
+    indep_vars = all.vars(formula[-2])
+    annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
+    variable <- colnames(annotation_data)[variable_index]
+    
+    pvalues <-
+      unlist(parallel::mclapply(1:nrow(beta_matrix), function(i) {
         beta_cpg <- as.numeric(beta_matrix[i])
-        # if variance of row bigger than cutoff calculate method
+        
         if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
           mapping_tmp <- annotation_data
           mapping_tmp$beta_value <- beta_cpg
           
           # order beta values based on the (potential) shuffeling of samples in Dimmer
           # only has an effect if permutation pvalues are calculated
-          mapping_tmp[[beta_value]] <- mapping_tmp[[beta_value]][sample_order]
+          mapping_tmp[[beta_value]] <-
+            mapping_tmp[[beta_value]][sample_order]
           
           # imputation process only if NaN values present
           if (sum(is.na(beta_cpg)) > 0) {
-            mapping_tmp <- imputation(mapping_tmp, timestamp)
+            mapping_tmp <- imputation(mapping_tmp, variable)
             # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
             # values in the data -> return 0.99
             if (sum(is.na(mapping_tmp$beta_value)) > 0) {
@@ -85,101 +216,29 @@ execute_friedman <- function(beta_matrix, annotation_data, formula, sample_order
             }
           }
           
-          model <- suppressMessages(friedman.test(formula, data = mapping_tmp))
-          return(model$p.value)
-          # else p-value of 0.99
+          model <-
+            suppressMessages(lme4::lmer(formula, data = mapping_tmp))
+          a <- suppressMessages(car::Anova(model))
+          return(a$`Pr(>Chisq)`[which(row.names(a) == variable)])
         } else{
           return(0.99)
         }
-      },
-      mc.cores = as.numeric(ncores)
-    ))
-  
-  return(pvalues)
-}
-
-execute_anova <- function(beta_matrix, annotation_data, formula, sample_order, variance_cutoff, ncores){
-  indep_vars = all.vars(formula[-2])
-  timestamp = indep_vars[1]
-  annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
-  
-  pvalues <- unlist(parallel::mclapply(1:nrow(beta_matrix), FUN = function(i) {
-    beta_cpg <- as.numeric(beta_matrix[i])
-    # if variance of row bigger than cutoff calculate method
-    if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
-      mapping_tmp <- annotation_data
-      mapping_tmp$beta_value <- beta_cpg
-      
-      # order beta values based on the (potential) shuffeling of samples in Dimmer
-      # only has an effect if permutation pvalues are calculated
-      mapping_tmp[[beta_value]] <- mapping_tmp[[beta_value]][sample_order]
-      
-      # imputation process only if NaN values present
-      if (sum(is.na(beta_cpg)) > 0) {
-        mapping_tmp <- imputation(mapping_tmp, timestamp)
-        # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
-        # values in the data -> return 0.99
-        if (sum(is.na(mapping_tmp$beta_value)) > 0) {
-          return(0.99)
-        }
-      }
-      
-      model <- suppressMessages(friedman.test(formula, data = mapping_tmp))
-      return(model$p.value)
-      # else p-value of 0.99
-    } else{
-      return(0.99)
-    }
-  },
-  mc.cores = as.numeric(ncores)
-  ))
-  
-  return(pvalues)
-}
-
-execute_mixedModel <- function(beta_matrix, annotation_data, formula, variable_index, sample_order, variance_cutoff, ncores){
-  indep_vars = all.vars(formula[-2])
-  annotation_data[, (indep_vars) := lapply(.SD, FUN = as.factor), .SDcols = indep_vars]
-  variable <- colnames(annotation_data)[variable_index]
-  
-  pvalues <-
-    unlist(parallel::mclapply(1:nrow(beta_matrix), function(i) {
-      beta_cpg <- as.numeric(beta_matrix[i])
-      
-      if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
-        mapping_tmp <- annotation_data
-        mapping_tmp$beta_value <- beta_cpg
-        
-        # order beta values based on the (potential) shuffeling of samples in Dimmer
-        # only has an effect if permutation pvalues are calculated
-        mapping_tmp[[beta_value]] <- mapping_tmp[[beta_value]][sample_order]
-        
-        # imputation process only if NaN values present
-        if (sum(is.na(beta_cpg)) > 0) {
-          mapping_tmp <- imputation(mapping_tmp, variable)
-          # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
-          # values in the data -> return 0.99
-          if (sum(is.na(mapping_tmp$beta_value)) > 0) {
-            return(0.99)
-          }
-        }
-        
-        model <- suppressMessages(lme4::lmer(formula, data = mapping_tmp))
-        a <- suppressMessages(car::Anova(model))
-        return(a$`Pr(>Chisq)`[which(row.names(a) == variable)])
-      } else{
-        return(0.99)
-      }
-    }, mc.cores = as.numeric(ncores)))
-  
-  return(pvalues)
-}
+      }, mc.cores = as.numeric(ncores)))
+    
+    return(pvalues)
+  }
 
 #Saves necessary information of the model
-#@param pvalues list of pvalues 
+#@param pvalues list of pvalues
 #@param outputPath Path of folder, in which the data should be saved.
 save_model_information <- function(pvalues, outputPath) {
-  write.table(pvalues, file=outputPath, row.names=FALSE, col.names=FALSE, sep=",")
+  write.table(
+    pvalues,
+    file = outputPath,
+    row.names = FALSE,
+    col.names = FALSE,
+    sep = ","
+  )
 }
 
 #Checks if the arguments are complete and correct
@@ -235,14 +294,19 @@ variance_cutoff <- args[7]
 method <- args[8]
 ncores <- args[9]
 
-options(error=function() traceback(2))
+options(
+  error = function()
+    traceback(2)
+)
 
-runModel(beta_matrix_file = beta_matrix_file,
-         sample_order_file = sample_order_file,
-         pvalues_file = pvalues_file,
-         variable_index = variable_index,
-         formula = formula,
-         annotation_file = annotation_file,
-         variance_cutoff =  variance_cutoff,
-         method = method,
-         ncores = ncores)
+runModel(
+  beta_matrix_file = beta_matrix_file,
+  sample_order_file = sample_order_file,
+  pvalues_file = pvalues_file,
+  variable_index = variable_index,
+  formula = formula,
+  annotation_file = annotation_file,
+  variance_cutoff =  variance_cutoff,
+  method = method,
+  ncores = ncores
+)

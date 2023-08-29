@@ -9,7 +9,7 @@ public class ConsoleInputMonitor implements Runnable {
 	boolean done = false;
 	String msg;
 	ConsoleMainController mainController;
-	RawDataLoader rawDataLoader;
+	final RawDataLoader rawDataLoader;
 
 	public ConsoleInputMonitor(RawDataLoader rawDataLoader, ConsoleMainController mainController) {
 		this.rawDataLoader = rawDataLoader;
@@ -42,7 +42,7 @@ public class ConsoleInputMonitor implements Runnable {
 		try {
 			beta = MatrixUtil.getBetaAsMatrix(rawDataLoader.getuSet().getData(), rawDataLoader.getmSet().getData(), rawDataLoader.getManifest(), 0.f);
 			mainController.setBeta(beta);
-			float cellComposition[][] = null;
+			float[][] cellComposition = null;
 			if (rawDataLoader.getCellCompositionCorrection()!=null) {
 				cellComposition = rawDataLoader.getCellCompositionCorrection().getCellCompositoin();
 			}

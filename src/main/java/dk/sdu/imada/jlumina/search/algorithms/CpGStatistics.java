@@ -1,14 +1,6 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
-import java.time.format.DateTimeFormatter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
 
 import dk.sdu.imada.console.Config;
 import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
@@ -19,22 +11,18 @@ import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 	float[][] beta;
-	float[][] labels;
-	float fdrCutoff;
-
 	int bottom, top;
-
 	float [] pvalues; 
-	float diff[];
+	float[] diff;
 	int numberPermutations;
 	RandomizeLabels randomizer;
 
 	StatisticalEstimator statisticalEstimator;
 	Config config = null;
 
-	int empiricalCounter[];
-	int fwerCounter[];
-	int stepDownMinPCounter[];
+	int[] empiricalCounter;
+	int[] fwerCounter;
+	int[] stepDownMinPCounter;
 
 	public CpGStatistics(float[][] beta, float[] pvalues, StatisticalEstimator statisticalEstimator, RandomizeLabels randomizer, int numberPermutations) {
 		this.beta = beta;
@@ -55,7 +43,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		setMaxIterations(numberPermutations);
 		setDone(false);
 
-		float pvalues[] = new float[beta.length];
+		float[] pvalues = new float[beta.length];
 
 		empiricalCounter = new int[beta.length];
 		fwerCounter = new int[beta.length];
@@ -117,12 +105,12 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	
 	/**
 	 *
-	 * @param statisticalEstimator
-	 * @param indexes
-	 * @param diff place holder for methylation diff
+	 * @param statisticalEstimator estimtator class
+	 * @param indexes order of samples
+	 * @param diff placeholder for methylation diff
 	 * @return pvalues
 	 */
-	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int indexes[], float diff[])  {
+	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int[] indexes, float[] diff)  {
 
 		float[] originalPvalues;
 
@@ -176,14 +164,13 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		}
 	}
 
-	// Couting how many p-values are greater than the whole p-values...
+	// Counting how many p-values are greater than the whole p-values...
 	private int countPvalues(float [] sortedPvalues, float referencePvalue) {
 
 		int index = java.util.Arrays.binarySearch(sortedPvalues, referencePvalue);
 
 		if (index < 0) {
-			int i = Math.abs(index);
-			return i;
+            return Math.abs(index);
 		}else {
 			while(index < sortedPvalues.length && referencePvalue == sortedPvalues[index]) {
 				index++;
