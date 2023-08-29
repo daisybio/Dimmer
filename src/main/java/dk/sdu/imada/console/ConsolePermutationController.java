@@ -155,7 +155,7 @@ public class ConsolePermutationController {
 				beta_path = betaWriter.write();
 			}
 
-			se = new MixedModelEstimator(phenotype, resultIndex, 0, beta_path, config);
+			se = new MixedModelEstimator(phenotype, resultIndex, 0, beta_path, config, false);
 			se.setPvalues(new float[beta.length]);
 			cpGSignificance.setConfig(config);
 
@@ -163,7 +163,7 @@ public class ConsolePermutationController {
 
 			int runCounter = 1;
 			for (int i = 0; i < numThreads; i++) {
-				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config);
+				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true);
 				estimators[i].setPvalues(new float[beta.length]);
 				runCounter++;
 			}
@@ -192,7 +192,7 @@ public class ConsolePermutationController {
 					beta_path = betaWriter.write();
 				}
 
-				se = new TimeSeriesEstimator(phenotype, resultIndex, 0, beta_path, config, false);
+				se = new TimeSeriesEstimator(phenotype, resultIndex, 0, beta_path, config, false, config.getRemoveTemporaryFiles());
 				se.setPvalues(new float[beta.length]);
 				cpGSignificance.setConfig(config);
 
@@ -200,7 +200,7 @@ public class ConsolePermutationController {
 
 				int runCounter = 1;
 				for (int i = 0; i < numThreads; i++) {
-					estimators[i] = new TimeSeriesEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true);
+					estimators[i] = new TimeSeriesEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true, true);
 					estimators[i].setPvalues(new float[beta.length]);
 					runCounter++;
 				}

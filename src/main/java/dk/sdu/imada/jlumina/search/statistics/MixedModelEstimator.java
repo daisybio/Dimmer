@@ -46,7 +46,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config) {
+	public MixedModelEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
@@ -59,6 +59,10 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.annotation_file = config.getAnnotationPath();
 		this.numThreads = config.getThreads();
 		this.mm_variance_cutoff = config.getMMVarianceCutoff();
+
+		if(!permutation){
+			this.mm_variance_cutoff = (float)0.0;
+		}
 	}
 
 	/*

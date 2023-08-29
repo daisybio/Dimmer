@@ -17,6 +17,8 @@ import org.apache.commons.io.IOUtils;
  * (patients X labels).
  */
 public class TimeSeriesEstimator extends StatisticalEstimator{
+    private final int threadValue;
+    private final boolean removeTemporaryFiles;
     public float[] pvalues;
     int target;
     double[][] x;
@@ -31,6 +33,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
     int numThreads;
     float ts_variance_cutoff;
     String rscript;
+    int permutationValue;
 
     public void setX(float[][] x) {
         this.x = toDouble(x);
@@ -45,23 +48,35 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
     }
 
     /*
+     * This function is needed to give the temporary files of the Rscript unique names based on the
+     * thread and permutation they belong to.
+     * It should only be used for empirical pvalue calculation, not for the original pvalues.
+     * */
+    public void setPermutationValue(int permutation){
+        this.permutationValue = permutation;
+        this.sample_index_file = config.getOutputDirectory() + "ts-tmp-in_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+        this.ts_pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
+    }
+
+    /*
      * Creates an Instance of the TimeSeriesEstimator.
      * @param x matrix of labels (samples X labels)
      * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
-     * @param ThreadNumber is used to manage saving and reading information on different threads.
+     * @param threadValue is used to manage saving and reading information on different threads.
      * @param beta_path file path to beta matrix is only passed on
      * @param config a Configuration file, with the properties for the time series Model
      * @param permutation boolean that determines if this TimeSeriesEstimator is used for permutations or for the
      *      original p-value calculation. Determines if variance cutoff is used in calculations
      */
-    public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) throws IOException {
+    public TimeSeriesEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean permutation, boolean removeTemporaryFiles) throws IOException {
         this.x = toDouble(x);
         this.config = config;
         this.target = target;
         this.beta_path = beta_path;
+        this.threadValue = threadValue;
 
-        this.sample_index_file = config.getOutputDirectory() + "ts_tmp_in_" + threadNumber + ".csv";
-        this.ts_pvalues_file = config.getOutputDirectory() + "ts_pvalues" + threadNumber + ".csv";
+        this.sample_index_file = config.getOutputDirectory() + "ts-tmp-in_thread" + threadValue + ".csv";
+        this.ts_pvalues_file = config.getOutputDirectory() + "ts-pvalues_thread" + threadValue + ".csv";
 
         this.method = config.getModel();
         if(config.isRM_ANOVA()) {
@@ -79,6 +94,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         this.numThreads = config.getThreads();
 
         this.rscript = this.getRFile(Variables.TIME_SERIES_SCRIPT);
+        this.removeTemporaryFiles = removeTemporaryFiles;
     }
 
     /*
@@ -103,29 +119,25 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
      */
     public void removeFiles() {
         try {
-            File file = new File(sample_index_file);
+            File file = new File(this.sample_index_file);
             if (file.isFile()) {
-                if(file.delete()) {
-                    //System.out.println("InputFile got deleted");
-                } else {
-                    System.out.println("Couldn't delete InputFile");
+                if (!file.delete()) {
+                    System.out.println("Couldn't delete temporary sample index file");
                     System.exit(1);
                 }
             } else {
-                System.out.println("InputFile isn't File");
+                System.out.println("sample index file isn't File");
                 System.exit(1);
             }
 
-            File file1 = new File(ts_pvalues_file);
+            File file1 = new File(this.ts_pvalues_file);
             if (file1.isFile()) {
-                if(file1.delete()) {
-                    //System.out.println("OutputFile got deleted");
-                } else {
-                    System.out.println("Couldn't delete OutputFile");
+                if (!file1.delete()) {
+                    System.out.println("Couldn't delete temporary pvalue file");
                     System.exit(1);
                 }
             }else {
-                System.out.println("OutputFile isn't File");
+                System.out.println("pvalue file isn't File");
                 System.exit(1);
             }
 
@@ -172,7 +184,11 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         }
 
         // remove temporary files
-        removeFiles();
+        if(this.removeTemporaryFiles){
+            removeFiles();
+        }else{
+            System.out.println("Keeping temporary files");
+        }
     }
 
     /*

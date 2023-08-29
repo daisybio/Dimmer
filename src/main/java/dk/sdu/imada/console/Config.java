@@ -74,8 +74,9 @@ public class Config {
 	private String mm_formula;
 	private String rma_formula;
 	private String ft_formula;
-	
-	
+	private boolean remove_temporary_files;
+
+
 	public Config(HashMap<String,String> parameters){
 		initialize(parameters);
 	}
@@ -131,10 +132,12 @@ public class Config {
 						case "rmANOVA":
 							check_rm_anova_variance();
 							check_rm_anova_formula();
+							check_remove_temporary_files();
 							break;
 						case "friedmanT":
 							check_friedman_test_variance();
 							check_friedman_test_formula();
+							check_remove_temporary_files();
 							break;
 
 					}
@@ -593,6 +596,11 @@ public class Config {
 	private void check_friedman_test_formula(){
 		String parameter = "ft_formula";
 		this.ft_formula = check_string(parameter);
+	}
+
+	private void check_remove_temporary_files(){
+		String parameter = "remove_temporary_files";
+		this.remove_temporary_files = Boolean.parseBoolean(check_boolean(parameter));
 	}
 	
 	private void check_variable(){
@@ -1236,4 +1244,7 @@ public class Config {
 		this.parameters.put(key, value);
 	}
 
+	public boolean getRemoveTemporaryFiles() {
+		return this.remove_temporary_files;
+	}
 }

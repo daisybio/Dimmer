@@ -82,6 +82,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 			}else if (config.isRM_ANOVA() || config.isFriedmanTest()){
 				// since we run the time series model R script only once, there is no need to go through the for loop
 				// over the whole beta matrix in this case (similar to mixedModel)
+				statisticalEstimator.setPermutationValue(np+1);
 				statisticalEstimator.setSignificance(y, indexes);
 				pvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
 			}else{

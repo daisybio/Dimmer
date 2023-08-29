@@ -91,4 +91,6 @@ public abstract class StatisticalEstimator {
 	
 	public abstract void setSignificance(double[]y, int[] indexes);
 
+    public void setPermutationValue(int np) {
+    }
 }
