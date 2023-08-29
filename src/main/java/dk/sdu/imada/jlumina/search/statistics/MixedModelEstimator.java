@@ -240,7 +240,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 
 	public String getRFile(String fileName) throws IOException {
 
-		InputStream stream = getClass().getResourceAsStream("/mixed_model.R");
+		InputStream stream = getClass().getResourceAsStream(fileName);
 
 		File tempFile = File.createTempFile("dimmer_R",".R");
 		tempFile.deleteOnExit();
