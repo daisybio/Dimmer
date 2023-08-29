@@ -6,8 +6,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.file.StandardCopyOption;
-import java.sql.SQLOutput;
-import java.util.Random;
 
 /*
  * Performs the mixed Model, y is the array with methylation levels for each patient
@@ -77,7 +75,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.numThreads = config.getThreads();
 		this.mm_variance_cutoff = config.getMMVarianceCutoff();
 
-		this.rscript = this.getRFile(Variables.MIXED_MODEL_SCRIPT);
+		this.rscript = this.getRFile(Variables.MODEL_SCRIPT);
 		this.removeTemporaryFiles = removeTemporaryFiles;
 
 		if(!permutation){
@@ -193,12 +191,13 @@ public class MixedModelEstimator extends StatisticalEstimator{
 			Process p = Runtime.getRuntime().exec(
 					"Rscript " + this.rscript +
 							" " + this.beta_path +
-							" " + this.target +
 							" " + this.sample_index_file +
 							" " + this.mm_pvalues_file +
-							" " + this.formula +
 							" " + this.annotation_file +
+							" " + this.formula +
+							" " + this.target +
 							" " + this.mm_variance_cutoff +
+							" " + this.getMethod() +
 					        " " + this.numThreads);
 			
 			BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -220,19 +219,18 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				System.out.println("The beta matrix file does not exist.");
 				System.exit(-1);
 			case 5:
-				System.out.println("The annotation file does not exist.");
-				System.exit(-1);
-			case 6:
 				System.out.println("The sample order file does not exist.");
 				System.exit(-1);
+			case 6:
+				System.out.println("The annotation file does not exist.");
+				System.exit(-1);
 			case 7:
-				System.out.println("Variance cutoff is not between 0 and 1.");
+				System.out.println("The method is no valid model (neither \"mixedModel\", \"friedmanT\" nor \"rmANOVA\"), it is: " + this.getMethod());
 				System.exit(-1);
 			default:
-			System.out.println("Something in the mixed model script went wrong. ExitCode: " + exitCode);
-			System.exit(-1);
+				System.out.println("Something in the mixed model script went wrong. ExitCode: " + exitCode);
+				System.exit(-1);
 			}
-			//p.destroy();
 		} catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
@@ -240,6 +238,10 @@ public class MixedModelEstimator extends StatisticalEstimator{
         } catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getMethod() {
+		return("mixedModel");
 	}
 
 	public String getRFile(String fileName) throws IOException {
@@ -250,7 +252,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		tempFile.deleteOnExit();
 
 		java.nio.file.Files.copy(
-				stream,
+                stream,
 				tempFile.toPath(),
 				StandardCopyOption.REPLACE_EXISTING);
 		IOUtils.closeQuietly(stream);

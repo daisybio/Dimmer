@@ -2,11 +2,8 @@ package dk.sdu.imada.jlumina.search.statistics;
 
 import java.io.*;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
 
-import au.com.bytecode.opencsv.CSVReader;
+
 import dk.sdu.imada.console.Config;
 import dk.sdu.imada.console.Variables;
 import org.apache.commons.io.IOUtils;
@@ -93,7 +90,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         this.annotation_file = config.getAnnotationPath();
         this.numThreads = config.getThreads();
 
-        this.rscript = this.getRFile(Variables.TIME_SERIES_SCRIPT);
+        this.rscript = this.getRFile(Variables.MODEL_SCRIPT);
         this.removeTemporaryFiles = removeTemporaryFiles;
     }
 
@@ -202,11 +199,12 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
                             " " + this.beta_path +
                             " " + this.sample_index_file +
                             " " + this.ts_pvalues_file +
-                            " " + this.formula +
                             " " + this.annotation_file +
+                            " " + this.formula +
+                            " " + this.target +
                             " " + this.ts_variance_cutoff +
-                            " " + this.numThreads +
-                            " " + this.method);
+                            " " + this.method +
+                            " " + this.numThreads);
 
             BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
@@ -227,19 +225,18 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
                     System.out.println("The beta matrix file does not exist.");
                     System.exit(-1);
                 case 5:
-                    System.out.println("The annotation file does not exist.");
-                    System.exit(-1);
-                case 6:
                     System.out.println("The sample order file does not exist.");
                     System.exit(-1);
+                case 6:
+                    System.out.println("The annotation file does not exist.");
+                    System.exit(-1);
                 case 7:
-                    System.out.println("The method is no Time Series model (neither \"friedmanT\" nor \"rmANOVA\"), it is: " + this.getMethod());
+                    System.out.println("The method is no valid model (neither \"mixedModel\", \"friedmanT\" nor \"rmANOVA\"), it is: " + this.getMethod());
                     System.exit(-1);
                 default:
-                    System.out.println("Something in the Time Series model script went wrong. ExitCode: " + exitCode);
+                    System.out.println("Something in the mixed model script went wrong. ExitCode: " + exitCode);
                     System.exit(-1);
             }
-            //p.destroy();
         } catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
             e.printStackTrace();
