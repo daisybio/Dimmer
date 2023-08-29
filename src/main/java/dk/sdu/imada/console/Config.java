@@ -126,19 +126,13 @@ public class Config {
 							check_t_test();
 							break;
 						case "mixedModel":
-							check_mixed_model_variance();
-							check_mixed_model_formula();
-							check_remove_temporary_files();
+							check_mixed_model();
 							break;
 						case "rmANOVA":
-							check_rm_anova_variance();
-							check_rm_anova_formula();
-							check_remove_temporary_files();
+							check_anova();
 							break;
 						case "friedmanT":
-							check_friedman_test_variance();
-							check_friedman_test_formula();
-							check_remove_temporary_files();
+							check_friedman();
 							break;
 
 					}
@@ -570,33 +564,34 @@ public class Config {
 		}
 	}
 
-	private void check_mixed_model_variance(){
+	private void check_mixed_model(){
 		String parameter = "mm_variance_cutoff";
 		this.mm_variance_cutoff = check_positive_float(parameter,0, 1, true);
+
+		parameter = "mm_formula";
+		this.mm_formula = check_string(parameter);
+
+		check_remove_temporary_files();
 	}
-	private void check_friedman_test_variance(){
+
+	private void check_friedman(){
 		String parameter = "ft_variance_cutoff";
 		this.ft_variance_cutoff = check_positive_float(parameter,0, 1, true);
+
+		parameter = "ft_formula";
+		this.ft_formula = check_string(parameter);
+
+		check_remove_temporary_files();
 	}
-	private void check_rm_anova_variance(){
+
+	private void check_anova(){
 		String parameter = "rma_variance_cutoff";
 		this.rma_variance_cutoff = check_positive_float(parameter,0, 1, true);
-	}
 
-	private void check_mixed_model_formula(){
-		String parameter = "mm_formula";
-		this.mm_formula = check_string(parameter);
-	}
-
-	private void check_rm_anova_formula(){
-		String parameter = "rma_formula";
+		parameter = "rma_formula";
 		this.rma_formula = check_string(parameter);
 
-	}
-
-	private void check_friedman_test_formula(){
-		String parameter = "ft_formula";
-		this.ft_formula = check_string(parameter);
+		check_remove_temporary_files();
 	}
 
 	private void check_remove_temporary_files(){
