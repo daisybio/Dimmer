@@ -47,10 +47,6 @@ runModel <-
 
     sample_order <- data.table::fread(sample_order_file)[[1]] + 1
     beta_matrix <- data.table::fread(beta_matrix_file)[, -1]
-    
-    # re-order annotation data frame
-    annotation_data <-
-      annotation_data[sample_order, ]   # row wise re-ordering
 
     # print the used variance cutoff (used for testing if variance cutoff for original p-value calculation is indeed
     # set to 0.0 by Dimmer; is retained for information and clarity)
@@ -66,10 +62,6 @@ runModel <-
                          counter_setNANCpGSign,
                          counter_setLowVarCpGSign) {
             beta_cpg <- as.numeric(beta_matrix[i])
-            # Progress bar
-            if (i %% 10000 == 0) {
-              cat(i)
-            }
             # if variance of row bigger than cutoff calculate method
             if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
               mapping_tmp <- annotation_data
@@ -83,7 +75,7 @@ runModel <-
                   return(0.99)
                 }
               }
-              
+
               model <-
                 suppressMessages(friedman.test(formula, data = mapping_tmp))
               return(model$p.value)
@@ -95,15 +87,15 @@ runModel <-
           mc.cores = as.numeric(ncores)
         ))
     } else if (method == "rmANOVA") {
+      
+      # re-order annotation data frame
+      annotation_data[[timestamp]] <- annotation_data[[timestamp]][sample_order]
+      
       pvalues <-
         unlist(parallel::mclapply(1:nrow(beta_matrix), function(i,
                                                                 counter_setNANCpGSign,
                                                                 counter_setLowVarCpGSign) {
           beta_cpg <- as.numeric(beta_matrix[i])
-          # Progress bar
-          if (i %% 10000 == 0) {
-            cat(i)
-          }
           # if variance of row bigger than cutoff calculate method
           if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
             mapping_tmp <- annotation_data
@@ -117,7 +109,7 @@ runModel <-
                 return(0.99)
               }
             }
-            
+
             model <- suppressMessages(aov(formula, data = mapping_tmp))
             return(summary(model)[[2]][[1]]$`Pr(>F)`[1])
             # else p-value of 0.99

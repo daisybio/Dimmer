@@ -1,6 +1,7 @@
 package dk.sdu.imada.jlumina.search.statistics;
 
 import java.io.*;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
@@ -8,6 +9,7 @@ import java.util.Random;
 import au.com.bytecode.opencsv.CSVReader;
 import dk.sdu.imada.console.Config;
 import dk.sdu.imada.console.Variables;
+import org.apache.commons.io.IOUtils;
 
 /*
  * Performs the Timeseries Model (repeated measures ANOVA or Friedman Test as specified) and is based on the code of the
@@ -28,6 +30,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
     String beta_path;
     int numThreads;
     float ts_variance_cutoff;
+    String rscript;
 
     public void setX(float[][] x) {
         this.x = toDouble(x);
@@ -51,7 +54,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
      * @param permutation boolean that determines if this TimeSeriesEstimator is used for permutations or for the
      *      original p-value calculation. Determines if variance cutoff is used in calculations
      */
-    public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) {
+    public TimeSeriesEstimator(float x[][], int target, int threadNumber, String beta_path, Config config, boolean permutation) throws IOException {
         this.x = toDouble(x);
         this.config = config;
         this.target = target;
@@ -74,6 +77,8 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
         }
         this.annotation_file = config.getAnnotationPath();
         this.numThreads = config.getThreads();
+
+        this.rscript = this.getRFile(Variables.TIME_SERIES_SCRIPT);
     }
 
     /*
@@ -177,7 +182,7 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
     public void runRCode() {
         try {
             Process p = Runtime.getRuntime().exec(
-                    "Rscript " + Objects.requireNonNull(getClass().getResource(Variables.TimeSeries_SCRIPT)).getFile() +
+                    "Rscript " + this.rscript +
                             " " + this.beta_path +
                             " " + this.sample_index_file +
                             " " + this.ts_pvalues_file +
@@ -230,5 +235,21 @@ public class TimeSeriesEstimator extends StatisticalEstimator{
 
     public String getMethod(){
         return this.method;
+    }
+
+    public String getRFile(String fileName) throws IOException {
+
+        InputStream stream = getClass().getResourceAsStream(fileName);
+
+        File tempFile = File.createTempFile("dimmer_R",".R");
+        tempFile.deleteOnExit();
+
+        java.nio.file.Files.copy(
+                stream,
+                tempFile.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        IOUtils.closeQuietly(stream);
+
+        return(tempFile.toString());
     }
 }

@@ -1,5 +1,6 @@
 package dk.sdu.imada.console;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,11 +45,15 @@ public class ConsolePermutationController {
 		this.mainController = mainController;
 	}
 
-	public void start(){
-		pushExecutePermutation();
+	public void start() {
+		try {
+			pushExecutePermutation();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public void pushExecutePermutation() {
+	public void pushExecutePermutation() throws IOException {
 
 		int numberOfPermutations = config.getNPermutationsCpG();
 		int numThreads = config.getThreads();
@@ -187,7 +192,7 @@ public class ConsolePermutationController {
 					beta_path = betaWriter.write();
 				}
 
-				se = new TimeSeriesEstimator(phenotype, resultIndex, config.getThreads(), beta_path, config, false);
+				se = new TimeSeriesEstimator(phenotype, resultIndex, 0, beta_path, config, false);
 				se.setPvalues(new float[beta.length]);
 				cpGSignificance.setConfig(config);
 
