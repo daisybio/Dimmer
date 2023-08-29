@@ -347,14 +347,14 @@ public class ConsolePermutationController {
 	
 	/**
 	 * 
-	 * @return the index of the coefficient in the colnames + 1 ( or 0 if the model is T-Test 
+	 * @return the index of the coefficient in the colnames + 1 (or 0 if the model is T-Test)
 	 */
 	private int getCoefficientIndexResult() {
 
 		ArrayList<String> labels = colNames;
 		String coefficient = config.getVariable();
 
-		if (config.isRegression()) {
+		if (!config.isTTest()) {
 			for (int i = 0; i < labels.size(); i++) {
 				if (labels.get(i).equals(coefficient)) 
 					return i + 1;
