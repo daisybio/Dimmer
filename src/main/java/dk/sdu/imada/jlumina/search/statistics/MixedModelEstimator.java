@@ -53,7 +53,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 		this.sample_index_file = config.getOutputDirectory() + "mm-tmp-in_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
 		this.mm_pvalues_file = config.getOutputDirectory() + "mm-pvalues_thread" + this.threadValue + "_permutation" + this.permutationValue + ".csv";
 	}
-	
+
 	/*
 	 * Creates an Instance of the MixedModelEstimator.
 	 * @param threadValue is used to manage saving and reading information on different threads.
@@ -62,7 +62,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 	 * @param config a Configuration file, with the properties for the mixed Model
 	 * @param target index of the target coefficient (based on annotation file) of current Dimmer run; needed to extract correct pvalues from model
 	 */
-	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean removeTemporaryFiles) throws IOException {
+	public MixedModelEstimator(float x[][], int target, int threadValue, String beta_path, Config config, boolean removeTemporaryFiles, boolean permutation) throws IOException {
 		this.x = toDouble(x);
 		this.config = config;
 		this.target = target;
@@ -79,10 +79,14 @@ public class MixedModelEstimator extends StatisticalEstimator{
 
 		this.rscript = this.getRFile(Variables.MIXED_MODEL_SCRIPT);
 		this.removeTemporaryFiles = removeTemporaryFiles;
+
+		if(!permutation){
+			this.mm_variance_cutoff = (float)0.0;
+		}
 	}
 
 	/*
-	 * Saves order of samples to file; also create temporary file that holds results of Rscript (pvalues)
+	 * Saves order of samples to file
 	 * @param indexes order of samples
 	 */
 	private void prepareData(int[] indexes) throws IOException {

@@ -1,23 +1,22 @@
 package dk.sdu.imada.console;
 
-import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
-import dk.sdu.imada.jlumina.core.primitives.CpG;
-import dk.sdu.imada.jlumina.core.primitives.Grouping;
-import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
-import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
-import dk.sdu.imada.jlumina.search.statistics.RegressionEstimator;
-import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
-import dk.sdu.imada.jlumina.search.statistics.StudentTTest;
-import dk.sdu.imada.jlumina.search.util.NonPairedShuffle;
-import dk.sdu.imada.jlumina.search.util.PairedShuffle;
-import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import dk.sdu.imada.jlumina.core.io.WriteBetaMatrix;
+import dk.sdu.imada.jlumina.core.primitives.CpG;
+import dk.sdu.imada.jlumina.core.primitives.Grouping;
+import dk.sdu.imada.jlumina.core.util.PairIDCheck;
+import dk.sdu.imada.jlumina.search.algorithms.CpGStatistics;
+import dk.sdu.imada.jlumina.search.statistics.*;
+import dk.sdu.imada.jlumina.search.util.NonPairedShuffle;
+import dk.sdu.imada.jlumina.search.util.PairedShuffle;
+import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
 
 public class ConsolePermutationController {
@@ -46,7 +45,7 @@ public class ConsolePermutationController {
 		this.mainController = mainController;
 	}
 
-	public void start(){
+	public void start() {
 		try {
 			pushExecutePermutation();
 		} catch (IOException e) {
@@ -99,7 +98,7 @@ public class ConsolePermutationController {
 				System.out.println(gr.log());
 			}
 		}
-		if (config.isMixedModel()) {
+		if (config.isMixedModel() || config.isRM_ANOVA() || config.isFriedmanTest()) {
 			gr = new Grouping(columnMap.get(config.getVariable()));
 			phenotype = loadPhenotype();
 			mainController.setPhenotype(phenotype);
@@ -116,6 +115,7 @@ public class ConsolePermutationController {
 			StudentTTest test = new StudentTTest(config.isTwoSided(), splitPoint, config.isLeftSided(), config.isRightSided() , config.isPaired(), config.getAssumeEqualVariance());
 			System.out.println(test.status());
 			se = test.getTTestEstimator();
+            cpGSignificance.setConfig(config);
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			for (int i = 0; i < numThreads; i++) {
@@ -126,6 +126,7 @@ public class ConsolePermutationController {
 
 			System.out.println("Performing linear regression for original p-value estimation...");
 			se = new RegressionEstimator(phenotype, resultIndex);
+			cpGSignificance.setConfig(config);
 			pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
 
 			for (int i = 0; i < numThreads; i++) {
@@ -135,14 +136,14 @@ public class ConsolePermutationController {
 
 			LocalTime now = LocalTime.now();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-			
+
 			System.out.println(now.format(dtf) + ": Running mixed model for original p-value estimation...");
 
 			String beta_path;
 			if(config.getInputType().equals("beta")){
 				beta_path = config.getBetaPath();
-			}else{
-				if(!config.getSaveBeta()){
+			} else {
+				if (!config.getSaveBeta()) {
 					System.out.println("Beta matrix has to be saved to file when using mixed model, ignoring save_beta parameter ...");
 				}
 				// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
@@ -154,7 +155,7 @@ public class ConsolePermutationController {
 				beta_path = betaWriter.write();
 			}
 
-			se = new MixedModelEstimator(phenotype, resultIndex, 0, beta_path, config, config.getRemoveTemporaryFiles());
+			se = new MixedModelEstimator(phenotype, resultIndex, 0, beta_path, config, false, config.getRemoveTemporaryFiles());
 			se.setPvalues(new float[beta.length]);
 			cpGSignificance.setConfig(config);
 
@@ -162,11 +163,48 @@ public class ConsolePermutationController {
 
 			int runCounter = 1;
 			for (int i = 0; i < numThreads; i++) {
-				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true);
+				estimators[i] = new MixedModelEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true, true);
 				estimators[i].setPvalues(new float[beta.length]);
 				runCounter++;
 			}
-		}
+		}else if (config.isRM_ANOVA() || config.isFriedmanTest()) {
+
+				LocalTime now = LocalTime.now();
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+				// print which time series model was selected and is applied for clarity
+				System.out.println(now.format(dtf) + ": Running Time series model (" + config.getModel() +
+						" as specified) for original p-value estimation...");
+
+				String beta_path;
+				if(config.getInputType() == "beta"){
+					beta_path = config.getBetaPath();
+				}else{
+					if(!config.getSaveBeta()){
+						System.out.println("Beta matrix has to be saved to file when using time series model");
+					}
+					// Need to write beta-matrix as file (use existing Dimmer code to write beta-matrix)
+					String path = mainController.getConfig().getOutputDirectory();
+					CpG[] cpgs = mainController.getManifest().getCpgList();
+					String input_type = mainController.getConfig().getInputType();
+					String array_type = mainController.getConfig().getArrayType();
+					WriteBetaMatrix betaWriter = new WriteBetaMatrix(path, columnMap, cpgs, beta, input_type, array_type);
+					beta_path = betaWriter.write();
+				}
+
+				se = new TimeSeriesEstimator(phenotype, resultIndex, 0, beta_path, config, false, config.getRemoveTemporaryFiles());
+				se.setPvalues(new float[beta.length]);
+				cpGSignificance.setConfig(config);
+
+				pvalue = cpGSignificance.computeSignificances(se, originalIndex, methylationDiff);
+
+				int runCounter = 1;
+				for (int i = 0; i < numThreads; i++) {
+					estimators[i] = new TimeSeriesEstimator(phenotype.clone(), resultIndex, runCounter, beta_path, config, true, true);
+					estimators[i].setPvalues(new float[beta.length]);
+					runCounter++;
+				}
+			}
 
 		mainController.setOriginalPvalues(pvalue);
 		mainController.setMethylationDifference(methylationDiff);
@@ -210,7 +248,8 @@ public class ConsolePermutationController {
 		String coefficient = config.getVariable();
 
 
-		if(config.getModel().equals("T-test") || config.getModel().equals("mixedModel")) {
+		if(config.getModel().equals("T-test") || config.getModel().equals("mixedModel") ||
+				config.getModel().equals("rmANOVA") || config.getModel().equals("friedmanT")) {
 			float phenotype[][] = new float[map.get(coefficient).length][1];
 
 			int idx = 0;

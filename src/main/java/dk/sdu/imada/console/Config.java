@@ -69,10 +69,14 @@ public class Config {
 	private boolean save_search_tables;
 	private boolean save_dmr_permu_plots;
 	private float mm_variance_cutoff;
+	private float rma_variance_cutoff;
+	private float ft_variance_cutoff;
 	private String mm_formula;
+	private String rma_formula;
+	private String ft_formula;
 	private boolean remove_temporary_files;
-	
-	
+
+
 	public Config(HashMap<String,String> parameters){
 		initialize(parameters);
 	}
@@ -126,6 +130,17 @@ public class Config {
 							check_mixed_model_formula();
 							check_remove_temporary_files();
 							break;
+						case "rmANOVA":
+							check_rm_anova_variance();
+							check_rm_anova_formula();
+							check_remove_temporary_files();
+							break;
+						case "friedmanT":
+							check_friedman_test_variance();
+							check_friedman_test_formula();
+							check_remove_temporary_files();
+							break;
+
 					}
 				}
 				
@@ -478,11 +493,11 @@ public class Config {
 	}
 	
 	/**
-	 * Added Mixed Model option
+	 * Added Mixed and Timeseries Model option
 	 */
 	private void check_model(){
 		String parameter = "model";
-		String[] choices = {"Regression","T-test","1","2", "mixedModel", "3"};
+		String[] choices = {"Regression", "1", "T-test", "2", "mixedModel", "3", "rmANOVA", "4", "friedmanT", "5"};
 		String value = check_choices(parameter,choices);
 		this.model = value;
 	}
@@ -559,17 +574,36 @@ public class Config {
 		String parameter = "mm_variance_cutoff";
 		this.mm_variance_cutoff = check_positive_float(parameter,0, 1, true);
 	}
+	private void check_friedman_test_variance(){
+		String parameter = "ft_variance_cutoff";
+		this.ft_variance_cutoff = check_positive_float(parameter,0, 1, true);
+	}
+	private void check_rm_anova_variance(){
+		String parameter = "rma_variance_cutoff";
+		this.rma_variance_cutoff = check_positive_float(parameter,0, 1, true);
+	}
 
 	private void check_mixed_model_formula(){
 		String parameter = "mm_formula";
 		this.mm_formula = check_string(parameter);
 	}
 
+	private void check_rm_anova_formula(){
+		String parameter = "rma_formula";
+		this.rma_formula = check_string(parameter);
+
+	}
+
+	private void check_friedman_test_formula(){
+		String parameter = "ft_formula";
+		this.ft_formula = check_string(parameter);
+	}
+
 	private void check_remove_temporary_files(){
 		String parameter = "remove_temporary_files";
 		this.remove_temporary_files = Boolean.parseBoolean(check_boolean(parameter));
 	}
-	
+
 	private void check_variable(){
 		String value = null;
 		String parameter = "variable";
@@ -947,7 +981,13 @@ public class Config {
 	public String get_mm_formula(){
 		return this.mm_formula;
 	}
-	
+	public String get_rma_formula(){
+		return this.rma_formula;
+	}
+	public String get_ft_formula(){
+		return this.ft_formula;
+	}
+
 	public String getAnnotationPath(){
 		return this.annotation_path;
 	}
@@ -1055,8 +1095,24 @@ public class Config {
 	public boolean isMixedModel(){
 		return this.model.equals("mixedModel");
 	}
+	/**
+	 * Equals isMixedModel, isRegression and isTTEst
+	 * @return true if friedman test is selected otherwise false
+	 */
+	public boolean isFriedmanTest(){
+		return this.model.equals("friedmanT");
+	}
+	/**
+	 * Equals isMixedModel, isRegression and isTTEst
+	 * @return true if repeated measures anova is selected otherwise false
+	 */
+	public boolean isRM_ANOVA(){
+		return this.model.equals("rmANOVA");
+	}
 	public float getMMVarianceCutoff() {return this.mm_variance_cutoff;}
-	
+	public float geRMAVarianceCutoff() {return this.rma_variance_cutoff;}
+	public float getFTVarianceCutoff() {return this.ft_variance_cutoff;}
+
 	public boolean isPaired(){
 		return  this.data_type.equals("paired");
 	}
