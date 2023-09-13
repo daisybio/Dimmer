@@ -117,8 +117,13 @@ runModel <-
                 return(0.99)
               }
             }
-            
             model <- suppressMessages(aov(formula, data = mapping_tmp))
+            ## When wanting to test for time:treatment when 2-way rmANOVA and still time for one-way rmANOVA change to:
+            # x <- summary(model)[[2]][[1]]$`Pr(>F)`
+            # return(x[max(which(!is.na(x)))])
+            ## (to get the last (non NA) element of the effects)
+            ## currently it returns the time effect for the 2-way rmANOVA as well (so not time:treatment)
+            ## (needs testing; what if more-way rmANOVA?)
             return(summary(model)[[2]][[1]]$`Pr(>F)`[1])
             # else p-value of 0.99
           } else{
