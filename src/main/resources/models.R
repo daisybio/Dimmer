@@ -104,8 +104,8 @@ execute_friedman <-
             
             # order beta values based on the (potential) shuffeling of samples in Dimmer
             # only has an effect if permutation pvalues are calculated
-            mapping_tmp[[beta_value]] <-
-              mapping_tmp[[beta_value]][sample_order]
+            mapping_tmp[['beta_value']] <-
+              mapping_tmp[['beta_value']][sample_order]
             
             # imputation process only if NaN values present
             if (sum(is.na(beta_cpg)) > 0) {
@@ -154,8 +154,8 @@ execute_anova <-
             
             # order beta values based on the (potential) shuffeling of samples in Dimmer
             # only has an effect if permutation pvalues are calculated
-            mapping_tmp[[beta_value]] <-
-              mapping_tmp[[beta_value]][sample_order]
+            mapping_tmp[['beta_value']] <-
+              mapping_tmp[['beta_value']][sample_order]
             
             # imputation process only if NaN values present
             if (sum(is.na(beta_cpg)) > 0) {
@@ -203,8 +203,8 @@ execute_mixedModel <-
           
           # order beta values based on the (potential) shuffeling of samples in Dimmer
           # only has an effect if permutation pvalues are calculated
-          mapping_tmp[[beta_value]] <-
-            mapping_tmp[[beta_value]][sample_order]
+          mapping_tmp[['beta_value']] <-
+            mapping_tmp[['beta_value']][sample_order]
           
           # imputation process only if NaN values present
           if (sum(is.na(beta_cpg)) > 0) {
