@@ -255,7 +255,7 @@ checkArgs <- function() {
   args = commandArgs(trailingOnly = TRUE)
   if (length(args) != 9) {
     quit(status = 2)
-  } else if (!checkFormula(args[4])) {
+  } else if (!checkFormula(args[5])) {
     quit(status = 3)
   } else if (!file.exists(args[1])) {
     quit(status = 4)

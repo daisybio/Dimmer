@@ -221,7 +221,7 @@ public class MixedModelEstimator extends StatisticalEstimator{
 				System.out.println("The method is no valid model (neither \"mixedModel\", \"friedmanT\" nor \"rmANOVA\"), it is: " + this.getMethod());
 				System.exit(-1);
 			default:
-				System.out.println("Something in the mixed model script went wrong. ExitCode: " + exitCode);
+				System.out.println("Something in the R script went wrong. ExitCode: " + exitCode);
 				System.exit(-1);
 			}
 		} catch (IOException e) {
