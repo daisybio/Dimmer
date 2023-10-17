@@ -168,8 +168,8 @@ execute_anova <-
             }
             
             model <-
-              suppressMessages(friedman.test(formula, data = mapping_tmp))
-            return(model$p.value)
+              suppressMessages(aov(formula, data = mapping_tmp))
+            return(summary(model)[[2]][[1]]$`Pr(>F)`[1])
             # else p-value of 0.99
           } else{
             return(0.99)
