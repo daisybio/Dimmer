@@ -100,7 +100,7 @@ public class ConsolePermutationController {
 			gr = new Grouping(columnMap.get(config.getVariable()));
 			phenotype = loadPhenotype();
 			mainController.setPhenotype(phenotype);
-			resultIndex = getCoefficientIndexResult();
+			resultIndex = getCoefficientIndexR(columnMap);
 			originalIndex = gr.unGroupedIndices();
 		}
 				
@@ -223,8 +223,11 @@ public class ConsolePermutationController {
 		String coefficient = config.getVariable();
 
 
-		if(config.getModel().equals("T-test") || config.getModel().equals("mixedModel") ||
-				config.getModel().equals("rmANOVA") || config.getModel().equals("friedmanT")) {
+		if(config.getModel().equals("T-test") ||
+			config.getModel().equals("mixedModel") ||
+			config.getModel().equals("rmANOVA") ||
+			config.getModel().equals("friedmanT")){
+
 			float[][] phenotype = new float[map.get(coefficient).length][1];
 
 			int idx = 0;
@@ -233,11 +236,11 @@ public class ConsolePermutationController {
 			}
 			return phenotype;
 
-		}else { 
-			
+		} else {
+
 			colNames = new ArrayList<>(config.getConfoundingVariables());
 			colNames.add(coefficient);
-			
+
 			int ncols = colNames.size();
 			int nrows = map.get(coefficient).length;
 			float[][] phenotype = new float[nrows][ncols];
@@ -338,6 +341,24 @@ public class ConsolePermutationController {
 		}else {
 			return 0;
 		}
+	}
+
+
+	/**
+	 * This function differs from the one above, in that it iterates over all available columns, not only the
+	 * confounding variables. Therefor it returns the index of the coefficient in the original annotation table.
+	 *
+	 * @return the index of the coefficient in the meta-data table
+	 */
+	private int getCoefficientIndexR(HashMap<String,String[]> columnMap) {
+		String coefficient = config.getVariable();
+
+		for (int i = 0; i < columnMap.size(); i++) {
+			if (columnMap.keySet().toArray()[i].equals(coefficient))
+				return i + 1;
+		}
+		return 0;
+
 	}
 	
 	
