@@ -241,6 +241,25 @@ save_model_information <- function(pvalues, outputPath) {
   )
 }
 
+#imputation for beta_values of CpGs (with mean value) iff only one value per timestamp grouping is missing
+#@param mapping_tmp data table construct of beta values of one CpG and annotation
+#@param timestamp variable name out of formula used for grouping
+imputation <- function(mapping_tmp, timestamp) {
+  mapping_tmp %>%
+    group_by_at(timestamp) %>%
+    mutate_at(
+      .vars = vars(beta_value),
+      .funs = function(x) {
+        if (sum(is.na(x)) == 1) {
+          # imputation of Nan only if it is the only per this timestamp
+          mean_x <- mean(x, na.rm = TRUE)
+          x[is.na(x)] <- mean_x
+        }
+        return(x)
+      }
+    )
+}
+
 #Checks if the arguments are complete and correct
 #If not quits with the error-code
 #2, if there aren't enough or too much parameters.
