@@ -248,6 +248,7 @@ imputation <- function(mapping_tmp, timestamp) {
   mapping_tmp %>%
     group_by_at(timestamp) %>%
     mutate_at(
+    .tbl = .,
       .vars = vars(beta_value),
       .funs = function(x) {
         if (sum(is.na(x)) == 1) {
