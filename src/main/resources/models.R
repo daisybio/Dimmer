@@ -2,7 +2,9 @@
 require(data.table)
 require(dplyr)
 require(stats)
-require(BiocParallel)
+require(lme4)
+require(car)
+require(parallel)
 
 
 # Main function of script: read files and calculate the given model for all CpGs in provided beta matrix
