@@ -196,7 +196,7 @@ execute_mixedModel <-
     pvalues <-
       unlist(parallel::mclapply(1:nrow(beta_matrix), function(i) {
         beta_cpg <- as.numeric(beta_matrix[i])
-        
+
         if (var(beta_cpg, na.rm = T) > as.numeric(variance_cutoff)) {
           mapping_tmp <- annotation_data
           mapping_tmp$beta_value <- beta_cpg
@@ -207,19 +207,21 @@ execute_mixedModel <-
             mapping_tmp[['beta_value']][sample_order]
           
           # imputation process only if NaN values present
-          if (sum(is.na(beta_cpg)) > 0) {
-            mapping_tmp <- imputation(mapping_tmp, variable)
-            # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
-            # values in the data -> return 0.99
-            if (sum(is.na(mapping_tmp$beta_value)) > 0) {
-              return(0.99)
-            }
-          }
+#          if (sum(is.na(beta_cpg)) > 0) {
+#            mapping_tmp <- imputation(mapping_tmp, variable)
+#            # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+#            # values in the data -> return 0.99
+#            if (sum(is.na(mapping_tmp$beta_value)) > 0) {
+#              return(0.99)
+#            }
+#          }
           
           model <-
             suppressMessages(lme4::lmer(formula, data = mapping_tmp))
           a <- suppressMessages(car::Anova(model))
-          return(a$`Pr(>Chisq)`[which(row.names(a) == variable)])
+          pval <- a$`Pr(>Chisq)`[which(row.names(a) == variable)]
+          #cat(paste0(i,': ',pval,'; ', a$`Pr(>Chisq)`, '\n'))
+          return(a$`Pr(>Chisq)`)
         } else{
           return(0.99)
         }
@@ -245,11 +247,11 @@ save_model_information <- function(pvalues, outputPath) {
 #@param mapping_tmp data table construct of beta values of one CpG and annotation
 #@param timestamp variable name out of formula used for grouping
 imputation <- function(mapping_tmp, timestamp) {
-  mapping_tmp %>%
-    group_by_at(timestamp) %>%
-    mutate_at(
+  new <- mapping_tmp %>%
+    dplyr::group_by_at(timestamp) %>%
+    dplyr::mutate_at(
     .tbl = .,
-      .vars = vars(beta_value),
+      .vars = vars('beta_value'),
       .funs = function(x) {
         if (sum(is.na(x)) == 1) {
           # imputation of Nan only if it is the only per this timestamp
@@ -259,6 +261,8 @@ imputation <- function(mapping_tmp, timestamp) {
         return(x)
       }
     )
+
+  return(new)
 }
 
 #Checks if the arguments are complete and correct
