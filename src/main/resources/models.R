@@ -207,14 +207,14 @@ execute_mixedModel <-
             mapping_tmp[['beta_value']][sample_order]
           
           # imputation process only if NaN values present
-#          if (sum(is.na(beta_cpg)) > 0) {
-#            mapping_tmp <- imputation(mapping_tmp, variable)
-#            # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
-#            # values in the data -> return 0.99
-#            if (sum(is.na(mapping_tmp$beta_value)) > 0) {
-#              return(0.99)
-#            }
-#          }
+          if (sum(is.na(beta_cpg)) > 0) {
+            mapping_tmp <- imputation(mapping_tmp, variable)
+            # If no imputation (more that 1 value per timestamp missing) or despite (some) imputation still NaN
+            # values in the data -> return 0.99
+            if (sum(is.na(mapping_tmp$beta_value)) > 0) {
+              return(0.99)
+            }
+          }
           
           model <-
             suppressMessages(lme4::lmer(formula, data = mapping_tmp))
