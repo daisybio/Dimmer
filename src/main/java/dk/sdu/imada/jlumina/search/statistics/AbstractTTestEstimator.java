@@ -68,7 +68,7 @@ public abstract class AbstractTTestEstimator extends StatisticalEstimator {
 	public abstract float compute(double[] sample1, double[] sample2);
 	
 	@Override
-	public void setSignificance(double[] y) {
+	public void setSignificance(double[] y, int[] indexes) {
 		setSamples(y);
 		setPvalue(compute(this.sample1, this.sample2));		
 	}

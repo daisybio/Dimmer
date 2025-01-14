@@ -10,7 +10,7 @@ import dk.sdu.imada.jlumina.search.primitives.DMRPermutationSummary;
 
 public class ConsoleMainController {
 	
-	private Config config;
+	private final Config config;
 	
 	private boolean infinium;
 	private boolean epic;

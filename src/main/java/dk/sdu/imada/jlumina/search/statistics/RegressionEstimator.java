@@ -33,7 +33,7 @@ public class RegressionEstimator extends StatisticalEstimator {
 	}
 	
 	@Override
-	public void setSignificance(double[] y) {
+	public void setSignificance(double[] y, int[] indexes) {
 		
 		int counter = 0;
 		double[] y_mlr = y;
@@ -44,6 +44,15 @@ public class RegressionEstimator extends StatisticalEstimator {
 				counter++;
 			}
 		}
+		
+		/*System.out.println("-----------------------------------------------------");
+		for (int i = 0; i<x.length;i++) {
+			for (int j = 0;j<x[i].length;j++) {
+				System.out.print(x[i][j] + " ");
+			}
+			System.out.println(y[i]);
+		}
+		System.out.println("-----------------------------------------------------");*/
 		
 		// remove samples if their y value is nan
 		if(counter > 0){

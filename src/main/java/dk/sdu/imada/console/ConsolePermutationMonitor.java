@@ -7,11 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -73,7 +69,7 @@ public class ConsolePermutationMonitor implements Runnable{
 		System.out.println("Step down p-values: ");
 		log(stepDownMinPvalues, 0.05f);
 
-		System.out.println("Empirical p-values:");
+		System.out.println("Empirical p-values: ");
 		log(empiricalPvalues, 0.05f);
 
 		System.out.println("FDR p-values: ");
@@ -93,7 +89,7 @@ public class ConsolePermutationMonitor implements Runnable{
 			System.out.println("\nNo plots will be saved...");
 		}
 		
-		if(mainController.getConfig().getSaveBeta()){
+		if(mainController.getConfig().getSaveBeta() & !Objects.equals(mainController.getConfig().getModel(), "mixedModel")){
 			String path = mainController.getConfig().getOutputDirectory();
 			HashMap<String,String[]> columnMap = mainController.getInputController().getColumnMap();
 			CpG[] cpgs = mainController.getManifest().getCpgList();
@@ -394,7 +390,7 @@ public class ConsolePermutationMonitor implements Runnable{
 
 		
 		//vulcano
-		if (!mainController.getConfig().isRegression()) {
+		if (mainController.getConfig().isTTest()) {
 			exportChart(vulcanoPlot(empiricalPvalues, mainController.getMethylationDifference(),
 					"Methylation difference Vs. Emp. p-values", "Methylation difference", "Emp. p-values (-log10)").createBufferedImage(1800, 1200), dir+"emp_vulcano_plot.png");
 			exportChart(vulcanoPlot(fdrPvalues, mainController.getMethylationDifference(),

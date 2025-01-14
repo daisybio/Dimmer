@@ -1,29 +1,28 @@
 package dk.sdu.imada.jlumina.search.algorithms;
 
 import java.util.Arrays;
-import java.util.Random;
 
+import dk.sdu.imada.console.Config;
+import dk.sdu.imada.jlumina.search.statistics.MixedModelEstimator;
 import dk.sdu.imada.jlumina.search.statistics.StatisticalEstimator;
+import dk.sdu.imada.jlumina.search.statistics.TimeSeriesEstimator;
 import dk.sdu.imada.jlumina.search.util.RandomizeLabels;
 
 public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 	float[][] beta;
-	float[][] labels;
-	float fdrCutoff;
-
 	int bottom, top;
-
 	float [] pvalues; 
-	float diff[];
+	float[] diff;
 	int numberPermutations;
 	RandomizeLabels randomizer;
 
 	StatisticalEstimator statisticalEstimator;
+	Config config = null;
 
-	int empiricalCounter[];
-	int fwerCounter[];
-	int stepDownMinPCounter[];
+	int[] empiricalCounter;
+	int[] fwerCounter;
+	int[] stepDownMinPCounter;
 
 	public CpGStatistics(float[][] beta, float[] pvalues, StatisticalEstimator statisticalEstimator, RandomizeLabels randomizer, int numberPermutations) {
 		this.beta = beta;
@@ -44,7 +43,7 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		setMaxIterations(numberPermutations);
 		setDone(false);
 
-		float pvalues[] = new float[beta.length];
+		float[] pvalues = new float[beta.length];
 
 		empiricalCounter = new int[beta.length];
 		fwerCounter = new int[beta.length];
@@ -55,19 +54,41 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 		double[] y = new double[beta[0].length];
 		
+		int last_progress = -1;
+		
 		for (int np = 0; np < numberPermutations; np++) {
 
 			randomizer.shuffle();
 
-			int [] indexes = randomizer.getShuffledArray();
+			int[] indexes = randomizer.getShuffledArray();
 
-			for (int i = 0; i < beta.length; i++) {
-				int k = 0;
-				for (int j : indexes) {
-					y[k++] = beta[i][j];
+			if(config.getModel().equals("mixedModel")){
+				// since we run the mixed model R script only once, there is no need to go through the for loop over
+				// the whole beta matrix in this case
+				statisticalEstimator.setPermutationValue(np+1);
+				statisticalEstimator.setSignificance(y, indexes);
+				pvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+			}else if (config.isRM_ANOVA() || config.isFriedmanTest()){
+				// since we run the time series model R script only once, there is no need to go through the for loop
+				// over the whole beta matrix in this case (similar to mixedModel)
+				statisticalEstimator.setPermutationValue(np+1);
+				statisticalEstimator.setSignificance(y, indexes);
+				pvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
+			}else{
+				for (int i = 0; i < beta.length; i++) {
+					int k = 0;
+					for (int j : indexes) {
+						y[k++] = beta[i][j];
+					}
+					statisticalEstimator.setSignificance(y, indexes);
+					pvalues[i] = statisticalEstimator.getPvalue();
+
+					int progress = i/beta.length*100;
+					if (last_progress< progress) {
+						System.out.println("Computing Significance for Permutation " + np + " from " + numberPermutations + " at " + progress + "%," + i + " from " + beta.length + " finished");
+						last_progress = progress;
+					}
 				}
-				statisticalEstimator.setSignificance(y);
-				pvalues[i] = statisticalEstimator.getPvalue();
 			}
 
 			countEmpirical(pvalues);
@@ -83,32 +104,46 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 	}
 	
 	/**
-	 * 
-	 * @param statisticalEstimator
-	 * @param indexes
-	 * @param diff place holder for methylation diff
+	 *
+	 * @param statisticalEstimator estimtator class
+	 * @param indexes order of samples
+	 * @param diff placeholder for methylation diff
 	 * @return pvalues
 	 */
-	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int indexes[], float diff[])  {
+	public float [] computeSignificances(StatisticalEstimator statisticalEstimator, int[] indexes, float[] diff)  {
 
-		float originalPvalues[] = new float[beta.length];
+		float[] originalPvalues;
 
 		double[] y = new double[indexes.length];
 
-		for (int i = 0; i < beta.length; i++) {
+		if(config.getModel().equals("mixedModel")){
+			// since we run the mixed model R script only once, there is no need to go through the for loop over
+			// the whole beta matrix in this case
+			statisticalEstimator.setSignificance(y, indexes);
+			originalPvalues = ((MixedModelEstimator) statisticalEstimator).pvalues;
+		}else if(config.isFriedmanTest() || config.isRM_ANOVA()){
+			// since we run the time series model R script only once, there is no need to go through the for loop over
+			// the whole beta matrix in this case (similar to mixedModel)
+			statisticalEstimator.setSignificance(y, indexes);
+			originalPvalues = ((TimeSeriesEstimator) statisticalEstimator).pvalues;
+		}else{
+			originalPvalues =  new float[beta.length];
+			for (int i = 0; i < beta.length; i++) {
 
-			int k = 0;
-			for (int j : indexes) {
-				y[k++] = beta[i][j];
-			}
+				int k = 0;
+				for (int j : indexes) {
+					y[k++] = beta[i][j];
+				}
 
-			statisticalEstimator.setSignificance(y);
-			if(diff!=null){
-				diff[i] = statisticalEstimator.getDiff();
+				statisticalEstimator.setSignificance(y, indexes);
+				if(diff!=null){
+					diff[i] = statisticalEstimator.getDiff();
+				}
+				originalPvalues[i] = statisticalEstimator.getPvalue();
 			}
-			originalPvalues[i] = statisticalEstimator.getPvalue();
 		}
-		
+
+		System.out.println("Finished original p-value calculation.");
 		return originalPvalues;
 	}
 
@@ -129,14 +164,13 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 		}
 	}
 
-	// Couting how many p-values are greater than the whole p-values...
+	// Counting how many p-values are greater than the whole p-values...
 	private int countPvalues(float [] sortedPvalues, float referencePvalue) {
 
 		int index = java.util.Arrays.binarySearch(sortedPvalues, referencePvalue);
 
 		if (index < 0) {
-			int i = Math.abs(index);
-			return i;
+            return Math.abs(index);
 		}else {
 			while(index < sortedPvalues.length && referencePvalue == sortedPvalues[index]) {
 				index++;
@@ -191,6 +225,10 @@ public class CpGStatistics extends PermutationProgress implements Runnable  {
 
 	public void setBottom(int bottom) {
 		this.bottom = bottom;
+	}
+	
+	public void setConfig(Config config) {
+		this.config = config;
 	}
 
 	public void setDiff(float[] diff) {

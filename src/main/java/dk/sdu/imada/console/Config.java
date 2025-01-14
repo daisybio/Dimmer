@@ -68,8 +68,15 @@ public class Config {
 	private boolean save_search_plots;
 	private boolean save_search_tables;
 	private boolean save_dmr_permu_plots;
-	
-	
+	private float mm_variance_cutoff;
+	private float rma_variance_cutoff;
+	private float ft_variance_cutoff;
+	private String mm_formula;
+	private String rma_formula;
+	private String ft_formula;
+	private boolean remove_temporary_files;
+
+
 	public Config(HashMap<String,String> parameters){
 		initialize(parameters);
 	}
@@ -111,11 +118,23 @@ public class Config {
 				check_model();
 				check_variable();
 				if(model!=null){
-					if(model.equals("Regression")){
-						check_regression();
-					}
-					else if(model.equals("T-test")){
-						check_t_test();
+					switch (model) {
+						case "Regression":
+							check_regression();
+							break;
+						case "T-test":
+							check_t_test();
+							break;
+						case "mixedModel":
+							check_mixed_model();
+							break;
+						case "rmANOVA":
+							check_anova();
+							break;
+						case "friedmanT":
+							check_friedman();
+							break;
+
 					}
 				}
 				
@@ -123,20 +142,22 @@ public class Config {
 				check_input_type();
 				
 				if(input_type!=null){
-					
-					if(input_type.equals(Variables.IDAT)){
-						check_background_correction();
-						check_probe_filtering();
-						check_cell_composition();
-					}
-					else if(input_type.equals(Variables.BETA)){
-						check_beta_path();
-						check_array_type();
-					}
-					else if(input_type.equals(Variables.BISULFITE)){
-						check_min_reads();
-						check_min_read_exceptions();
-						check_min_variance();
+
+					switch (input_type) {
+						case Variables.IDAT:
+							check_background_correction();
+							check_probe_filtering();
+							check_cell_composition();
+							break;
+						case Variables.BETA:
+							check_beta_path();
+							check_array_type();
+							break;
+						case Variables.BISULFITE:
+							check_min_reads();
+							check_min_read_exceptions();
+							check_min_variance();
+							break;
 					}
 				}
 				
@@ -181,7 +202,27 @@ public class Config {
 		}
 
 	}
-	
+
+	private String check_string(String parameter){
+		String value = null;
+		String entry = this.parameters.remove(parameter);
+
+		if(entry == null){
+			this.check = false;
+			this.missing_fields.add(parameter);
+		}
+		else if(entry.equals("")){
+			this.check = false;
+			this.missing_values.add(parameter);
+		}else{
+			value = entry;
+		}
+		if(value!=null){
+			System.out.println(parameter+": "+value);
+		}
+		return(value);
+	}
+
 	/**
 	 * checks if a paramter value exists and is contained in an array of possible choices
 	 * @param parameter : the paramter name
@@ -445,9 +486,12 @@ public class Config {
 		this.data_type = value;
 	}
 	
+	/**
+	 * Added Mixed and Timeseries Model option
+	 */
 	private void check_model(){
 		String parameter = "model";
-		String[] choices = {"Regression","T-test","1","2"};
+		String[] choices = {"Regression", "1", "T-test", "2", "mixedModel", "3", "rmANOVA", "4", "friedmanT", "5"};
 		String value = check_choices(parameter,choices);
 		this.model = value;
 	}
@@ -519,7 +563,42 @@ public class Config {
 			this.assume_equal_variance = Boolean.parseBoolean(value);
 		}
 	}
-	
+
+	private void check_mixed_model(){
+		String parameter = "mm_variance_cutoff";
+		this.mm_variance_cutoff = check_positive_float(parameter,0, 1, true);
+
+		parameter = "mm_formula";
+		this.mm_formula = check_string(parameter);
+
+		check_remove_temporary_files();
+	}
+
+	private void check_friedman(){
+		String parameter = "ft_variance_cutoff";
+		this.ft_variance_cutoff = check_positive_float(parameter,0, 1, true);
+
+		parameter = "ft_formula";
+		this.ft_formula = check_string(parameter);
+
+		check_remove_temporary_files();
+	}
+
+	private void check_anova(){
+		String parameter = "rma_variance_cutoff";
+		this.rma_variance_cutoff = check_positive_float(parameter,0, 1, true);
+
+		parameter = "rma_formula";
+		this.rma_formula = check_string(parameter);
+
+		check_remove_temporary_files();
+	}
+
+	private void check_remove_temporary_files(){
+		String parameter = "remove_temporary_files";
+		this.remove_temporary_files = Boolean.parseBoolean(check_boolean(parameter));
+	}
+
 	private void check_variable(){
 		String value = null;
 		String parameter = "variable";
@@ -893,7 +972,17 @@ public class Config {
 	public String get(String parameter){
 		return this.parameters.get(parameter);
 	}
-	
+
+	public String get_mm_formula(){
+		return this.mm_formula;
+	}
+	public String get_rma_formula(){
+		return this.rma_formula;
+	}
+	public String get_ft_formula(){
+		return this.ft_formula;
+	}
+
 	public String getAnnotationPath(){
 		return this.annotation_path;
 	}
@@ -994,6 +1083,31 @@ public class Config {
 		return this.model.equals("T-test");
 	}
 	
+	/**
+	 * Equals isRegression and isTTEst
+	 * @return true if mixedModel is selected otherwise false
+	 */
+	public boolean isMixedModel(){
+		return this.model.equals("mixedModel");
+	}
+	/**
+	 * Equals isMixedModel, isRegression and isTTEst
+	 * @return true if friedman test is selected otherwise false
+	 */
+	public boolean isFriedmanTest(){
+		return this.model.equals("friedmanT");
+	}
+	/**
+	 * Equals isMixedModel, isRegression and isTTEst
+	 * @return true if repeated measures anova is selected otherwise false
+	 */
+	public boolean isRM_ANOVA(){
+		return this.model.equals("rmANOVA");
+	}
+	public float getMMVarianceCutoff() {return this.mm_variance_cutoff;}
+	public float geRMAVarianceCutoff() {return this.rma_variance_cutoff;}
+	public float getFTVarianceCutoff() {return this.ft_variance_cutoff;}
+
 	public boolean isPaired(){
 		return  this.data_type.equals("paired");
 	}
@@ -1125,5 +1239,8 @@ public class Config {
 	public void put(String key, String value){
 		this.parameters.put(key, value);
 	}
-	
+
+	public boolean getRemoveTemporaryFiles() {
+		return this.remove_temporary_files;
+	}
 }
