@@ -47,7 +47,7 @@ runModel <-
         "\t"
       )
     )
-    
+
     # distinguish which model has been selected and apply it
     if (method == "friedmanT") {
       pvalues <-
